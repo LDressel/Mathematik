@@ -72,6 +72,19 @@ table.log th{color:var(--muted);font-size:15px;font-weight:700}
 .tf .btn{min-width:150px;font-size:20px}
 .split{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start}
 @media (max-width:860px){.split{grid-template-columns:1fr}.keypad{grid-template-columns:repeat(5,1fr)}}
+.wand{position:relative;--wl:74px;display:grid;gap:8px;margin-bottom:6px}
+.wrow{display:grid;grid-template-columns:var(--wl) 1fr;align-items:center}
+.wlab{font-size:20px;font-weight:700;text-align:center}
+.wlab .fr{font-size:22px}
+.wtrack{display:flex;height:58px;border:3px solid #33465a;border-radius:6px;background:#fff;overflow:hidden;align-items:center}
+.wtrack.drop{border-style:dashed;border-color:#7a4fb5;background:#faf7ff}
+.wtrack.drop.hover{background:#efe6ff;box-shadow:0 0 0 4px rgba(122,79,181,.25)}
+.wp{height:100%;border-right:2px solid #33465a;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#1d2733;flex:0 0 auto;box-sizing:border-box}
+.wp.ok{box-shadow:inset 0 0 0 4px #3f8f3a}
+.wend{position:absolute;top:-6px;bottom:-6px;width:0;border-left:3px dashed #c0392b;pointer-events:none}
+.vorrat{display:flex;flex-wrap:wrap;gap:8px 4px;margin-top:14px;padding:10px;background:#f4f7fb;border-radius:14px}
+.chip{height:54px;min-width:44px;border:2px solid #33465a;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;box-sizing:border-box}
+.ghost{position:fixed;z-index:50;pointer-events:none;opacity:.85;box-shadow:0 6px 18px rgba(0,0,0,.25)}
 .pill{display:inline-block;background:var(--blueSoft);color:var(--blue);border-radius:999px;padding:3px 10px;font-weight:700;font-size:15px}
 </style>
 </head>
@@ -79,7 +92,7 @@ table.log th{color:var(--muted);font-size:15px;font-weight:700}
 <header>
   <h1>🔬 Bruchstreifen-Labor</h1>
   <nav>
-    <button data-tab="ent" class="on">🔍 Entdecken</button>
+    <button data-tab="wand" class="on">🧱 Bruchwand</button>
     <button data-tab="ueb">🏋️ Üben</button>
     <button data-tab="exit">🎟️ Exit-Ticket</button>
   </nav>
@@ -87,44 +100,37 @@ table.log th{color:var(--muted);font-size:15px;font-weight:700}
 <main>
 
 <!-- ================= ENTDECKEN ================= -->
-<section id="ent">
+<section id="wand">
   <div class="card">
     <h2>1 · Wähle einen Bruch</h2>
-    <div class="row">
-      <div>Zähler <span class="stepper"><button class="btn" data-step="z-">−</button><b id="eZ">3</b><button class="btn" data-step="z+">+</button></span></div>
-      <div>Nenner <span class="stepper"><button class="btn" data-step="n-">−</button><b id="eN">4</b><button class="btn" data-step="n+">+</button></span></div>
-      <div class="big" id="eFrac"></div>
+    <div class="row" id="wTargets"></div>
+    <div class="row" style="margin-top:10px">
+      <span class="muted">eigener Bruch:</span>
+      <span class="stepper"><button class="btn" data-ws="z-">−</button><b id="wZ">3</b><button class="btn" data-ws="z+">+</button></span>
+      <span class="muted">/</span>
+      <span class="stepper"><button class="btn" data-ws="n-">−</button><b id="wN">4</b><button class="btn" data-ws="n+">+</button></span>
     </div>
   </div>
   <div class="card">
-    <h2>2 · Teile jedes Teil in … Teile</h2>
-    <div class="row" id="eK"></div>
-  </div>
-  <div class="card">
-    <h2>3 · Vermute zuerst – dann prüfe!</h2>
-    <div class="split">
-      <div>
-        <div class="stripbox">
-          <div class="lab">vorher</div><div id="eStripA"></div>
-          <div class="lab">nachher</div><div id="eStripB"></div>
-        </div>
-        <div class="row" style="margin-top:14px">
-          <span class="big" id="eStart"></span><span class="big">=</span>
-          <span class="fr slots big" id="eGuess"><span><span class="slot" data-slot="z"></span></span><span><span class="slot" data-slot="n"></span></span></span>
-        </div>
-        <div class="row" style="margin-top:12px">
-          <button class="btn" id="eShow">👀 Zeig mir die Teilung</button>
-          <button class="btn main" id="eCheck">✔ Prüfen</button>
-        </div>
-        <div id="eFb"></div>
-      </div>
-      <div class="keypad" data-pad="ent"></div>
+    <h2>2 · Zieh Streifen einer anderen Sorte darunter</h2>
+    <p class="muted" style="margin:0 0 10px">Vermute zuerst: Wie viele brauchst du? Dann zieh einen Streifen in die leere Reihe – oder tippe ihn an.</p>
+    <div class="wand" id="wWand">
+      <div class="wrow"><div class="wlab">Ganzes</div><div class="wtrack" id="wGanz"></div></div>
+      <div class="wrow"><div class="wlab" id="wLabT">3/4</div><div class="wtrack" id="wTarget"></div></div>
+      <div class="wrow"><div class="wlab" id="wLabB">?</div><div class="wtrack drop" id="wBuild"></div></div>
+      <div class="wend" id="wEnd"></div>
+    </div>
+    <div id="wFb"></div>
+    <div class="vorrat" id="wVorrat"></div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn" id="wUndo">↩ Letzten Streifen weg</button>
+      <button class="btn" id="wClear">🗑 Reihe leeren</button>
     </div>
   </div>
   <div class="card">
     <h2>📒 Deine Entdeckungen</h2>
-    <table class="log"><thead><tr><th>Bruch</th><th>jedes Teil in</th><th>neuer Bruch</th><th>Zähler</th><th>Nenner</th></tr></thead><tbody id="eLog"><tr><td colspan="5" class="muted">Noch leer – prüfe deine erste Vermutung.</td></tr></tbody></table>
-    <div id="eLogQ" class="fb info hidden">🤔 Schau dir deine Tabelle an: Was passiert mit Zähler und Nenner? Sprich mit deinem Partner darüber.</div>
+    <table class="log"><thead><tr><th>Bruch</th><th>Sorte</th><th>gleich lang</th><th>Zähler</th><th>Nenner</th></tr></thead><tbody id="wLog"><tr><td colspan="5" class="muted">Noch leer – finde deine erste gleich lange Reihe.</td></tr></tbody></table>
+    <div id="wLogQ" class="fb info hidden">🤔 Schau dir deine Tabelle an: Was passiert mit Zähler und Nenner? Sprecht zu zweit darüber.</div>
   </div>
 </section>
 
@@ -246,66 +252,98 @@ function makePad(name) {
   pads[name] = pad;
   return pad;
 }
-["ent","ueb","exit"].forEach(makePad);
-let currentTab = "ent";
+["ueb","exit"].forEach(makePad);
+let currentTab = "wand";
 document.addEventListener("keydown", e => {
   const p = pads[currentTab]; if (!p) return;
   if (/^[0-9]$/.test(e.key)) { p.press(e.key); e.preventDefault(); }
   else if (e.key === "Backspace") { p.press("del"); e.preventDefault(); }
   else if (e.key === "Tab") { p.next(); e.preventDefault(); }
-  else if (e.key === "Enter") { const b = {ent:"#eCheck", ueb: !$("#uNext").classList.contains("hidden") ? "#uNext" : "#uCheck", exit:"#xNext"}[currentTab]; if (b && !$(b).closest(".hidden")) $(b).click(); }
+  else if (e.key === "Enter") { const b = {ueb: !$("#uNext").classList.contains("hidden") ? "#uNext" : "#uCheck", exit:"#xNext"}[currentTab]; if (b && !$(b).closest(".hidden")) $(b).click(); }
 });
 const val = s => s.textContent === "" ? null : parseInt(s.textContent, 10);
 
 // ---------- Tabs ----------
 $$("nav button").forEach(b => b.onclick = () => {
   $$("nav button").forEach(x => x.classList.toggle("on", x === b));
-  ["ent","ueb","exit"].forEach(id => $("#"+id).classList.toggle("hidden", id !== b.dataset.tab));
+  ["wand","ueb","exit"].forEach(id => $("#"+id).classList.toggle("hidden", id !== b.dataset.tab));
   currentTab = b.dataset.tab; window.scrollTo(0,0);
 });
 
-// ================= ENTDECKEN =================
-const E = { z: 3, n: 4, k: 2, shown: false, log: [] };
-function eRender(resetGuess=true) {
-  $("#eZ").textContent = E.z; $("#eN").textContent = E.n;
-  $("#eFrac").innerHTML = fr(E.z, E.n); $("#eStart").innerHTML = fr(E.z, E.n);
-  $("#eK").innerHTML = [2,3,4,5].map(k => `<button class="btn ${k===E.k?'sel':''}" data-k="${k}">${k} Teile</button>`).join("");
-  $$("#eK button").forEach(b => b.onclick = () => { E.k = +b.dataset.k; E.shown = false; eRender(); });
-  $("#eStripA").innerHTML = stripSVG(E.n, E.z, 1, {color:"#f5b971"});
-  $("#eStripB").innerHTML = stripSVG(E.n, E.z, E.shown ? E.k : 1, {color:"#f5b971"});
-  if (resetGuess) { $$("#eGuess .slot").forEach(s => { s.textContent = ""; s.classList.remove("good","bad"); }); $("#eFb").innerHTML = ""; pads.ent.bind($("#eGuess")); }
+// ================= BRUCHWAND =================
+const SORTS = [2,3,4,5,6,8,10,12,16];
+const SCOL = {1:"#d9d9d9",2:"#f4a6a6",3:"#f7c98b",4:"#f3e38a",5:"#bfe3a4",6:"#9fd8d0",8:"#a9c8f0",10:"#c7b6ee",12:"#f1b8dc",16:"#d6c3a5"};
+const W = { z: 3, n: 4, sort: null, count: 0, log: [], done: false };
+function piece(k, idx, cls="") { return `<div class="wp ${cls}" style="width:${100/k}%;background:${SCOL[k]}"><span>${k <= 12 ? "1/" + k : ""}</span></div>`; }
+function wRender() {
+  $("#wTargets").innerHTML = [[3,4],[2,3],[1,2]].map(([z,n]) => `<button class="btn ${W.z===z&&W.n===n?'sel':''}" data-wt="${z}/${n}"><span class="big" style="font-size:24px">${fr(z,n)}</span></button>`).join("");
+  $$("#wTargets [data-wt]").forEach(b => b.onclick = () => { const [z,n] = b.dataset.wt.split("/").map(Number); wSet(z,n); });
+  $("#wZ").textContent = W.z; $("#wN").textContent = W.n;
+  $("#wGanz").innerHTML = `<div class="wp" style="width:100%;background:${SCOL[1]}"><span>1 Ganzes</span></div>`;
+  $("#wTarget").innerHTML = Array.from({length: W.z}, (_, i) => piece(W.n, i)).join("");
+  $("#wLabT").innerHTML = fr(W.z, W.n);
+  $("#wBuild").innerHTML = W.count ? Array.from({length: W.count}, (_, i) => piece(W.sort, i, W.done ? "ok" : "")).join("") : `<span class="muted" style="padding:0 12px">hierher ziehen</span>`;
+  $("#wLabB").innerHTML = W.count ? fr(W.count, W.sort) : "?";
+  $("#wEnd").style.left = `calc(var(--wl) + (100% - var(--wl)) * ${W.z / W.n})`;
+  $("#wVorrat").innerHTML = SORTS.filter(k => k !== W.n).map(k => `<div class="chip" data-k="${k}" style="background:${SCOL[k]};width:calc(${100/k}% - 4px)">1/${k}</div>`).join("");
+  $$("#wVorrat .chip").forEach(c => c.addEventListener("pointerdown", dragStart));
 }
-$$("[data-step]").forEach(b => b.onclick = () => {
-  const a = b.dataset.step;
-  if (a === "z+" && E.z < E.n - 1) E.z++;
-  if (a === "z-" && E.z > 1) E.z--;
-  if (a === "n+" && E.n < 8) E.n++;
-  if (a === "n-" && E.n > 2) { E.n--; if (E.z > E.n - 1) E.z = E.n - 1; }
-  E.shown = false; eRender();
+function wSet(z, n) { W.z = z; W.n = n; W.sort = null; W.count = 0; W.done = false; $("#wFb").innerHTML = ""; wRender(); }
+function wMsg(cls, t) { $("#wFb").innerHTML = `<div class="fb ${cls}">${t}</div>`; }
+function addPiece(k) {
+  if (W.sort && W.sort !== k) { wMsg("info", "Nur <b>eine Sorte</b> pro Reihe! Tippe zuerst auf „Reihe leeren“."); return; }
+  if (W.done) { wMsg("info", "Schon gleich lang! Probier eine <b>andere Sorte</b> oder einen anderen Bruch."); return; }
+  W.sort = k; W.count++; wCheck(); wRender();
+}
+function wCheck() {
+  const k = W.sort, c = W.count, lhs = c * W.n, rhs = W.z * k;
+  if (lhs === rhs) {
+    W.done = true;
+    wMsg("good", `✅ Genau gleich lang! &nbsp;<span class="big" style="font-size:26px">${fr(W.z,W.n)} = ${fr(c,k)}</span>`);
+    if (!W.log.some(r => r.z===W.z && r.n===W.n && r.k===k)) { W.log.push({ z: W.z, n: W.n, k, c }); wLog(); }
+  } else if (lhs > rhs) {
+    if ((W.z * k) % W.n !== 0) wMsg("bad", `Mit ${fr(1,k)}-Streifen geht ${fr(W.z,W.n)} <b>nicht genau</b>. Leere die Reihe und probier eine andere Sorte.`);
+    else wMsg("bad", "Zu lang! Nimm einen Streifen weg.");
+  } else $("#wFb").innerHTML = "";
+}
+function wLog() {
+  $("#wLog").innerHTML = W.log.map(r => `<tr><td>${fr(r.z,r.n)}</td><td>${fr(1,r.k)}</td><td>${fr(r.z,r.n)} = ${fr(r.c,r.k)}</td><td>${r.z} ➜ ${r.c}</td><td>${r.n} ➜ ${r.k}</td></tr>`).join("");
+  $("#wLogQ").classList.toggle("hidden", W.log.length < 3);
+}
+// Ziehen (Finger oder Maus); kurzes Antippen fügt ebenfalls hinzu
+let drag = null;
+function dragStart(e) {
+  const c = e.currentTarget; const k = +c.dataset.k; e.preventDefault();
+  const r = c.getBoundingClientRect();
+  const g = c.cloneNode(true); g.classList.add("ghost"); g.style.width = r.width + "px"; g.style.height = r.height + "px";
+  g.style.left = r.left + "px"; g.style.top = r.top + "px"; document.body.appendChild(g);
+  drag = { k, g, x0: e.clientX, y0: e.clientY, dx: e.clientX - r.left, dy: e.clientY - r.top, moved: false };
+  window.addEventListener("pointermove", dragMove); window.addEventListener("pointerup", dragEnd, { once: true }); window.addEventListener("pointercancel", dragEnd, { once: true });
+}
+function dragMove(e) {
+  if (!drag) return;
+  if (Math.abs(e.clientX - drag.x0) + Math.abs(e.clientY - drag.y0) > 8) drag.moved = true;
+  drag.g.style.left = (e.clientX - drag.dx) + "px"; drag.g.style.top = (e.clientY - drag.dy) + "px";
+  const t = $("#wBuild").getBoundingClientRect();
+  $("#wBuild").classList.toggle("hover", e.clientX >= t.left && e.clientX <= t.right && e.clientY >= t.top - 30 && e.clientY <= t.bottom + 30);
+}
+function dragEnd(e) {
+  window.removeEventListener("pointermove", dragMove);
+  if (!drag) return;
+  const t = $("#wBuild").getBoundingClientRect();
+  const over = e.clientX >= t.left && e.clientX <= t.right && e.clientY >= t.top - 30 && e.clientY <= t.bottom + 30;
+  const k = drag.k, moved = drag.moved; drag.g.remove(); drag = null; $("#wBuild").classList.remove("hover");
+  if (over || !moved) addPiece(k);
+}
+$("#wUndo").onclick = () => { if (W.count) { W.count--; W.done = false; if (!W.count) W.sort = null; else wCheck(); wRender(); } };
+$("#wClear").onclick = () => { W.sort = null; W.count = 0; W.done = false; $("#wFb").innerHTML = ""; wRender(); };
+$$("[data-ws]").forEach(b => b.onclick = () => {
+  let { z, n } = W; const a = b.dataset.ws;
+  if (a === "z+" && z < n - 1) z++; if (a === "z-" && z > 1) z--;
+  if (a === "n+" && n < 6) n++; if (a === "n-" && n > 2) { n--; if (z > n - 1) z = n - 1; }
+  wSet(z, n);
 });
-$("#eShow").onclick = () => { E.shown = true; $("#eStripB").innerHTML = stripSVG(E.n, E.z, E.k, {color:"#f5b971"}); $("#eFb").innerHTML = `<div class="fb info">Zähle im unteren Streifen: Wie viele Teile sind es insgesamt? Wie viele sind gefärbt?</div>`; };
-$("#eCheck").onclick = () => {
-  const [sz, sn] = $$("#eGuess .slot"); const gz = val(sz), gn = val(sn);
-  if (gz === null || gn === null) { $("#eFb").innerHTML = `<div class="fb info">Trage zuerst deine Vermutung ein: oben den Zähler, unten den Nenner.</div>`; return; }
-  const rz = E.z * E.k, rn = E.n * E.k;
-  sz.classList.toggle("good", gz === rz); sz.classList.toggle("bad", gz !== rz);
-  sn.classList.toggle("good", gn === rn); sn.classList.toggle("bad", gn !== rn);
-  E.shown = true; $("#eStripB").innerHTML = stripSVG(E.n, E.z, E.k, {color:"#f5b971"});
-  if (gz === rz && gn === rn) {
-    $("#eFb").innerHTML = `<div class="fb good">✅ Richtig vermutet! Der gefärbte Teil ist <b>gleich lang</b> geblieben.<div style="margin-top:6px">${bogenSVG(E.z,E.n,E.k,rz,rn,0.8)}</div></div>`;
-    if (!E.log.some(r => r.z===E.z && r.n===E.n && r.k===E.k)) { E.log.push({z:E.z, n:E.n, k:E.k}); eLog(); }
-  } else {
-    let t = "Noch nicht ganz. Schau dir den unteren Streifen an und zähle nach. ";
-    if (gn !== rn) t += `Jedes der ${E.n} Teile wird in ${E.k} Teile geteilt – wie viele Teile sind es dann insgesamt? `;
-    if (gz !== rz) t += `Jedes der ${E.z} gefärbten Teile wird auch in ${E.k} Teile geteilt.`;
-    $("#eFb").innerHTML = `<div class="fb bad">${t}</div>`;
-  }
-};
-function eLog() {
-  $("#eLog").innerHTML = E.log.map(r => `<tr><td>${fr(r.z,r.n)}</td><td>${r.k}</td><td>${fr(r.z*r.k, r.n*r.k)}</td><td>${r.z} ➜ ${r.z*r.k}</td><td>${r.n} ➜ ${r.n*r.k}</td></tr>`).join("");
-  $("#eLogQ").classList.toggle("hidden", E.log.length < 3);
-}
-eRender();
+wRender();
 
 // ================= ÜBEN =================
 const U = { level: "basis", task: null, tier: 0, solved: 0, clean: 0, streak: 0, levelSolved: {basis:0, stern:0, zwei:0}, done: false };
