@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Bruchstreifen-Labor</title>
+<style>
+:root{
+  --bg:#f4f7fb; --card:#ffffff; --ink:#1d2733; --muted:#5d6b7a; --line:#33465a;
+  --blue:#1f5f99; --blueSoft:#e6eef7; --strip:#7fb8e6; --orange:#f5b971;
+  --green:#3f8f3a; --greenSoft:#e5f4e1; --red:#c0392b; --redSoft:#fbe9e7;
+  --yellow:#fff3b0; --yellowLine:#e8b400; --star:#c47d00;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;touch-action:manipulation}
+body{font-size:19px;line-height:1.35;padding-bottom:30px}
+header{position:sticky;top:0;z-index:5;background:var(--blue);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+header h1{font-size:22px;margin:0;font-weight:800;letter-spacing:-.2px}
+nav{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+nav button{font:inherit;font-size:17px;font-weight:700;border:0;border-radius:12px;padding:10px 16px;background:rgba(255,255,255,.16);color:#fff;min-height:48px}
+nav button.on{background:#fff;color:var(--blue)}
+main{max-width:980px;margin:0 auto;padding:16px}
+.card{background:var(--card);border-radius:18px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card h2{font-size:19px;margin:0 0 10px;color:var(--blue)}
+.row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.muted{color:var(--muted);font-size:16px}
+.btn{font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 18px;min-height:52px;min-width:52px;background:var(--blueSoft);color:var(--blue);cursor:pointer}
+.btn.main{background:var(--blue);color:#fff}
+.btn.ok{background:var(--green);color:#fff}
+.btn.tipp{background:var(--yellow);color:#6b5200;border:2px solid var(--yellowLine)}
+.btn.sel{background:var(--blue);color:#fff}
+.btn:disabled{opacity:.4}
+.stepper{display:inline-flex;align-items:center;gap:8px;background:var(--blueSoft);border-radius:14px;padding:6px}
+.stepper .btn{min-width:48px;min-height:48px;padding:0;font-size:24px;background:#fff}
+.stepper b{min-width:34px;text-align:center;font-size:24px}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px;line-height:1.05;font-weight:700}
+.fr>span:first-child{border-bottom:3px solid currentColor;padding:0 4px 2px}
+.fr>span:last-child{padding:2px 4px 0}
+.big{font-size:30px}
+.slot{display:inline-flex;align-items:center;justify-content:center;min-width:64px;height:52px;border:3px solid #9fb3c8;border-radius:12px;background:#fff;font-size:28px;font-weight:800;color:var(--ink);cursor:pointer;margin:2px 0}
+.slot.active{border-color:var(--blue);box-shadow:0 0 0 4px rgba(31,95,153,.18)}
+.slot.good{border-color:var(--green);background:var(--greenSoft)}
+.slot.bad{border-color:var(--red);background:var(--redSoft)}
+.fr .slot{min-width:70px}
+.fr.slots>span:first-child{border-bottom-width:4px;padding-bottom:6px}
+.fr.slots>span:last-child{padding-top:6px}
+.keypad{display:grid;grid-template-columns:repeat(5,60px);gap:8px}
+.keypad button{font:inherit;font-size:26px;font-weight:800;height:58px;border-radius:12px;border:0;background:#fff;box-shadow:0 1px 0 #c9d6e3, inset 0 0 0 2px #c9d6e3;color:var(--ink)}
+.keypad button:active{background:var(--blueSoft)}
+.keypad .del{background:var(--redSoft);color:var(--red)}
+.strip{width:100%;height:auto;display:block}
+.stripbox{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center}
+.stripbox .lab{font-size:15px;color:var(--muted);text-align:right;min-width:62px}
+.fb{border-radius:14px;padding:12px 14px;margin-top:12px;font-weight:600}
+.fb.good{background:var(--greenSoft);color:#245d20}
+.fb.bad{background:var(--redSoft);color:#8e2a20}
+.fb.info{background:var(--blueSoft);color:var(--blue)}
+.hint{background:#fffaf0;border:2px solid var(--yellowLine);border-radius:14px;padding:10px 14px;margin-top:12px}
+.hint .t{display:flex;gap:10px;margin:6px 0;align-items:center;flex-wrap:wrap}
+.hint .k{background:var(--yellow);color:#6b5200;border-radius:8px;padding:2px 8px;font-weight:800;font-size:15px;white-space:nowrap}
+table.log{width:100%;border-collapse:collapse;font-size:18px}
+table.log th,table.log td{border-bottom:1.5px solid #e1e8f0;padding:6px 8px;text-align:center}
+table.log th{color:var(--muted);font-size:15px;font-weight:700}
+.levels .btn{min-width:120px}
+.score{display:flex;gap:16px;align-items:center;font-weight:700;color:var(--muted);font-size:16px;flex-wrap:wrap}
+.score b{color:var(--ink);font-size:20px}
+.banner{background:linear-gradient(90deg,#fff3b0,#ffe28a);border-radius:14px;padding:12px 16px;font-weight:800;margin-bottom:12px}
+.exitres{text-align:center;padding:24px 12px;border-radius:18px}
+.exitres .n{font-size:64px;font-weight:900;line-height:1}
+.hidden{display:none!important}
+.tf .btn{min-width:150px;font-size:20px}
+.split{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start}
+@media (max-width:860px){.split{grid-template-columns:1fr}.keypad{grid-template-columns:repeat(5,1fr)}}
+.pill{display:inline-block;background:var(--blueSoft);color:var(--blue);border-radius:999px;padding:3px 10px;font-weight:700;font-size:15px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🔬 Bruchstreifen-Labor</h1>
+  <nav>
+    <button data-tab="ent" class="on">🔍 Entdecken</button>
+    <button data-tab="ueb">🏋️ Üben</button>
+    <button data-tab="exit">🎟️ Exit-Ticket</button>
+  </nav>
+</header>
+<main>
+
+<!-- ================= ENTDECKEN ================= -->
+<section id="ent">
+  <div class="card">
+    <h2>1 · Wähle einen Bruch</h2>
+    <div class="row">
+      <div>Zähler <span class="stepper"><button class="btn" data-step="z-">−</button><b id="eZ">3</b><button class="btn" data-step="z+">+</button></span></div>
+      <div>Nenner <span class="stepper"><button class="btn" data-step="n-">−</button><b id="eN">4</b><button class="btn" data-step="n+">+</button></span></div>
+      <div class="big" id="eFrac"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>2 · Teile jedes Teil in … Teile</h2>
+    <div class="row" id="eK"></div>
+  </div>
+  <div class="card">
+    <h2>3 · Vermute zuerst – dann prüfe!</h2>
+    <div class="split">
+      <div>
+        <div class="stripbox">
+          <div class="lab">vorher</div><div id="eStripA"></div>
+          <div class="lab">nachher</div><div id="eStripB"></div>
+        </div>
+        <div class="row" style="margin-top:14px">
+          <span class="big" id="eStart"></span><span class="big">=</span>
+          <span class="fr slots big" id="eGuess"><span><span class="slot" data-slot="z"></span></span><span><span class="slot" data-slot="n"></span></span></span>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn" id="eShow">👀 Zeig mir die Teilung</button>
+          <button class="btn main" id="eCheck">✔ Prüfen</button>
+        </div>
+        <div id="eFb"></div>
+      </div>
+      <div class="keypad" data-pad="ent"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>📒 Deine Entdeckungen</h2>
+    <table class="log"><thead><tr><th>Bruch</th><th>jedes Teil in</th><th>neuer Bruch</th><th>Zähler</th><th>Nenner</th></tr></thead><tbody id="eLog"><tr><td colspan="5" class="muted">Noch leer – prüfe deine erste Vermutung.</td></tr></tbody></table>
+    <div id="eLogQ" class="fb info hidden">🤔 Schau dir deine Tabelle an: Was passiert mit Zähler und Nenner? Sprich mit deinem Partner darüber.</div>
+  </div>
+</section>
+
+<!-- ================= ÜBEN ================= -->
+<section id="ueb" class="hidden">
+  <div class="card">
+    <div class="row levels" style="justify-content:space-between">
+      <div class="row">
+        <button class="btn sel" data-level="basis">Basis</button>
+        <button class="btn" data-level="stern">★</button>
+        <button class="btn" data-level="zwei">★★</button>
+      </div>
+      <div class="score">Gelöst <b id="uSolved">0</b> · ohne Tipp <b id="uClean">0</b> · Serie <b id="uStreak">0</b> 🔥</div>
+    </div>
+  </div>
+  <div id="uBanner" class="banner hidden"></div>
+  <div class="card">
+    <div class="split">
+      <div>
+        <div id="uPrompt" style="font-weight:700;font-size:20px;margin-bottom:10px"></div>
+        <div id="uVisual"></div>
+        <div id="uAnswer" class="row" style="margin-top:12px"></div>
+        <div class="row" style="margin-top:14px">
+          <button class="btn tipp" id="uTipp">💡 Tipp</button>
+          <button class="btn main" id="uCheck">✔ Prüfen</button>
+          <button class="btn ok hidden" id="uNext">Weiter ➜</button>
+        </div>
+        <div id="uFb"></div>
+        <div id="uHint"></div>
+      </div>
+      <div class="keypad" data-pad="ueb"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXIT-TICKET ================= -->
+<section id="exit" class="hidden">
+  <div class="card" id="xStart">
+    <h2>🎟️ Exit-Ticket</h2>
+    <p>3 Aufgaben. <b>Ohne Tipps.</b> Jede Aufgabe hast du nur <b>einmal</b>.<br>Am Ende zeigst du das Ergebnis deiner Lehrkraft.</p>
+    <button class="btn main" id="xGo">Los geht's ➜</button>
+  </div>
+  <div class="card hidden" id="xTask">
+    <div class="muted" id="xNr"></div>
+    <div class="split">
+      <div>
+        <div id="xPrompt" style="font-weight:700;font-size:20px;margin:6px 0 12px"></div>
+        <div id="xAnswer" class="row"></div>
+        <div class="row" style="margin-top:14px"><button class="btn main" id="xNext">Antwort abgeben ➜</button></div>
+        <div id="xFb"></div>
+      </div>
+      <div class="keypad" data-pad="exit"></div>
+    </div>
+  </div>
+  <div class="card hidden" id="xEnd"></div>
+</section>
+</main>
+
+<script>
+"use strict";
+// ---------- Hilfsfunktionen ----------
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const rnd = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const gcd = (a,b) => b ? gcd(b, a % b) : a;
+const fr = (z,n) => `<span class="fr"><span>${z}</span><span>${n}</span></span>`;
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+
+function stripSVG(n, z, k, opt={}) {
+  // n Teile, z gefärbt, jedes Teil in k Teile (k=1: keine Unterteilung)
+  const W = 600, H = opt.h || 64, pw = W / n;
+  const col = opt.color || "#7fb8e6";
+  let s = `<svg class="strip" viewBox="-2 -2 ${W+4} ${H+4}" preserveAspectRatio="none" style="max-width:${opt.maxw||600}px">`;
+  s += `<rect x="0" y="0" width="${z*pw}" height="${H}" fill="${col}"/>`;
+  if (k > 1) {
+    for (let i = 0; i < n*k; i++) {
+      if (i % k === 0) continue;
+      const x = i * pw / k;
+      s += `<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#33465a" stroke-width="1.6" ${opt.dashed ? 'stroke-dasharray="6 5"' : ''}/>`;
+    }
+  }
+  for (let i = 1; i < n; i++) s += `<line x1="${i*pw}" y1="0" x2="${i*pw}" y2="${H}" stroke="#33465a" stroke-width="3.2"/>`;
+  s += `<rect x="0" y="0" width="${W}" height="${H}" fill="none" stroke="#33465a" stroke-width="3.5"/></svg>`;
+  return s;
+}
+
+function bogenSVG(z1, n1, k, z2, n2, scale=1) {
+  const W = 190, H = 120, m = H/2, fs = 28;
+  const frac = (x,z,n) => `<text x="${x}" y="${m-8}" font-size="${fs}" text-anchor="middle" font-weight="800" fill="#1d2733">${z}</text>
+    <line x1="${x-18}" y1="${m}" x2="${x+18}" y2="${m}" stroke="#1d2733" stroke-width="3"/>
+    <text x="${x}" y="${m+28}" font-size="${fs}" text-anchor="middle" font-weight="800" fill="#1d2733">${n}</text>`;
+  const c = "#1f5f99";
+  return `<svg width="${W*scale}" height="${H*scale}" viewBox="0 0 ${W} ${H}" style="vertical-align:middle;font-family:inherit">
+    ${frac(30,z1,n1)}<text x="${W/2}" y="${m+9}" font-size="${fs}" text-anchor="middle" fill="#1d2733">=</text>${frac(W-30,z2,n2)}
+    <path d="M 48 ${m-30} Q ${W/2} ${m-66} ${W-48} ${m-30}" fill="none" stroke="${c}" stroke-width="3"/>
+    <path d="M ${W-57} ${m-39} L ${W-47} ${m-30} L ${W-60} ${m-27}" fill="none" stroke="${c}" stroke-width="3"/>
+    <path d="M 48 ${m+30} Q ${W/2} ${m+66} ${W-48} ${m+30}" fill="none" stroke="${c}" stroke-width="3"/>
+    <path d="M ${W-57} ${m+39} L ${W-47} ${m+30} L ${W-60} ${m+27}" fill="none" stroke="${c}" stroke-width="3"/>
+    ${[m-46, m+46].map(y => `<ellipse cx="${W/2}" cy="${y}" rx="24" ry="13" fill="#fff3b0" stroke="#e8b400" stroke-width="2"/>
+      <text x="${W/2}" y="${y+7}" font-size="20" text-anchor="middle" font-weight="800" fill="#6b5200">·${k}</text>`).join("")}
+  </svg>`;
+}
+
+// ---------- Ziffernblock (pro Bereich) ----------
+const pads = {};
+function makePad(name) {
+  const el = document.querySelector(`[data-pad="${name}"]`);
+  const keys = ["1","2","3","4","5","6","7","8","9","0"];
+  el.innerHTML = keys.map(k => `<button data-k="${k}">${k}</button>`).join("") + `<button class="del" data-k="del" style="grid-column:span 5">⌫ löschen</button>`;
+  const pad = { root: null, active: null,
+    bind(root) { this.root = root; const slots = root.querySelectorAll(".slot"); slots.forEach(s => s.onclick = () => this.focus(s)); this.focus(slots[0] || null); },
+    focus(s) { if (!this.root) return; this.root.querySelectorAll(".slot").forEach(x => x.classList.remove("active")); this.active = s; if (s) s.classList.add("active"); },
+    next() { if (!this.root || !this.active) return; const slots = Array.from(this.root.querySelectorAll(".slot")); const i = slots.indexOf(this.active); if (i >= 0 && i < slots.length-1) this.focus(slots[i+1]); },
+    press(k) { const s = this.active; if (!s) return; s.classList.remove("good","bad");
+      if (k === "del") { s.textContent = s.textContent.slice(0,-1); return; }
+      if (s.textContent.length >= 3) return; s.textContent += k; }
+  };
+  el.addEventListener("click", e => { const b = e.target.closest("button"); if (b) pad.press(b.dataset.k); });
+  pads[name] = pad;
+  return pad;
+}
+["ent","ueb","exit"].forEach(makePad);
+let currentTab = "ent";
+document.addEventListener("keydown", e => {
+  const p = pads[currentTab]; if (!p) return;
+  if (/^[0-9]$/.test(e.key)) { p.press(e.key); e.preventDefault(); }
+  else if (e.key === "Backspace") { p.press("del"); e.preventDefault(); }
+  else if (e.key === "Tab") { p.next(); e.preventDefault(); }
+  else if (e.key === "Enter") { const b = {ent:"#eCheck", ueb: !$("#uNext").classList.contains("hidden") ? "#uNext" : "#uCheck", exit:"#xNext"}[currentTab]; if (b && !$(b).closest(".hidden")) $(b).click(); }
+});
+const val = s => s.textContent === "" ? null : parseInt(s.textContent, 10);
+
+// ---------- Tabs ----------
+$$("nav button").forEach(b => b.onclick = () => {
+  $$("nav button").forEach(x => x.classList.toggle("on", x === b));
+  ["ent","ueb","exit"].forEach(id => $("#"+id).classList.toggle("hidden", id !== b.dataset.tab));
+  currentTab = b.dataset.tab; window.scrollTo(0,0);
+});
+
+// ================= ENTDECKEN =================
+const E = { z: 3, n: 4, k: 2, shown: false, log: [] };
+function eRender(resetGuess=true) {
+  $("#eZ").textContent = E.z; $("#eN").textContent = E.n;
+  $("#eFrac").innerHTML = fr(E.z, E.n); $("#eStart").innerHTML = fr(E.z, E.n);
+  $("#eK").innerHTML = [2,3,4,5].map(k => `<button class="btn ${k===E.k?'sel':''}" data-k="${k}">${k} Teile</button>`).join("");
+  $$("#eK button").forEach(b => b.onclick = () => { E.k = +b.dataset.k; E.shown = false; eRender(); });
+  $("#eStripA").innerHTML = stripSVG(E.n, E.z, 1, {color:"#f5b971"});
+  $("#eStripB").innerHTML = stripSVG(E.n, E.z, E.shown ? E.k : 1, {color:"#f5b971"});
+  if (resetGuess) { $$("#eGuess .slot").forEach(s => { s.textContent = ""; s.classList.remove("good","bad"); }); $("#eFb").innerHTML = ""; pads.ent.bind($("#eGuess")); }
+}
+$$("[data-step]").forEach(b => b.onclick = () => {
+  const a = b.dataset.step;
+  if (a === "z+" && E.z < E.n - 1) E.z++;
+  if (a === "z-" && E.z > 1) E.z--;
+  if (a === "n+" && E.n < 8) E.n++;
+  if (a === "n-" && E.n > 2) { E.n--; if (E.z > E.n - 1) E.z = E.n - 1; }
+  E.shown = false; eRender();
+});
+$("#eShow").onclick = () => { E.shown = true; $("#eStripB").innerHTML = stripSVG(E.n, E.z, E.k, {color:"#f5b971"}); $("#eFb").innerHTML = `<div class="fb info">Zähle im unteren Streifen: Wie viele Teile sind es insgesamt? Wie viele sind gefärbt?</div>`; };
+$("#eCheck").onclick = () => {
+  const [sz, sn] = $$("#eGuess .slot"); const gz = val(sz), gn = val(sn);
+  if (gz === null || gn === null) { $("#eFb").innerHTML = `<div class="fb info">Trage zuerst deine Vermutung ein: oben den Zähler, unten den Nenner.</div>`; return; }
+  const rz = E.z * E.k, rn = E.n * E.k;
+  sz.classList.toggle("good", gz === rz); sz.classList.toggle("bad", gz !== rz);
+  sn.classList.toggle("good", gn === rn); sn.classList.toggle("bad", gn !== rn);
+  E.shown = true; $("#eStripB").innerHTML = stripSVG(E.n, E.z, E.k, {color:"#f5b971"});
+  if (gz === rz && gn === rn) {
+    $("#eFb").innerHTML = `<div class="fb good">✅ Richtig vermutet! Der gefärbte Teil ist <b>gleich lang</b> geblieben.<div style="margin-top:6px">${bogenSVG(E.z,E.n,E.k,rz,rn,0.8)}</div></div>`;
+    if (!E.log.some(r => r.z===E.z && r.n===E.n && r.k===E.k)) { E.log.push({z:E.z, n:E.n, k:E.k}); eLog(); }
+  } else {
+    let t = "Noch nicht ganz. Schau dir den unteren Streifen an und zähle nach. ";
+    if (gn !== rn) t += `Jedes der ${E.n} Teile wird in ${E.k} Teile geteilt – wie viele Teile sind es dann insgesamt? `;
+    if (gz !== rz) t += `Jedes der ${E.z} gefärbten Teile wird auch in ${E.k} Teile geteilt.`;
+    $("#eFb").innerHTML = `<div class="fb bad">${t}</div>`;
+  }
+};
+function eLog() {
+  $("#eLog").innerHTML = E.log.map(r => `<tr><td>${fr(r.z,r.n)}</td><td>${r.k}</td><td>${fr(r.z*r.k, r.n*r.k)}</td><td>${r.z} ➜ ${r.z*r.k}</td><td>${r.n} ➜ ${r.n*r.k}</td></tr>`).join("");
+  $("#eLogQ").classList.toggle("hidden", E.log.length < 3);
+}
+eRender();
+
+// ================= ÜBEN =================
+const U = { level: "basis", task: null, tier: 0, solved: 0, clean: 0, streak: 0, levelSolved: {basis:0, stern:0, zwei:0}, done: false };
+const LV = {
+  basis: { nMax: 6,  kMax: 5,  types: ["erw","erw","luecke","bild"] },
+  stern: { nMax: 10, kMax: 9,  types: ["erw","luecke","luecke"] },
+  zwei:  { nMax: 12, kMax: 12, types: ["luecke","zahl","stimmt","stimmt"] }
+};
+function baseFrac(nMax) { let n, z; do { n = rnd(2, nMax); z = rnd(1, n-1); } while (gcd(z,n) !== 1); return [z,n]; }
+function newTask() {
+  const L = LV[U.level]; const type = pick(L.types);
+  let [z, n] = baseFrac(type === "bild" ? 4 : L.nMax);
+  let k = rnd(2, type === "bild" ? 4 : L.kMax);
+  const t = { type, z, n, k };
+  if (type === "luecke") t.miss = Math.random() < 0.5 ? "z" : "n";
+  if (type === "stimmt") {
+    t.correct = Math.random() < 0.45;
+    if (t.correct) { t.c = z*k; t.d = n*k; }
+    else { const v = pick(["add","nenner","zwei"]);
+      if (v === "add") { t.c = z + k; t.d = n + k; t.why = `Hier wurde ${k} <b>addiert</b>. Beim Erweitern wird aber <b>malgenommen</b>.`; }
+      else if (v === "nenner") { t.c = z; t.d = n*k; t.why = `Hier wurde nur der <b>Nenner</b> mal ${k} genommen. Der Zähler muss auch mal ${k}.`; }
+      else { t.c = z*k; t.d = n*(k+1); t.why = `Zähler mal ${k}, aber Nenner mal ${k+1}. Es muss die <b>gleiche</b> Zahl sein.`; } }
+  }
+  U.task = t; U.tier = 0; U.done = false; uRender();
+}
+function slot(key) { return `<span class="slot" data-slot="${key}"></span>`; }
+function uRender() {
+  const t = U.task; const pad = pads.ueb;
+  $("#uFb").innerHTML = ""; $("#uHint").innerHTML = ""; $("#uNext").classList.add("hidden"); $("#uCheck").classList.remove("hidden"); $("#uTipp").classList.remove("hidden");
+  $("#uVisual").innerHTML = ""; $("#uAnswer").classList.remove("tf");
+  const kp = document.querySelector('[data-pad="ueb"]'); kp.classList.remove("hidden");
+  if (t.type === "erw") {
+    $("#uPrompt").innerHTML = `Erweitere ${fr(t.z,t.n)} mit ${t.k}.`;
+    $("#uAnswer").innerHTML = `<span class="big">${fr(t.z,t.n)} =</span> <span class="fr slots big">${'<span>'+slot("a")+'</span><span>'+slot("b")+'</span>'}</span>`;
+    if (U.level === "basis") $("#uVisual").innerHTML = `<div style="max-width:420px">${stripSVG(t.n,t.z,1,{h:46})}</div>`;
+  } else if (t.type === "luecke") {
+    $("#uPrompt").innerHTML = `Finde die fehlende Zahl.`;
+    const top = t.miss === "z" ? slot("a") : t.z*t.k, bot = t.miss === "n" ? slot("a") : t.n*t.k;
+    $("#uAnswer").innerHTML = `<span class="big">${fr(t.z,t.n)} =</span> <span class="fr slots big"><span>${top}</span><span>${bot}</span></span>`;
+  } else if (t.type === "bild") {
+    $("#uPrompt").innerHTML = `Der obere Streifen zeigt ${fr(t.z,t.n)}. Welcher Bruch ist unten gefärbt? Mit welcher Zahl wurde erweitert?`;
+    $("#uVisual").innerHTML = `<div style="max-width:460px;display:grid;gap:8px">${stripSVG(t.n,t.z,1,{h:46,color:"#a9d18e"})}${stripSVG(t.n,t.z,t.k,{h:46,color:"#a9d18e"})}</div>`;
+    $("#uAnswer").innerHTML = `<span class="big">${fr(t.z,t.n)} =</span> <span class="fr slots big"><span>${slot("a")}</span><span>${slot("b")}</span></span> <span style="margin-left:18px">Erweiterungszahl: ${slot("c")}</span>`;
+  } else if (t.type === "zahl") {
+    $("#uPrompt").innerHTML = `Mit welcher Zahl wurde erweitert?`;
+    $("#uAnswer").innerHTML = `<span class="big">${fr(t.z,t.n)} = ${fr(t.z*t.k,t.n*t.k)}</span> <span style="margin-left:18px">Erweiterungszahl: ${slot("a")}</span>`;
+  } else if (t.type === "stimmt") {
+    $("#uPrompt").innerHTML = `Stimmt das? Prüfe, ob richtig erweitert wurde.`;
+    $("#uAnswer").classList.add("tf");
+    $("#uAnswer").innerHTML = `<span class="big" style="margin-right:20px">${fr(t.z,t.n)} = ${fr(t.c,t.d)}</span> <button class="btn" data-tf="1">👍 stimmt</button> <button class="btn" data-tf="0">👎 stimmt nicht</button>`;
+    $$("#uAnswer [data-tf]").forEach(b => b.onclick = () => { $$("#uAnswer [data-tf]").forEach(x => x.classList.toggle("sel", x === b)); U.tf = +b.dataset.tf; });
+    U.tf = null; kp.classList.add("hidden");
+  }
+  pad.bind($("#uAnswer"));
+}
+function solution(t) {
+  if (t.type === "stimmt") return t.correct ? `Es stimmt: Zähler und Nenner wurden beide mal ${t.k} genommen. ${bogenSVG(t.z,t.n,t.k,t.c,t.d,0.6)}` : `Es stimmt nicht. ${t.why}`;
+  return `${bogenSVG(t.z,t.n,t.k,t.z*t.k,t.n*t.k,0.62)} &nbsp; ${t.z} · ${t.k} = ${t.z*t.k} &nbsp;und&nbsp; ${t.n} · ${t.k} = ${t.n*t.k}`;
+}
+function hints(t) {
+  const reihe = (b, max) => { const r = []; for (let i = 1; i*b <= max; i++) r.push(i*b); return r.join(", "); };
+  switch (t.type) {
+    case "erw": return [`Erweitern heißt: Zähler <b>und</b> Nenner mal die <b>gleiche</b> Zahl.`, `Zähler: ${t.z} · ${t.k} = ? &nbsp;&nbsp; Nenner: ${t.n} · ${t.k} = ?`, solution(t)];
+    case "luecke": return t.miss === "z"
+      ? [`Suche zuerst die <b>Erweiterungszahl</b>. Schau beim Nenner: Dort stehen beide Zahlen.`, `${t.n} · ? = ${t.n*t.k} &nbsp; (Reihe: ${reihe(t.n, t.n*t.k)})`, solution(t)]
+      : [`Suche zuerst die <b>Erweiterungszahl</b>. Schau beim Zähler: Dort stehen beide Zahlen.`, `${t.z} · ? = ${t.z*t.k} &nbsp; (Reihe: ${reihe(t.z, t.z*t.k)})`, solution(t)];
+    case "bild": return [`Zähle im <b>unteren</b> Streifen: alle Teile (Nenner) und die gefärbten Teile (Zähler).`, `Wie viele kleine Teile passen in <b>ein</b> großes Teil? Das ist die Erweiterungszahl.`, solution(t)];
+    case "zahl": return [`Mit welcher Zahl wurde der Nenner malgenommen?`, `${t.n} · ? = ${t.n*t.k}`, solution(t)];
+    case "stimmt": return [`Beim Erweitern wird <b>malgenommen</b> – oben und unten mit der <b>gleichen</b> Zahl.`, `Prüfe: ${t.z} · ? = ${t.c} und ${t.n} · ? = ${t.d}. Ist es beide Male die gleiche Zahl?`, solution(t)];
+  }
+}
+function showHint() {
+  const h = hints(U.task); U.tier = Math.min(U.tier + 1, 3);
+  $("#uHint").innerHTML = `<div class="hint">${h.slice(0, U.tier).map((x,i) => `<div class="t"><span class="k">Tipp ${i+1}</span><span>${x}</span></div>`).join("")}</div>`;
+}
+$("#uTipp").onclick = () => { if (!U.done) showHint(); };
+$("#uCheck").onclick = () => {
+  const t = U.task; let ok = false, filled = true;
+  const g = k => { const s = $(`#uAnswer [data-slot="${k}"]`); return s ? val(s) : null; };
+  const mark = (k, good) => { const s = $(`#uAnswer [data-slot="${k}"]`); if (s) { s.classList.toggle("good", good); s.classList.toggle("bad", !good); } };
+  if (t.type === "erw") { const a=g("a"), b=g("b"); filled = a!==null && b!==null; if (filled) { mark("a", a===t.z*t.k); mark("b", b===t.n*t.k); ok = a===t.z*t.k && b===t.n*t.k; } }
+  else if (t.type === "luecke") { const a=g("a"); filled = a!==null; const r = t.miss==="z" ? t.z*t.k : t.n*t.k; if (filled) { ok = a===r; mark("a", ok); } }
+  else if (t.type === "bild") { const a=g("a"), b=g("b"), c=g("c"); filled = a!==null && b!==null && c!==null; if (filled) { mark("a", a===t.z*t.k); mark("b", b===t.n*t.k); mark("c", c===t.k); ok = a===t.z*t.k && b===t.n*t.k && c===t.k; } }
+  else if (t.type === "zahl") { const a=g("a"); filled = a!==null; if (filled) { ok = a===t.k; mark("a", ok); } }
+  else if (t.type === "stimmt") { filled = U.tf !== null && U.tf !== undefined; if (filled) ok = (U.tf === 1) === t.correct; }
+  if (!filled) { $("#uFb").innerHTML = `<div class="fb info">Fülle zuerst alle Kästchen aus.</div>`; return; }
+  if (ok) {
+    U.done = true; U.solved++; U.levelSolved[U.level]++; if (U.tier === 0) { U.clean++; U.streak++; } else U.streak = 0;
+    $("#uFb").innerHTML = `<div class="fb good">✅ ${pick(["Super!","Richtig!","Stark!","Genau so!","Klasse!"])} ${t.type==="stimmt" ? solution(t) : ""}</div>`;
+    $("#uCheck").classList.add("hidden"); $("#uTipp").classList.add("hidden"); $("#uNext").classList.remove("hidden");
+    $("#uSolved").textContent = U.solved; $("#uClean").textContent = U.clean; $("#uStreak").textContent = U.streak;
+    const ls = U.levelSolved[U.level];
+    if (ls === 10 && U.level !== "zwei") { $("#uBanner").textContent = `🏆 10 Aufgaben in ${U.level==="basis"?"Basis":"★"} gelöst! Probier die nächste Stufe.`; $("#uBanner").classList.remove("hidden"); }
+    if (ls === 10 && U.level === "zwei") { $("#uBanner").textContent = `🏆 10 Profi-Aufgaben gelöst! Erfinde jetzt eigene Aufgaben für deinen Partner.`; $("#uBanner").classList.remove("hidden"); }
+  } else {
+    U.streak = 0; $("#uStreak").textContent = 0;
+    if (U.tier < 3) { showHint(); $("#uFb").innerHTML = `<div class="fb bad">Noch nicht richtig. Lies den Tipp und versuche es noch einmal.</div>`; }
+    else { $("#uFb").innerHTML = `<div class="fb bad">Schau dir Tipp 3 genau an und trage die Lösung ein.</div>`; }
+  }
+};
+$("#uNext").onclick = newTask;
+$$("[data-level]").forEach(b => b.onclick = () => { $$("[data-level]").forEach(x => x.classList.toggle("sel", x === b)); U.level = b.dataset.level; $("#uBanner").classList.add("hidden"); newTask(); });
+newTask();
+
+// ================= EXIT-TICKET =================
+const X = { i: 0, res: [], tasks: [
+  { prompt: () => `Erweitere ${fr(3,7)} mit 4.`, html: () => `<span class="big">${fr(3,7)} =</span> <span class="fr slots big"><span>${slot("a")}</span><span>${slot("b")}</span></span>`, check: g => g("a")===12 && g("b")===28, need: ["a","b"] },
+  { prompt: () => `Finde die fehlende Zahl.`, html: () => `<span class="big">${fr(2,3)} =</span> <span class="fr slots big"><span>${slot("a")}</span><span>15</span></span>`, check: g => g("a")===10, need: ["a"] },
+  { prompt: () => `Lisa sagt: „Beim Erweitern wird der Bruch größer.“`, tf: true, html: () => `<button class="btn" data-tf="1">👍 stimmt</button> <button class="btn" data-tf="0">👎 stimmt nicht</button>`, check: () => X.tf === 0 }
+]};
+$("#xGo").onclick = () => { X.i = 0; X.res = []; $("#xStart").classList.add("hidden"); $("#xEnd").classList.add("hidden"); $("#xTask").classList.remove("hidden"); xRender(); };
+function xRender() {
+  const t = X.tasks[X.i]; $("#xNr").textContent = `Aufgabe ${X.i+1} von 3`;
+  $("#xPrompt").innerHTML = t.prompt(); $("#xAnswer").innerHTML = t.html();
+  const kp = document.querySelector('[data-pad="exit"]'); kp.classList.toggle("hidden", !!t.tf);
+  X.tf = null; $("#xFb").innerHTML = "";
+  if (t.tf) $$("#xAnswer [data-tf]").forEach(b => b.onclick = () => { $$("#xAnswer [data-tf]").forEach(x => x.classList.toggle("sel", x === b)); X.tf = +b.dataset.tf; });
+  pads.exit.bind($("#xAnswer"));
+}
+$("#xNext").onclick = () => {
+  const t = X.tasks[X.i];
+  const g = k => { const s = $(`#xAnswer [data-slot="${k}"]`); return s ? val(s) : null; };
+  if (t.tf ? X.tf === null : t.need.some(k => g(k) === null)) { $("#xFb").innerHTML = `<div class="fb info">Bitte zuerst antworten.</div>`; return; }
+  X.res.push(!!t.check(g)); X.i++;
+  if (X.i < 3) xRender(); else xEnd();
+};
+function xEnd() {
+  $("#xTask").classList.add("hidden");
+  const n = X.res.filter(Boolean).length;
+  const col = n === 3 ? "#e5f4e1" : n === 2 ? "#fff3b0" : "#fbe9e7";
+  const start = n === 3 ? "★" : n === 2 ? "Basis" : "Basis mit Hilfe";
+  const now = new Date(); const zeit = now.toLocaleDateString("de-DE") + ", " + now.toLocaleTimeString("de-DE", {hour:"2-digit", minute:"2-digit"});
+  $("#xEnd").innerHTML = `<div class="exitres" style="background:${col}">
+    <div class="n">${n} / 3</div>
+    <div style="font-size:24px;margin:8px 0">${X.res.map((r,i) => `Aufgabe ${i+1}: ${r ? "✅" : "❌"}`).join(" &nbsp; ")}</div>
+    <div style="font-size:22px">Nächste Stunde startest du bei: <b>${start}</b></div>
+    <div class="muted" style="margin-top:10px">Zeige dieses Bild deiner Lehrkraft. · ${zeit}</div></div>`;
+  $("#xEnd").classList.remove("hidden");
+}
+</script>
+</body>
+</html>

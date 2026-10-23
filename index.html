@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mathematik – Lernwerkstatt</title>
+<style>
+  :root { --bg:#f4f7fb; --ink:#1d2733; --muted:#5d6b7a; --blue:#1f5f99; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:var(--bg); color:var(--ink); font-family: Inter, -apple-system, "Segoe UI", Roboto, system-ui, sans-serif; }
+  header { background:var(--blue); color:#fff; padding:26px 20px; }
+  .wrap { max-width:900px; margin:0 auto; }
+  header h1 { margin:0 0 4px; font-size:30px; }
+  header p { margin:0; opacity:.85; }
+  main { padding:24px 20px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; }
+  a.jg { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; background:#fff; border-radius:20px; padding:26px 12px; text-decoration:none; color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  a.jg b { font-size:42px; color:var(--blue); }
+  a.jg span { color:var(--muted); }
+  footer { max-width:900px; margin:20px auto 40px; padding:0 20px; color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>🧮 Mathematik</h1><p>Mittelschule Indersdorf · Wähle deine Jahrgangsstufe.</p></div></header>
+<main><div class="wrap grid" id="list"></div></main>
+<footer>Interaktive Lerneinheiten · gehostet über GitHub Pages</footer>
+<script>
+  // Jahrgangsstufen: Ordnername = Jahrgangsstufe (z. B. "6/")
+  const stufen = [
+    { name: "6", href: "6/" },
+  ];
+  document.getElementById("list").innerHTML = stufen.map(s => `<a class="jg" href="${s.href}"><b>${s.name}</b><span>Jahrgangsstufe ${s.name}</span></a>`).join("");
+</script>
+</body>
+</html>

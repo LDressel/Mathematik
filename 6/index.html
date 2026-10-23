@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Mathe 6 – Lernwerkstatt</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root { --bg:#f4f7fb; --card:#fff; --ink:#1d2733; --muted:#5d6b7a; --blue:#1f5f99; --line:#d5dfea; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:var(--bg); color:var(--ink); font-family: Inter, -apple-system, "Segoe UI", Roboto, system-ui, sans-serif; }
+  header { background:var(--blue); color:#fff; padding:22px 20px 26px; }
+  header .wrap, main .wrap { max-width:980px; margin:0 auto; }
+  header a { color:#cfe2f5; text-decoration:none; font-size:15px; }
+  header h1 { margin:6px 0 4px; font-size:30px; }
+  header p { margin:0; opacity:.85; }
+  main { padding:20px; }
+  h2 { color:var(--blue); font-size:19px; margin:22px 0 10px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:14px; }
+  .unit { background:var(--card); border-radius:18px; padding:18px; box-shadow:0 1px 3px rgba(0,0,0,.08); display:flex; gap:14px; align-items:center; text-decoration:none; color:inherit; min-height:110px; }
+  .unit:active { transform:scale(.98); }
+  .icon { font-size:44px; flex:0 0 auto; }
+  .txt { flex:1; min-width:0; }
+  .txt b { display:block; font-size:20px; margin-bottom:3px; }
+  .txt span { color:var(--muted); font-size:15px; line-height:1.35; }
+  .qr { flex:0 0 auto; display:none; }
+  body.lehrer .qr { display:block; }
+  .qr canvas, .qr img { width:84px; height:84px; border:1px solid var(--line); border-radius:6px; padding:3px; background:#fff; }
+  footer { max-width:980px; margin:30px auto 40px; padding:0 20px; color:var(--muted); font-size:13px; }
+  footer button { font:inherit; border:1px solid var(--line); background:#fff; border-radius:8px; padding:4px 10px; color:var(--muted); }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a href="../">← alle Jahrgangsstufen</a>
+  <h1>🧮 Mathe 6</h1>
+  <p>Tippe auf eine Kachel, um zu starten.</p>
+</div></header>
+
+<main><div class="wrap" id="list"></div></main>
+
+<footer>
+  Mittelschule Indersdorf · Mathematik 6 &nbsp; <button id="qrToggle">QR-Codes für Lehrkraft</button>
+</footer>
+
+<script>
+  // ================================================================
+  // NEUE LERNEINHEITEN HIER EINTRAGEN (Thema = Überschrift, gleiche Themen werden gruppiert)
+  // ================================================================
+  const units = [
+    { thema: "Brüche 1", icon: "🔬", title: "Bruchstreifen-Labor", desc: "Brüche erweitern: entdecken, üben, Exit-Ticket", href: "bruchstreifen-labor.html" },
+    // 👉 neue Einträge HIER einfügen 👈
+  ];
+  // ================================================================
+
+  const list = document.getElementById("list");
+  const themen = [...new Set(units.map(u => u.thema))];
+  themen.forEach(t => {
+    const h = document.createElement("h2"); h.textContent = t; list.appendChild(h);
+    const g = document.createElement("div"); g.className = "grid"; list.appendChild(g);
+    units.filter(u => u.thema === t).forEach((u, i) => {
+      const a = document.createElement("a"); a.className = "unit"; a.href = u.href;
+      const id = "qr-" + t.replace(/\W/g, "") + i;
+      a.innerHTML = `<div class="icon">${u.icon || "📘"}</div><div class="txt"><b>${u.title}</b><span>${u.desc || ""}</span></div><div class="qr" id="${id}"></div>`;
+      g.appendChild(a);
+      try { new QRCode(document.getElementById(id), { text: new URL(u.href, location.href).href, width: 160, height: 160 }); } catch (e) {}
+    });
+  });
+  document.getElementById("qrToggle").onclick = () => document.body.classList.toggle("lehrer");
+</script>
+</body>
+</html>
