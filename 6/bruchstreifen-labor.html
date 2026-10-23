@@ -414,7 +414,11 @@ newTask();
 const X = { i: 0, res: [], tasks: [
   { prompt: () => `Erweitere ${fr(3,7)} mit 4.`, html: () => `<span class="big">${fr(3,7)} =</span> <span class="fr slots big"><span>${slot("a")}</span><span>${slot("b")}</span></span>`, check: g => g("a")===12 && g("b")===28, need: ["a","b"] },
   { prompt: () => `Finde die fehlende Zahl.`, html: () => `<span class="big">${fr(2,3)} =</span> <span class="fr slots big"><span>${slot("a")}</span><span>15</span></span>`, check: g => g("a")===10, need: ["a"] },
-  { prompt: () => `Lisa sagt: „Beim Erweitern wird der Bruch größer.“`, tf: true, html: () => `<button class="btn" data-tf="1">👍 stimmt</button> <button class="btn" data-tf="0">👎 stimmt nicht</button>`, check: () => X.tf === 0 }
+  { prompt: () => `Lisa sagt: „Beim Erweitern wird der Bruch größer.“ Was stimmt?`, tf: true, html: () => `<div style="display:grid;gap:10px;width:100%">
+      <button class="btn" data-tf="1" style="text-align:left">A · Ja, weil die Zahlen größer werden.</button>
+      <button class="btn" data-tf="2" style="text-align:left">B · Ja, weil es mehr Teile sind.</button>
+      <button class="btn" data-tf="0" style="text-align:left">C · Nein. Das Ganze wird nur feiner unterteilt – der Wert bleibt gleich.</button>
+      <button class="btn" data-tf="3" style="text-align:left">D · Nein, der Bruch wird kleiner, weil die Teile kleiner werden.</button></div>`, check: () => X.tf === 0 }
 ]};
 $("#xGo").onclick = () => { X.i = 0; X.res = []; $("#xStart").classList.add("hidden"); $("#xEnd").classList.add("hidden"); $("#xTask").classList.remove("hidden"); xRender(); };
 function xRender() {
@@ -438,11 +442,13 @@ function xEnd() {
   const col = n === 3 ? "#e5f4e1" : n === 2 ? "#fff3b0" : "#fbe9e7";
   const start = n === 3 ? "★" : n === 2 ? "Basis" : "Basis mit Hilfe";
   const now = new Date(); const zeit = now.toLocaleDateString("de-DE") + ", " + now.toLocaleTimeString("de-DE", {hour:"2-digit", minute:"2-digit"});
-  $("#xEnd").innerHTML = `<div class="exitres" style="background:${col}">
+  const emo = n === 3 ? "🟢" : n === 2 ? "🟡" : "🔴";
+  $("#xEnd").innerHTML = `<div class="exitres" style="background:${col};min-height:60vh;display:flex;flex-direction:column;justify-content:center">
+    <div style="font-size:90px;line-height:1">${emo}</div>
     <div class="n">${n} / 3</div>
     <div style="font-size:24px;margin:8px 0">${X.res.map((r,i) => `Aufgabe ${i+1}: ${r ? "✅" : "❌"}`).join(" &nbsp; ")}</div>
     <div style="font-size:22px">Nächste Stunde startest du bei: <b>${start}</b></div>
-    <div class="muted" style="margin-top:10px">Zeige dieses Bild deiner Lehrkraft. · ${zeit}</div></div>`;
+    <div class="muted" style="margin-top:10px">Halte dein iPad hoch. · ${zeit}</div></div>`;
   $("#xEnd").classList.remove("hidden");
 }
 </script>
