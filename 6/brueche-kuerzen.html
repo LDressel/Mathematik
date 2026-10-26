@@ -126,13 +126,7 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
     <h2 style="font-size:28px">Schau nach vorne.</h2>
     <p style="font-size:20px">🎯 Ich kann <b>Brüche kürzen</b> und erklären, warum der Wert gleich bleibt.</p>
   </div>
-  <div class="card">
-    <h2>📄 Schon jetzt: Übungsblatt in GoodNotes laden</h2>
-    <div class="row">
-      <a class="btn main" href="brueche-kuerzen-uebungsblatt.pdf" target="_blank" rel="noopener" style="text-decoration:none">📄 Übungsblatt öffnen</a>
-      <span class="muted">Teilen ⬆️ → GoodNotes → importieren. Dann zurück zur App.</span>
-    </div>
-  </div>
+
 </section>
 
 <!-- ===== DU · BRUCHWAND ===== -->
@@ -191,9 +185,11 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
       <a class="btn main" href="brueche-kuerzen-uebungsblatt.pdf" target="_blank" rel="noopener" style="text-decoration:none">📄 Übungsblatt öffnen</a>
       <span class="muted">Dann oben auf <b>Teilen ⬆️</b> → <b>GoodNotes</b> → als neues Dokument importieren.</span>
     </div>
-    <div class="fertig">Fertig mit dem Blatt? → Hier in der App weiterüben.</div>
-    <div class="score" style="margin-top:8px">Gelöst <b id="uSolved">0</b> · ohne Tipp <b id="uClean">0</b> · Serie <b id="uStreak">0</b> 🔥</div>
+    <div class="fertig">Fertig mit dem Blatt? → Tippe auf „⚡ Für Schnelle“.</div>
+    <button class="btn" id="uToggle" style="margin-top:10px;background:#fff3b0;color:#6b5200;border:2px solid #e8b400">⚡ Für Schnelle</button>
   </div>
+  <div id="uSchnell" class="hidden">
+  <div class="card"><div class="score">Gelöst <b id="uSolved">0</b> · ohne Tipp <b id="uClean">0</b> · Serie <b id="uStreak">0</b> 🔥</div></div>
 <div id="uBanner" class="banner hidden"></div>
   <div class="card">
     <div class="split">
@@ -211,6 +207,7 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
       </div>
       <div class="keypad" data-pad="ueb"></div>
     </div>
+  </div>
   </div>
 </section>
 
@@ -485,6 +482,7 @@ $("#uCheck").onclick = () => {
   }
 };
 $("#uNext").onclick = newTask;
+$("#uToggle").onclick = () => { const h = $("#uSchnell").classList.toggle("hidden"); $("#uToggle").textContent = h ? "⚡ Für Schnelle" : "⚡ Für Schnelle ausblenden"; };
 newTask();
 
 // ================= EXIT-TICKET =================
