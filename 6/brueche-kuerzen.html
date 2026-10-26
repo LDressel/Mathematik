@@ -89,7 +89,7 @@ table.log th{color:var(--muted);font-size:15px;font-weight:700}
 
 header{flex-direction:column;align-items:stretch;gap:8px;padding:10px 12px}
 header .top{display:flex;align-items:center;gap:10px}
-.leiste{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-left:0;width:100%}
+.leiste{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-left:0;width:100%}
 .leiste button{font:inherit;font-size:14px;font-weight:700;border-radius:10px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#dbe7f3;min-height:46px;padding:4px}
 .leiste button.on{color:#fff;border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
 .leiste button.done{opacity:.75}
@@ -125,32 +125,6 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
     <div class="e">👀</div>
     <h2 style="font-size:28px">Schau nach vorne.</h2>
     <p style="font-size:20px">🎯 Ich kann <b>Brüche kürzen</b> und erklären, warum der Wert gleich bleibt.</p>
-  </div>
-</section>
-
-<!-- ===== ICH · FALTEN ===== -->
-<section id="falten" class="hidden">
-  <div class="card">
-    <h2 style="color:#1f5f99">ICH · Falte und fasse zusammen <span class="muted" style="float:right">📄 Papier + Buntstift</span></h2>
-    <div class="steps" id="fSteps"></div>
-    <table class="ftab" id="fTab">
-      <tr><th></th><th>Teile insgesamt<br>(Nenner)</th><th>gefärbte Teile<br>(Zähler)</th><th>Bruch</th></tr>
-      <tr><td style="text-align:left">kleine Teile</td><td><span class="slot" data-slot="n1"></span></td><td><span class="slot" data-slot="z1"></span></td><td class="big" id="fB1">?</td></tr>
-      <tr><td style="text-align:left">große Teile<br><span class="muted">(je 2 zusammen)</span></td><td><span class="slot" data-slot="n2"></span></td><td><span class="slot" data-slot="z2"></span></td><td class="big" id="fB2">?</td></tr>
-    </table>
-    <div class="split" style="margin-top:12px">
-      <div><button class="btn main" id="fCheck">✔ Prüfen</button><div id="fFb"></div></div>
-      <div class="keypad" data-pad="falten"></div>
-    </div>
-    <div class="fertig">Fertig? → ★ Beantworte die Profi-Frage unten.</div>
-  </div>
-  <div class="card">
-    <h2><span class="stern" style="color:#c47d00">★</span> Profi-Frage: Geht es auch mit <b>Halben</b>? (Blatt nur einmal in der Mitte falten)</h2>
-    <div class="row" id="fStar">
-      <button class="btn" data-fs="0">Ja: 6/8 = 1/2</button>
-      <button class="btn" data-fs="1">Nein: Dann wäre eine Hälfte nur zum Teil gefärbt.</button>
-    </div>
-    <div id="fStarFb"></div>
   </div>
 </section>
 
@@ -317,13 +291,12 @@ function makePad(name) {
   el.addEventListener("click", e => { const b = e.target.closest("button"); if (b) pad.press(b.dataset.k); });
   pads[name] = pad; return pad;
 }
-["falten","ueb","exit"].forEach(makePad);
+["ueb","exit"].forEach(makePad);
 const val = s => s.textContent === "" ? null : parseInt(s.textContent, 10);
 
 // ---------- Phasen-Leiste (wie in der Präsentation) ----------
 const PH = [
   { id: "ein", label: "Einstieg", color: "#e08a1e" },
-  { id: "falten", label: "ICH · Falten", color: "#1f5f99" },
   { id: "wand", label: "DU · Bruchwand", color: "#7a4fb5" },
   { id: "wir", label: "WIR · Regel", color: "#3f8f3a" },
   { id: "ueb", label: "Üben", color: "#c47d00" },
@@ -347,29 +320,6 @@ document.addEventListener("keydown", e => {
   else if (e.key === "Tab") { p.next(); e.preventDefault(); }
 });
 function steps(el, items, color) { $(el).innerHTML = items.map((t, i) => `<div><b class="n" style="background:${color}">${i + 1}</b><span>${t}</span></div>`).join(""); }
-
-// ================= ICH · FALTEN =================
-steps("#fSteps", ["Falte ein Blatt in <b>4 Streifen</b> und dann <b>quer einmal</b> → 8 Teile.", "Färbe <b>3 ganze Streifen</b> (6 kleine Teile).", "Fahre nur die <b>Längsfalten</b> mit dem Stift nach: je 2 Teile werden ein großes Teil.", "Zähle und trage ein."], "#1f5f99");
-pads.falten.bind($("#fTab"));
-pads.falten.onchange = () => {
-  const g = k => val($(`#fTab [data-slot="${k}"]`));
-  $("#fB1").innerHTML = g("n1") && g("z1") !== null ? fr(g("z1"), g("n1")) : "?";
-  $("#fB2").innerHTML = g("n2") && g("z2") !== null ? fr(g("z2"), g("n2")) : "?";
-};
-$("#fCheck").onclick = () => {
-  const want = { n1: 8, z1: 6, n2: 4, z2: 3 }; let all = true, filled = true;
-  for (const k in want) { const s = $(`#fTab [data-slot="${k}"]`); const v = val(s); if (v === null) { filled = false; continue; } s.classList.toggle("good", v === want[k]); s.classList.toggle("bad", v !== want[k]); if (v !== want[k]) all = false; }
-  if (!filled) { $("#fFb").innerHTML = `<div class="fb info">Fülle zuerst alle vier Kästchen aus.</div>`; return; }
-  $("#fFb").innerHTML = all
-    ? `<div class="fb good">✅ Richtig! Gleich viel gefärbt – nur <b>gröber</b> unterteilt.<div>${bogenSVG(6, 8, 2, 3, 4, 0.75, ":")}</div></div>`
-    : `<div class="fb bad">Noch nicht ganz. Zähle noch einmal: Wie viele <b>große</b> Teile hat das Blatt, wenn du nur die Längsfalten anschaust?</div>`;
-};
-$$("#fStar [data-fs]").forEach(b => b.onclick = () => {
-  $$("#fStar [data-fs]").forEach(x => x.classList.toggle("sel", x === b));
-  $("#fStarFb").innerHTML = b.dataset.fs === "1"
-    ? `<div class="fb good">✅ Genau! 6 von 8 Teilen passen nicht in ganze Hälften. Nicht jede Zahl passt zum Kürzen.</div>`
-    : `<div class="fb bad">Falte es aus: Eine Hälfte sind 4 kleine Teile. Gefärbt sind 6 – das ist mehr als eine Hälfte, aber keine zwei. Probier es noch einmal.</div>`;
-});
 
 // ================= DU · BRUCHWAND (gröber) =================
 steps("#wSteps", ["Wählt einen Bruch.", "<b>Vermutet</b> – dann zieht <b>größere</b> Streifen darunter.", "Gleich lang? Es landet in der Tabelle."], "#7a4fb5");
