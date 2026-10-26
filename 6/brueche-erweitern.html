@@ -111,6 +111,22 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
 .ftab td.l{text-align:left;font-weight:700}
 .ftab .slot{min-width:56px}
 .ftab tr.vm td{background:#fffbea}
+.fdots{display:flex;gap:6px;margin:10px 0 4px}
+.fdots span{flex:1;height:8px;border-radius:4px;background:#dde6ef}
+.fdots span.on{background:#1f5f99}.fdots span.done{background:#3f8f3a}
+.fstep h3{font-size:22px;margin:10px 0 6px;color:#1d2733}
+.fstep .anl{font-size:19px;margin:0 0 8px}
+.fpics{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:8px 0 6px}
+.fpics figure{margin:0;text-align:center}
+.fpics figcaption{font-size:15px;color:#50606f;margin-top:4px;max-width:200px}
+.fpics .pfeil{font-size:30px;color:#9aa8b6}
+.fq{background:#f4f7fb;border-radius:14px;padding:12px 14px;margin-top:12px}
+.fq .q{font-weight:800;font-size:20px;margin-bottom:10px}
+.fopts{display:flex;flex-wrap:wrap;gap:10px}
+.fopts .btn{font-size:22px;min-width:90px;background:#fff;border:2px solid #c9d6e3;color:#1d2733}
+.fopts .btn.wide{font-size:18px;min-width:0;text-align:left}
+.fopts .btn.good{background:#e5f4e1;border-color:#3f8f3a;color:#245d20;opacity:1}
+.fopts .btn.bad{background:#fbe9e7;border-color:#c0392b;color:#8e2a20;text-decoration:line-through}
 .wgroup{box-shadow:inset -3px 0 0 #33465a}
 </style>
 </head>
@@ -135,31 +151,12 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
 <!-- ===== ICH · FALTEN ===== -->
 <section id="ich" class="hidden">
   <div class="card">
-    <h2 style="color:#1f5f99">ICH · Falte und färbe</h2>
-    <p class="muted" style="margin:0 0 6px">📄 1 Blatt Schmierpapier + Buntstift · allein</p>
-    <div class="steps" id="fSteps"></div>
-    <div style="max-width:300px;margin:6px 0 4px" id="fBild"></div>
-    <p class="muted" style="margin:0">So sieht dein Blatt nach Schritt 2 aus.</p>
-  </div>
-  <div class="card">
-    <h2>📒 Trage ein</h2>
-    <div class="split">
-      <div id="fTab">
-        <table class="ftab">
-          <thead><tr><th></th><th>Teile insgesamt<br>(Nenner)</th><th>gefärbte Teile<br>(Zähler)</th><th>Bruch</th></tr></thead>
-          <tbody>
-            <tr><td class="l">Anfang</td><td>4</td><td>3</td><td><span class="big">FR34</span></td></tr>
-            <tr data-r="1"><td class="l">1× quer gefaltet</td><td><span class="slot" data-slot="n1"></span></td><td><span class="slot" data-slot="z1"></span></td><td class="fbr"></td></tr>
-            <tr data-r="2"><td class="l">noch 1× gefaltet</td><td><span class="slot" data-slot="n2"></span></td><td><span class="slot" data-slot="z2"></span></td><td class="fbr"></td></tr>
-            <tr data-r="3" class="vm hidden" id="fVm"><td class="l">⭐ Vermutung:<br>noch 1× gefaltet</td><td><span class="slot" data-slot="n3"></span></td><td><span class="slot" data-slot="z3"></span></td><td class="fbr"></td></tr>
-          </tbody>
-        </table>
-        <button class="btn main" id="fCheck" style="margin-top:12px">✔ Prüfen</button>
-        <div id="fFb"></div>
-      </div>
-      <div class="keypad" data-pad="ich"></div>
+    <div class="row" style="align-items:center;justify-content:space-between">
+      <h2 style="color:#1f5f99;margin:0">ICH · Falte und färbe</h2>
+      <span class="muted">📄 Schmierpapier + Buntstift · allein</span>
     </div>
-    <div class="fertig" id="fFertig">Fertig? → Vermute: Wie geht es beim nächsten Falten weiter?</div>
+    <div class="fdots" id="fDots"></div>
+    <div id="fStep"></div>
   </div>
 </section>
 
@@ -331,7 +328,7 @@ function makePad(name) {
   el.addEventListener("click", e => { const b = e.target.closest("button"); if (b) pad.press(b.dataset.k); });
   pads[name] = pad; return pad;
 }
-["ich","ueb","exit"].forEach(makePad);
+["ueb","exit"].forEach(makePad);
 const val = s => s.textContent === "" ? null : parseInt(s.textContent, 10);
 
 // ---------- Phasen-Leiste (wie in der Präsentation) ----------
@@ -362,29 +359,126 @@ document.addEventListener("keydown", e => {
 });
 function steps(el, items, color) { $(el).innerHTML = items.map((t, i) => `<div><b class="n" style="background:${color}">${i + 1}</b><span>${t}</span></div>`).join(""); }
 
-// ================= ICH · FALTEN =================
-steps("#fSteps", ["Falte das Blatt in <b>4 gleich große Streifen</b>. Öffne es.", "Färbe <b>3 Streifen</b>.", "Falte <b>quer</b> einmal. Öffne. <b>Zähle</b> und trage ein.", "Falte <b>noch einmal</b> quer. Öffne. Zähle und trage ein."], "#1f5f99");
-$("#fBild").innerHTML = stripSVG(4, 3, 1, {h: 60, maxw: 300});
-$("#fTab .big").innerHTML = fr(3, 4);
-const F = { 1: [8, 6], 2: [16, 12], 3: [32, 24] };
-pads.ich.bind($("#fTab"));
-$("#fCheck").onclick = () => {
-  const g = k => { const s = $(`#fTab [data-slot="${k}"]`); return s ? val(s) : null; };
-  const rows = $("#fVm").classList.contains("hidden") ? [1, 2] : [1, 2, 3];
-  if (rows.some(r => g("n" + r) === null || g("z" + r) === null)) { $("#fFb").innerHTML = `<div class="fb info">Fülle zuerst alle Kästchen aus.</div>`; return; }
-  let ok = true;
-  rows.forEach(r => { const [n, z] = F[r];
-    const gn = g("n" + r) === n, gz = g("z" + r) === z;
-    [["n" + r, gn], ["z" + r, gz]].forEach(([k, good]) => { const s = $(`#fTab [data-slot="${k}"]`); s.classList.toggle("good", good); s.classList.toggle("bad", !good); });
-    $(`#fTab tr[data-r="${r}"] .fbr`).innerHTML = gn && gz ? `<span class="big">${fr(z, n)}</span>` : "";
-    if (!(gn && gz)) ok = false; });
-  if (!ok) { $("#fFb").innerHTML = `<div class="fb bad">Noch nicht ganz. Öffne dein Blatt und zähle <b>alle</b> Teile und dann nur die <b>gefärbten</b>.</div>`; return; }
-  if (rows.length === 2) {
-    $("#fFb").innerHTML = `<div class="fb good">✅ Richtig gezählt! &nbsp;<span style="font-size:24px">${fr(3,4)} = ${fr(6,8)} = ${fr(12,16)}</span><br>Hat sich die <b>gefärbte Fläche</b> verändert? Schau auf dein Blatt.</div>`;
-    $("#fVm").classList.remove("hidden"); $("#fFertig").textContent = "Fertig? → Trage deine Vermutung in die gelbe Zeile ein und prüfe.";
-    pads.ich.bind($("#fTab")); pads.ich.focus($('#fTab [data-slot="n3"]'));
-  } else $("#fFb").innerHTML = `<div class="fb good">✅ Super vermutet! Bei jedem Falten werden <b>Zähler und Nenner</b> verdoppelt. Warte auf deinen Partner.</div>`;
-};
+// ================= ICH · FALTEN (geführt, mit Fragen) =================
+// Blatt-Bild: cols Streifen (senkrecht), rows Reihen, col = gefärbte Streifen
+function sheet(o) {
+  const W = o.w || 200, Hh = o.h || 140, cols = o.cols || 4, rows = o.rows || 1, col = o.col || 0;
+  const x0 = 8, y0 = 8, w = W, h = Hh; let g = "";
+  if (col) g += `<rect x="${x0}" y="${y0}" width="${w*col/cols}" height="${h}" fill="#7fb8e6"/>`;
+  for (let i = 1; i < cols; i++) g += `<line x1="${x0+w*i/cols}" y1="${y0}" x2="${x0+w*i/cols}" y2="${y0+h}" stroke="#33465a" stroke-width="2"/>`;
+  for (let j = 1; j < rows; j++) g += `<line x1="${x0}" y1="${y0+h*j/rows}" x2="${x0+w}" y2="${y0+h*j/rows}" stroke="#33465a" stroke-width="2"/>`;
+  (o.dashV || []).forEach(f => g += `<line x1="${x0+w*f}" y1="${y0-4}" x2="${x0+w*f}" y2="${y0+h+4}" stroke="#c0392b" stroke-width="3" stroke-dasharray="7 5"/>`);
+  (o.dashH || []).forEach(f => g += `<line x1="${x0-4}" y1="${y0+h*f}" x2="${x0+w+4}" y2="${y0+h*f}" stroke="#c0392b" stroke-width="3" stroke-dasharray="7 5"/>`);
+  g += `<rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="none" stroke="#33465a" stroke-width="3"/>`;
+  if (o.arrow === "v") g += `<path d="M${x0+w*0.85} ${y0+h*0.5} Q ${x0+w*0.5} ${y0-34} ${x0+w*0.17} ${y0+h*0.42}" fill="none" stroke="#e08a1e" stroke-width="4" marker-end="url(#fpf)"/>`;
+  if (o.arrow === "h") g += `<path d="M${x0+w*0.5} ${y0+h*0.88} Q ${x0+w+38} ${y0+h*0.5} ${x0+w*0.55} ${y0+h*0.14}" fill="none" stroke="#e08a1e" stroke-width="4" marker-end="url(#fpf)"/>`;
+  const pad = o.arrow ? 46 : 16;
+  return `<svg viewBox="${-pad/2} ${o.arrow === "v" ? -34 : 0} ${W+16+pad} ${Hh+16+(o.arrow === "v" ? 34 : 0)}" width="${Math.round((W+16+pad)*0.9)}" style="max-width:100%"><defs><marker id="fpf" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#e08a1e"/></marker></defs>${g}</svg>`;
+}
+const fig = (svg, cap) => `<figure>${svg}<figcaption>${cap}</figcaption></figure>`;
+const PF = `<span class="pfeil">➜</span>`;
+const FSTEPS = [
+  { t: "Schritt 1 · Falte 4 Streifen",
+    anl: "Falte dein Blatt <b>zweimal in der Mitte</b> – immer Kante auf Kante. Dann öffne es.",
+    pics: () => fig(sheet({cols:1, dashV:[0.5], arrow:"v"}), "1. In der Mitte falten") + PF + fig(sheet({w:100, cols:1, dashV:[0.5], arrow:"v"}), "2. Noch einmal in der Mitte") + PF + fig(sheet({}), "3. Öffnen"),
+    qs: [{ q: "Wie viele Streifen hat dein Blatt jetzt?", opts: [
+      ["2", false, "Du hast nur <b>einmal</b> gefaltet. Falte noch einmal in der Mitte."],
+      ["3", false, "Prüfe: Hast du <b>genau</b> in der Mitte gefaltet, Kante auf Kante? Dann sind alle Streifen gleich groß."],
+      ["4", true, "Genau: 4 gleich große Streifen."],
+      ["8", false, "Zähle nur die <b>Streifen von oben nach unten</b>, wenn das Blatt ganz offen ist."]] }] },
+  { t: "Schritt 2 · Färbe 3 Streifen",
+    anl: "Färbe <b>3 Streifen</b> mit dem Buntstift.",
+    pics: () => fig(sheet({col:3}), "So sieht dein Blatt aus."),
+    qs: [{ q: "Welcher Bruch ist gefärbt?", opts: [
+      [fr(1,4), false, "Du hast die <b>weißen</b> Streifen gezählt. Zähle die <b>gefärbten</b>."],
+      [fr(4,3), false, "Vertauscht! <b>Oben</b> (Zähler) stehen die gefärbten Teile, <b>unten</b> (Nenner) alle Teile."],
+      [fr(3,4), true, "Richtig: 3 von 4 Streifen sind gefärbt."],
+      [fr(3,3), false, "Unten (Nenner) steht die Zahl <b>aller</b> Teile – auch der weißen."]] }] },
+  { t: "Schritt 3 · Falte quer",
+    anl: "Falte das Blatt <b>quer</b> in der Mitte (unten auf oben). Öffne es und <b>zähle</b>.",
+    pics: () => fig(sheet({col:3, dashH:[0.5], arrow:"h"}), "Quer falten: unten auf oben"),
+    qs: [
+      { q: "Wie viele Teile hat dein Blatt jetzt <u>insgesamt</u>?", opts: [
+        ["4", false, "Öffne dein Blatt <b>ganz</b>. Der neue Knick geht quer durch alle Streifen."],
+        ["6", false, "Du hast nur die <b>gefärbten</b> Teile gezählt. Zähle <b>alle</b> – auch die weißen."],
+        ["8", true, "Richtig: Jeder der 4 Streifen hat jetzt 2 Teile."],
+        ["5", false, "Zähle noch einmal langsam: Jeder Streifen hat jetzt <b>2 Teile</b>."]] },
+      { q: "Wie viele Teile sind <u>gefärbt</u>?", opts: [
+        ["3", false, "Das waren die Streifen <b>vorher</b>. Jeder gefärbte Streifen hat jetzt 2 Teile."],
+        ["6", true, `Richtig: Jetzt sind <b>${fr(6,8)}</b> gefärbt.`],
+        ["8", false, "Das sind <b>alle</b> Teile. Zähle nur die <b>gefärbten</b>."],
+        ["5", false, "Zähle noch einmal: In jedem gefärbten Streifen sind <b>2</b> Teile."]],
+        after: () => fig(sheet({col:3, rows:2}), "So sieht dein Blatt jetzt aus.") }] },
+  { t: "Schritt 4 · Falte noch einmal quer",
+    anl: "Falte das Blatt wie in Schritt 3 und dann <b>noch einmal</b> in der Mitte. Öffne es und zähle.",
+    pics: () => fig(sheet({col:3, h:70, dashH:[0.5], arrow:"h"}), "Zusammengefaltet noch einmal in der Mitte falten"),
+    qs: [
+      { q: "Wie viele Teile hat dein Blatt jetzt <u>insgesamt</u>?", opts: [
+        ["8", false, "Das war vorher. Hast du <b>noch einmal</b> gefaltet? Öffne das Blatt ganz."],
+        ["12", false, "Du hast nur die <b>gefärbten</b> Teile gezählt. Zähle <b>alle</b>."],
+        ["10", false, "Zähle noch einmal: Jeder Streifen hat jetzt <b>4 Teile</b>."],
+        ["16", true, "Richtig: 4 Streifen mit je 4 Teilen."]] },
+      { q: "Wie viele Teile sind <u>gefärbt</u>?", opts: [
+        ["12", true, `Richtig: Jetzt sind <b>${fr(12,16)}</b> gefärbt.`],
+        ["6", false, "Das war <b>vorher</b>. Jeder gefärbte Streifen hat jetzt 4 Teile."],
+        ["16", false, "Das sind <b>alle</b> Teile. Zähle nur die <b>gefärbten</b>."],
+        ["9", false, "Zähle noch einmal: In jedem gefärbten Streifen sind <b>4</b> Teile."]],
+        after: () => fig(sheet({col:3, rows:4}), "So sieht dein Blatt jetzt aus.") }] },
+  { t: "Schritt 5 · Vergleiche",
+    anl: "Leg dein Blatt vor dich. Schau dir die drei Bilder an.",
+    pics: () => fig(sheet({w:130, h:90, col:3}), fr(3,4)) + `<span class="pfeil">=?</span>` + fig(sheet({w:130, h:90, col:3, rows:2}), fr(6,8)) + `<span class="pfeil">=?</span>` + fig(sheet({w:130, h:90, col:3, rows:4}), fr(12,16)),
+    qs: [
+      { q: "Ist jetzt <u>mehr</u> gefärbt als am Anfang?", wide: true, opts: [
+        ["Ja, mehr – die Zahlen sind größer.", false, "Die Zahlen sind größer. Aber prüfe dein Blatt: Hast du beim Falten etwas <b>dazugemalt</b>? Vergleiche die gefärbte <b>Fläche</b>."],
+        ["Nein, weniger – die Teile sind kleiner.", false, "Die Teile sind kleiner, aber es sind auch <b>mehr</b> Teile. Vergleiche die gefärbte <b>Fläche</b> auf deinem Blatt."],
+        ["Gleich viel – die Fläche ist dieselbe.", true, `Genau! Nur die Teile sind feiner. ${fr(3,4)} = ${fr(6,8)} = ${fr(12,16)}`]] },
+      { q: "Was ist beim Falten mit Zähler und Nenner passiert?", wide: true, opts: [
+        ["Beide wurden plus 2 gerechnet.", false, "Prüfe: 3 + 2 = 5. Aber aus 3 wurde <b>6</b>."],
+        ["Nur der Nenner wurde größer.", false, "Schau auf den <b>Zähler</b>: Aus 3 wurde 6 und dann 12."],
+        ["Beide wurden mal 2 genommen.", true, "Richtig: 3 · 2 = 6 und 4 · 2 = 8. Jedes Falten verdoppelt oben <b>und</b> unten."],
+        ["Beide wurden plus 3 gerechnet.", false, "3 + 3 = 6 passt. Aber prüfe den Nenner: 4 + 3 = 7, nicht 8."]] }] },
+];
+const FX = { step: 0, q: 0, done: false, bonus: false };
+function fDots() { $("#fDots").innerHTML = FSTEPS.map((_, i) => `<span class="${FX.done || i < FX.step ? 'done' : (i === FX.step ? 'on' : '')}"></span>`).join(""); }
+function fQuestion(q, qi, solved) {
+  return `<div class="fq" data-q="${qi}"><div class="q">${q.q}</div><div class="fopts">${q.opts.map(([t, ok], i) =>
+    `<button class="btn ${q.wide ? 'wide' : ''} ${solved && ok ? 'good' : ''}" data-o="${i}" ${solved ? 'disabled' : ''}>${t}</button>`).join("")}</div>
+    <div class="ffb">${solved ? `<div class="fb good">✅ ${q.opts.find(o => o[1])[2]}</div>` : ""}</div>
+    <div class="fafter">${solved && q.after ? `<div class="fpics">${q.after()}</div>` : ""}</div></div>`;
+}
+function fRender() {
+  fDots();
+  if (FX.done) {
+    $("#fStep").innerHTML = `<div class="fstep"><div class="fb good" style="font-size:20px">🎉 Geschafft! Du hast entdeckt: <span style="font-size:26px">${fr(3,4)} = ${fr(6,8)} = ${fr(12,16)}</span></div>
+      <p style="font-size:19px">Warte auf deinen Partner. Dann geht es weiter mit <b>DU · Bruchwand</b>.</p>
+      <div class="fq" id="fBonus"><div class="q">⭐ Fertig? Vermute: Welcher Bruch ist gefärbt, wenn du <u>noch einmal</u> faltest?</div>
+      <div class="fopts">${[[fr(15,20),false,"Prüfe: Beim Falten wird <b>verdoppelt</b>. 12 · 2 = ?"],[fr(24,32),true,"Super vermutet! 12 · 2 = 24 und 16 · 2 = 32."],[fr(14,18),false,"Prüfe: Beim Falten wird nicht plus 2 gerechnet, sondern <b>mal 2</b>."]].map(([t,ok,why],i) => `<button class="btn" data-ok="${ok?1:0}" data-why="${why.replace(/"/g,'&quot;')}">${t}</button>`).join("")}</div><div class="ffb"></div></div></div>`;
+    $$("#fBonus .btn").forEach(b => b.onclick = () => fAnswer(b, b.dataset.ok === "1", b.dataset.why, $("#fBonus")));
+    return;
+  }
+  const st = FSTEPS[FX.step];
+  let h = `<div class="fstep"><h3>${st.t}</h3><p class="anl">${st.anl}</p><div class="fpics">${st.pics()}</div>`;
+  st.qs.forEach((q, qi) => { if (qi <= FX.q) h += fQuestion(q, qi, qi < FX.q); });
+  h += `<div class="row" style="margin-top:12px"><button class="btn main hidden" id="fNext">Weiter ➜</button></div></div>`;
+  $("#fStep").innerHTML = h;
+  const box = $(`#fStep .fq[data-q="${FX.q}"]`);
+  Array.from(box.querySelectorAll(".btn")).forEach(b => b.onclick = () => { const o = st.qs[FX.q].opts[+b.dataset.o]; fAnswer(b, o[1], o[2], box); });
+}
+function fAnswer(b, ok, why, box) {
+  const fb = box.querySelector(".ffb");
+  if (!ok) { b.classList.add("bad"); b.disabled = true; fb.innerHTML = `<div class="fb bad">❌ Noch nicht. ${why}<br>Wähle noch einmal.</div>`; return; }
+  Array.from(box.querySelectorAll(".btn")).forEach(x => x.disabled = true); b.classList.add("good");
+  fb.innerHTML = `<div class="fb good">✅ ${why}</div>`;
+  if (box.id === "fBonus") return;
+  const st = FSTEPS[FX.step], q = st.qs[FX.q];
+  if (q.after) box.querySelector(".fafter").innerHTML = `<div class="fpics">${q.after()}</div>`;
+  if (FX.q < st.qs.length - 1) { FX.q++; const keep = window.scrollY; fRender(); window.scrollTo(0, keep); $(`#fStep .fq[data-q="${FX.q}"]`).scrollIntoView({behavior: "smooth", block: "center"}); return; }
+  const n = $("#fNext"); n.classList.remove("hidden");
+  n.textContent = FX.step < FSTEPS.length - 1 ? "Weiter zu Schritt " + (FX.step + 2) + " ➜" : "Fertig ➜";
+  n.onclick = () => { if (FX.step < FSTEPS.length - 1) { FX.step++; FX.q = 0; } else FX.done = true; fRender(); $("#ich").scrollIntoView(); };
+  n.scrollIntoView({behavior: "smooth", block: "center"});
+}
+fRender();
 
 // ================= DU · BRUCHWAND (feiner) =================
 steps("#wSteps", ["Wählt einen Bruch.", "<b>Vermutet</b> – dann zieht <b>kleinere</b> Streifen darunter.", "Gleich lang? Es landet in der Tabelle."], "#7a4fb5");
