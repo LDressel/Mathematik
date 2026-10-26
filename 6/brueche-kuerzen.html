@@ -126,6 +126,13 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
     <h2 style="font-size:28px">Schau nach vorne.</h2>
     <p style="font-size:20px">🎯 Ich kann <b>Brüche kürzen</b> und erklären, warum der Wert gleich bleibt.</p>
   </div>
+  <div class="card">
+    <h2>📄 Schon jetzt: Übungsblatt in GoodNotes laden</h2>
+    <div class="row">
+      <a class="btn main" href="brueche-kuerzen-uebungsblatt.pdf" target="_blank" rel="noopener" style="text-decoration:none">📄 Übungsblatt öffnen</a>
+      <span class="muted">Teilen ⬆️ → GoodNotes → importieren. Dann zurück zur App.</span>
+    </div>
+  </div>
 </section>
 
 <!-- ===== DU · BRUCHWAND ===== -->
@@ -179,9 +186,12 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
 <!-- ===== ÜBEN ===== -->
 <section id="ueb" class="hidden">
   <div class="card">
-    <h2 style="color:#c47d00">Üben · Alle: Buch S. 15 Nr. 5 a ins Heft</h2>
-    <div style="font-size:20px">Kürze mit 4: &nbsp;<span class="big" id="uFr5a" style="font-size:22px"></span></div>
-    <div class="fertig">Fertig? → Hier in der App weiterüben (gleiche Art Aufgaben).</div>
+    <h2 style="color:#c47d00">Üben · Alle: Übungsblatt Kürzen (A → B → C)</h2>
+    <div class="row">
+      <a class="btn main" href="brueche-kuerzen-uebungsblatt.pdf" target="_blank" rel="noopener" style="text-decoration:none">📄 Übungsblatt öffnen</a>
+      <span class="muted">Dann oben auf <b>Teilen ⬆️</b> → <b>GoodNotes</b> → als neues Dokument importieren.</span>
+    </div>
+    <div class="fertig">Fertig mit dem Blatt? → Hier in der App weiterüben.</div>
     <div class="score" style="margin-top:8px">Gelöst <b id="uSolved">0</b> · ohne Tipp <b id="uClean">0</b> · Serie <b id="uStreak">0</b> 🔥</div>
   </div>
 <div id="uBanner" class="banner hidden"></div>
@@ -475,7 +485,6 @@ $("#uCheck").onclick = () => {
   }
 };
 $("#uNext").onclick = newTask;
-$("#uFr5a").innerHTML = [[4,8],[12,16],[16,20],[20,40],[20,8],[28,36],[20,44]].map(([z,n]) => fr(z,n)).join(" ");
 newTask();
 
 // ================= EXIT-TICKET =================
