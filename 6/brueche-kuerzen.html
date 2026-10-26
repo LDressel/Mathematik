@@ -205,17 +205,12 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
 <!-- ===== ÜBEN ===== -->
 <section id="ueb" class="hidden">
   <div class="card">
-    <div class="row levels" style="justify-content:space-between">
-      <div class="row">
-        <button class="btn sel" data-level="basis">Basis</button>
-        <button class="btn" data-level="stern">★</button>
-        <button class="btn" data-level="zwei">★★</button>
-      </div>
-      <div class="score">Gelöst <b id="uSolved">0</b> · ohne Tipp <b id="uClean">0</b> · Serie <b id="uStreak">0</b> 🔥</div>
-    </div>
-    <div class="muted" style="margin-top:6px">Oder Buch S. 15 ins Heft: Basis Nr. 3 a–b, 4 a–e, 5 a–b · ★ Nr. 3 c, 4 f–j, 5 c–d · ★★ Nr. 7, 8</div>
+    <h2 style="color:#c47d00">Üben · Alle: Buch S. 15 Nr. 5 a ins Heft</h2>
+    <div style="font-size:20px">Kürze mit 4: &nbsp;<span class="big" id="uFr5a" style="font-size:22px"></span></div>
+    <div class="fertig">Fertig? → Hier in der App weiterüben (gleiche Art Aufgaben).</div>
+    <div class="score" style="margin-top:8px">Gelöst <b id="uSolved">0</b> · ohne Tipp <b id="uClean">0</b> · Serie <b id="uStreak">0</b> 🔥</div>
   </div>
-  <div id="uBanner" class="banner hidden"></div>
+<div id="uBanner" class="banner hidden"></div>
   <div class="card">
     <div class="split">
       <div>
@@ -444,7 +439,7 @@ $("#mBox").innerHTML = `<div class="row" style="align-items:center;gap:24px"><di
 // ================= ÜBEN (Kürzen) =================
 const U = { level: "basis", task: null, tier: 0, solved: 0, clean: 0, streak: 0, levelSolved: {basis:0, stern:0, zwei:0}, done: false };
 const LV = {
-  basis: { bMax: 6,  kMax: 5,  types: ["kmit","kmit","luecke","bild"] },
+  basis: { bMax: 6,  kMax: 5,  types: ["kmit","kmit","luecke","zahl","bild"] },
   stern: { bMax: 10, kMax: 9,  types: ["kmit","zahl","luecke"] },
   zwei:  { bMax: 12, kMax: 12, types: ["zahl","luecke","stimmt","stimmt"] }
 };
@@ -522,7 +517,7 @@ $("#uCheck").onclick = () => {
     $("#uFb").innerHTML = `<div class="fb good">✅ ${pick(["Super!","Richtig!","Stark!","Genau so!","Klasse!"])} ${t.type==="stimmt" ? solution(t) : ""}</div>`;
     $("#uCheck").classList.add("hidden"); $("#uTipp").classList.add("hidden"); $("#uNext").classList.remove("hidden");
     $("#uSolved").textContent = U.solved; $("#uClean").textContent = U.clean; $("#uStreak").textContent = U.streak;
-    if (U.levelSolved[U.level] === 10) { $("#uBanner").textContent = U.level === "zwei" ? "🏆 10 Profi-Aufgaben gelöst! Erfinde eigene Aufgaben für deinen Partner." : "🏆 10 Aufgaben gelöst! Probier die nächste Stufe."; $("#uBanner").classList.remove("hidden"); }
+    if (U.levelSolved[U.level] === 10) { $("#uBanner").textContent = U.level === "zwei" ? "🏆 10 Profi-Aufgaben gelöst! Erfinde eigene Aufgaben für deinen Partner." : "🏆 10 Aufgaben gelöst – stark!"; $("#uBanner").classList.remove("hidden"); }
   } else {
     U.streak = 0; $("#uStreak").textContent = 0;
     if (U.tier < 3) { showHint(); $("#uFb").innerHTML = `<div class="fb bad">Noch nicht richtig. Lies den Tipp und versuche es noch einmal.</div>`; }
@@ -530,7 +525,7 @@ $("#uCheck").onclick = () => {
   }
 };
 $("#uNext").onclick = newTask;
-$$("[data-level]").forEach(b => b.onclick = () => { $$("[data-level]").forEach(x => x.classList.toggle("sel", x === b)); U.level = b.dataset.level; $("#uBanner").classList.add("hidden"); newTask(); });
+$("#uFr5a").innerHTML = [[4,8],[12,16],[16,20],[20,40],[20,8],[28,36],[20,44]].map(([z,n]) => fr(z,n)).join(" ");
 newTask();
 
 // ================= EXIT-TICKET =================
