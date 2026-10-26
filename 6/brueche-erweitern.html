@@ -89,7 +89,7 @@ table.log th{color:var(--muted);font-size:15px;font-weight:700}
 
 header{flex-direction:column;align-items:stretch;gap:8px;padding:10px 12px}
 header .top{display:flex;align-items:center;gap:10px}
-.leiste{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-left:0;width:100%}
+.leiste{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-left:0;width:100%}
 .leiste button{font:inherit;font-size:14px;font-weight:700;border-radius:10px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#dbe7f3;min-height:46px;padding:4px}
 .leiste button.on{color:#fff;border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
 .leiste button.done{opacity:.75}
@@ -108,6 +108,9 @@ details.muster{background:#eef6fd;border:2px solid #1f5f99;border-radius:14px;pa
 details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18px}
 .vorne{text-align:center;padding:30px 10px}
 .vorne .e{font-size:80px}
+.ftab td.l{text-align:left;font-weight:700}
+.ftab .slot{min-width:56px}
+.ftab tr.vm td{background:#fffbea}
 .wgroup{box-shadow:inset -3px 0 0 #33465a}
 </style>
 </head>
@@ -127,6 +130,37 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
     <p style="font-size:20px">🎯 Ich kann <b>Brüche erweitern</b> und erklären, warum der Wert gleich bleibt.</p>
   </div>
 
+</section>
+
+<!-- ===== ICH · FALTEN ===== -->
+<section id="ich" class="hidden">
+  <div class="card">
+    <h2 style="color:#1f5f99">ICH · Falte und färbe</h2>
+    <p class="muted" style="margin:0 0 6px">📄 1 Blatt Schmierpapier + Buntstift · allein</p>
+    <div class="steps" id="fSteps"></div>
+    <div style="max-width:300px;margin:6px 0 4px" id="fBild"></div>
+    <p class="muted" style="margin:0">So sieht dein Blatt nach Schritt 2 aus.</p>
+  </div>
+  <div class="card">
+    <h2>📒 Trage ein</h2>
+    <div class="split">
+      <div id="fTab">
+        <table class="ftab">
+          <thead><tr><th></th><th>Teile insgesamt<br>(Nenner)</th><th>gefärbte Teile<br>(Zähler)</th><th>Bruch</th></tr></thead>
+          <tbody>
+            <tr><td class="l">Anfang</td><td>4</td><td>3</td><td><span class="big">FR34</span></td></tr>
+            <tr data-r="1"><td class="l">1× quer gefaltet</td><td><span class="slot" data-slot="n1"></span></td><td><span class="slot" data-slot="z1"></span></td><td class="fbr"></td></tr>
+            <tr data-r="2"><td class="l">noch 1× gefaltet</td><td><span class="slot" data-slot="n2"></span></td><td><span class="slot" data-slot="z2"></span></td><td class="fbr"></td></tr>
+            <tr data-r="3" class="vm hidden" id="fVm"><td class="l">⭐ Vermutung:<br>noch 1× gefaltet</td><td><span class="slot" data-slot="n3"></span></td><td><span class="slot" data-slot="z3"></span></td><td class="fbr"></td></tr>
+          </tbody>
+        </table>
+        <button class="btn main" id="fCheck" style="margin-top:12px">✔ Prüfen</button>
+        <div id="fFb"></div>
+      </div>
+      <div class="keypad" data-pad="ich"></div>
+    </div>
+    <div class="fertig" id="fFertig">Fertig? → Vermute: Wie geht es beim nächsten Falten weiter?</div>
+  </div>
 </section>
 
 <!-- ===== DU · BRUCHWAND ===== -->
@@ -297,12 +331,13 @@ function makePad(name) {
   el.addEventListener("click", e => { const b = e.target.closest("button"); if (b) pad.press(b.dataset.k); });
   pads[name] = pad; return pad;
 }
-["ueb","exit"].forEach(makePad);
+["ich","ueb","exit"].forEach(makePad);
 const val = s => s.textContent === "" ? null : parseInt(s.textContent, 10);
 
 // ---------- Phasen-Leiste (wie in der Präsentation) ----------
 const PH = [
   { id: "ein", label: "Einstieg", color: "#e08a1e" },
+  { id: "ich", label: "ICH · Falten", color: "#1f5f99" },
   { id: "wand", label: "DU · Bruchwand", color: "#7a4fb5" },
   { id: "wir", label: "WIR · Regel", color: "#3f8f3a" },
   { id: "ueb", label: "Üben", color: "#c47d00" },
@@ -327,7 +362,31 @@ document.addEventListener("keydown", e => {
 });
 function steps(el, items, color) { $(el).innerHTML = items.map((t, i) => `<div><b class="n" style="background:${color}">${i + 1}</b><span>${t}</span></div>`).join(""); }
 
-// ================= DU · BRUCHWAND (gröber) =================
+// ================= ICH · FALTEN =================
+steps("#fSteps", ["Falte das Blatt in <b>4 gleich große Streifen</b>. Öffne es.", "Färbe <b>3 Streifen</b>.", "Falte <b>quer</b> einmal. Öffne. <b>Zähle</b> und trage ein.", "Falte <b>noch einmal</b> quer. Öffne. Zähle und trage ein."], "#1f5f99");
+$("#fBild").innerHTML = stripSVG(4, 3, 1, {h: 60, maxw: 300});
+$("#fTab .big").innerHTML = fr(3, 4);
+const F = { 1: [8, 6], 2: [16, 12], 3: [32, 24] };
+pads.ich.bind($("#fTab"));
+$("#fCheck").onclick = () => {
+  const g = k => { const s = $(`#fTab [data-slot="${k}"]`); return s ? val(s) : null; };
+  const rows = $("#fVm").classList.contains("hidden") ? [1, 2] : [1, 2, 3];
+  if (rows.some(r => g("n" + r) === null || g("z" + r) === null)) { $("#fFb").innerHTML = `<div class="fb info">Fülle zuerst alle Kästchen aus.</div>`; return; }
+  let ok = true;
+  rows.forEach(r => { const [n, z] = F[r];
+    const gn = g("n" + r) === n, gz = g("z" + r) === z;
+    [["n" + r, gn], ["z" + r, gz]].forEach(([k, good]) => { const s = $(`#fTab [data-slot="${k}"]`); s.classList.toggle("good", good); s.classList.toggle("bad", !good); });
+    $(`#fTab tr[data-r="${r}"] .fbr`).innerHTML = gn && gz ? `<span class="big">${fr(z, n)}</span>` : "";
+    if (!(gn && gz)) ok = false; });
+  if (!ok) { $("#fFb").innerHTML = `<div class="fb bad">Noch nicht ganz. Öffne dein Blatt und zähle <b>alle</b> Teile und dann nur die <b>gefärbten</b>.</div>`; return; }
+  if (rows.length === 2) {
+    $("#fFb").innerHTML = `<div class="fb good">✅ Richtig gezählt! &nbsp;<span style="font-size:24px">${fr(3,4)} = ${fr(6,8)} = ${fr(12,16)}</span><br>Hat sich die <b>gefärbte Fläche</b> verändert? Schau auf dein Blatt.</div>`;
+    $("#fVm").classList.remove("hidden"); $("#fFertig").textContent = "Fertig? → Trage deine Vermutung in die gelbe Zeile ein und prüfe.";
+    pads.ich.bind($("#fTab")); pads.ich.focus($('#fTab [data-slot="n3"]'));
+  } else $("#fFb").innerHTML = `<div class="fb good">✅ Super vermutet! Bei jedem Falten werden <b>Zähler und Nenner</b> verdoppelt. Warte auf deinen Partner.</div>`;
+};
+
+// ================= DU · BRUCHWAND (feiner) =================
 steps("#wSteps", ["Wählt einen Bruch.", "<b>Vermutet</b> – dann zieht <b>kleinere</b> Streifen darunter.", "Gleich lang? Es landet in der Tabelle."], "#7a4fb5");
 const SORTS = [2,3,4,5,6,8,10,12,16];
 const SCOL = {1:"#d9d9d9",2:"#f4a6a6",3:"#f7c98b",4:"#f3e38a",5:"#bfe3a4",6:"#9fd8d0",8:"#a9c8f0",10:"#c7b6ee",12:"#f1b8dc",16:"#d6c3a5"};
