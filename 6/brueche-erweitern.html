@@ -100,10 +100,11 @@ header .top{display:flex;align-items:center;gap:10px}
 .ftab{border-collapse:collapse;width:100%;font-size:18px}
 .ftab th,.ftab td{border:2px solid #c9d6e3;padding:8px;text-align:center}
 .ftab th{background:#eef3f8;font-size:15px}
-.toggle{font:inherit;font-weight:800;border:2px dashed #7a4fb5;background:#faf7ff;color:#7a4fb5;border-radius:10px;padding:6px 12px;margin:0 4px;min-height:44px}
+.toggle{font:inherit;font-size:20px;font-weight:800;border:2px solid #7a4fb5;background:#faf7ff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%237a4fb5' stroke-width='2.5'/%3E%3C/svg%3E") no-repeat right 10px center;color:#7a4fb5;border-radius:10px;padding:6px 32px 6px 12px;margin:0 4px;min-height:46px;-webkit-appearance:none;appearance:none;cursor:pointer}
 .toggle.good{border-style:solid;border-color:#3f8f3a;background:#e5f4e1;color:#245d20}
 .toggle.bad{border-style:solid;border-color:#c0392b;background:#fbe9e7;color:#8e2a20}
-.regel{font-size:21px;line-height:2.4}
+.regel{font-size:21px;line-height:2.6}
+.regel select{line-height:1.2;vertical-align:middle}
 details.muster{background:#eef6fd;border:2px solid #1f5f99;border-radius:14px;padding:10px 14px}
 details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18px}
 .vorne{text-align:center;padding:30px 10px}
@@ -186,11 +187,11 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
     <table class="log"><thead><tr><th>Bruch</th><th>feiner</th><th>Zähler</th><th>Nenner</th></tr></thead><tbody id="wLog"><tr><td colspan="4" class="muted">Noch leer.</td></tr></tbody></table>
   </div>
   <div class="card" id="rCard">
-    <h2>✍️ Unsere Regel <span class="muted">(tippe auf die lila Wörter)</span></h2>
+    <h2>✍️ Unsere Regel <span class="muted">(wähle in jedem lila Feld das passende Wort)</span></h2>
     <div class="regel">Beim Erweitern werden <b>Zähler und Nenner</b> mit der
-      <button class="toggle" data-opts="gleichen|einer anderen" data-ok="gleichen">…</button> Zahl
-      <button class="toggle" data-opts="addiert|malgenommen|geteilt" data-ok="malgenommen">…</button>.<br>
-      Der Wert des Bruches bleibt <button class="toggle" data-opts="gleich|größer|kleiner" data-ok="gleich">…</button>.
+      <select class="toggle" data-ok="gleichen"><option value="">wählen …</option><option>gleichen</option><option>einer anderen</option></select> Zahl
+      <select class="toggle" data-ok="malgenommen"><option value="">wählen …</option><option>addiert</option><option>malgenommen</option><option>geteilt</option></select>.<br>
+      Der Wert des Bruches bleibt <select class="toggle" data-ok="gleich"><option value="">wählen …</option><option>gleich</option><option>größer</option><option>kleiner</option></select>.
     </div>
     <button class="btn main" id="rCheck" style="margin-top:8px">✔ Regel prüfen</button>
     <div id="rFb"></div>
@@ -534,10 +535,10 @@ $("#wUndo").onclick = () => { if (W.count) { W.count--; W.done = false; if (!W.c
 $("#wClear").onclick = () => { W.sort = null; W.count = 0; W.done = false; $("#wFb").innerHTML = ""; wRender(); };
 wRender();
 // Regel-Bausteine
-$$("#rCard .toggle").forEach(b => { b.dataset.i = -1; b.onclick = () => { const o = b.dataset.opts.split("|"); b.dataset.i = (+b.dataset.i + 1) % o.length; b.textContent = o[b.dataset.i]; b.classList.remove("good","bad"); }; });
+$$("#rCard .toggle").forEach(b => b.onchange = () => { b.classList.remove("good","bad"); $("#rFb").innerHTML = ""; });
 $("#rCheck").onclick = () => {
-  const ts = $$("#rCard .toggle"); if (ts.some(b => b.textContent === "…")) { $("#rFb").innerHTML = `<div class="fb info">Tippe zuerst auf alle lila Wörter.</div>`; return; }
-  let ok = true; ts.forEach(b => { const g = b.textContent === b.dataset.ok; b.classList.toggle("good", g); b.classList.toggle("bad", !g); if (!g) ok = false; });
+  const ts = $$("#rCard .toggle"); if (ts.some(b => b.value === "")) { $("#rFb").innerHTML = `<div class="fb info">Wähle zuerst in jedem lila Feld ein Wort.</div>`; return; }
+  let ok = true; ts.forEach(b => { const g = b.value === b.dataset.ok; b.classList.toggle("good", g); b.classList.toggle("bad", !g); if (!g) ok = false; });
   $("#rFb").innerHTML = ok ? `<div class="fb good">✅ Super – das ist die Regel fürs Erweitern!</div>` : `<div class="fb bad">Schau in eure Tabelle: Wie kommt ihr von 3 zu 6 und von 4 zu 8?</div>`;
 };
 
