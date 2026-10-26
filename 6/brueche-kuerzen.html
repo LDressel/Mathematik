@@ -216,7 +216,7 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
 <section id="exit" class="hidden">
   <div class="card" id="xStart">
     <h2>🎟️ Exit-Ticket</h2>
-    <p>3 Aufgaben. <b>Allein, ohne Tipps.</b> Jede Aufgabe nur <b>einmal</b>. Am Ende hältst du dein iPad hoch.</p>
+    <p>3 Aufgaben. <b>Allein, ohne Tipps.</b> Jede Aufgabe nur <b>einmal</b>. Am Ende siehst du dein Ergebnis.</p>
     <button class="btn main" id="xGo">Los geht's ➜</button>
   </div>
   <div class="card hidden" id="xTask">
@@ -519,7 +519,7 @@ function xEnd() {
     <div style="font-size:90px;line-height:1">${emo}</div><div class="n">${n} / 3</div>
     <div style="font-size:24px;margin:8px 0">${X.res.map((r,i) => `Aufgabe ${i+1}: ${r ? "✅" : "❌"}`).join(" &nbsp; ")}</div>
     <div style="font-size:22px">In der Übungsstunde startest du bei: <b>${start}</b></div>
-    <div class="muted" style="margin-top:10px">Halte dein iPad hoch. · ${zeit}</div></div>`;
+    <div class="muted" style="margin-top:10px">Lass das Ergebnis offen – deine Lehrkraft schaut kurz vorbei. · ${zeit}</div></div>`;
   $("#xEnd").classList.remove("hidden");
 }
 
