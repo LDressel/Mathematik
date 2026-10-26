@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Brüche erweitern – Mathe 6</title>
+<style>
+:root{
+  --bg:#f4f7fb; --card:#ffffff; --ink:#1d2733; --muted:#5d6b7a; --line:#33465a;
+  --blue:#1f5f99; --blueSoft:#e6eef7; --strip:#7fb8e6; --orange:#f5b971;
+  --green:#3f8f3a; --greenSoft:#e5f4e1; --red:#c0392b; --redSoft:#fbe9e7;
+  --yellow:#fff3b0; --yellowLine:#e8b400; --star:#c47d00;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;touch-action:manipulation}
+body{font-size:19px;line-height:1.35;padding-bottom:30px}
+header{position:sticky;top:0;z-index:5;background:var(--blue);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+header h1{font-size:22px;margin:0;font-weight:800;letter-spacing:-.2px}
+nav{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+nav button{font:inherit;font-size:17px;font-weight:700;border:0;border-radius:12px;padding:10px 16px;background:rgba(255,255,255,.16);color:#fff;min-height:48px}
+nav button.on{background:#fff;color:var(--blue)}
+main{max-width:980px;margin:0 auto;padding:16px}
+.card{background:var(--card);border-radius:18px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card h2{font-size:19px;margin:0 0 10px;color:var(--blue)}
+.row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.muted{color:var(--muted);font-size:16px}
+.btn{font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 18px;min-height:52px;min-width:52px;background:var(--blueSoft);color:var(--blue);cursor:pointer}
+.btn.main{background:var(--blue);color:#fff}
+.btn.ok{background:var(--green);color:#fff}
+.btn.tipp{background:var(--yellow);color:#6b5200;border:2px solid var(--yellowLine)}
+.btn.sel{background:var(--blue);color:#fff}
+.btn:disabled{opacity:.4}
+.stepper{display:inline-flex;align-items:center;gap:8px;background:var(--blueSoft);border-radius:14px;padding:6px}
+.stepper .btn{min-width:48px;min-height:48px;padding:0;font-size:24px;background:#fff}
+.stepper b{min-width:34px;text-align:center;font-size:24px}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px;line-height:1.05;font-weight:700}
+.fr>span:first-child{border-bottom:3px solid currentColor;padding:0 4px 2px}
+.fr>span:last-child{padding:2px 4px 0}
+.big{font-size:30px}
+.slot{display:inline-flex;align-items:center;justify-content:center;min-width:64px;height:52px;border:3px solid #9fb3c8;border-radius:12px;background:#fff;font-size:28px;font-weight:800;color:var(--ink);cursor:pointer;margin:2px 0}
+.slot.active{border-color:var(--blue);box-shadow:0 0 0 4px rgba(31,95,153,.18)}
+.slot.good{border-color:var(--green);background:var(--greenSoft)}
+.slot.bad{border-color:var(--red);background:var(--redSoft)}
+.fr .slot{min-width:70px}
+.fr.slots>span:first-child{border-bottom-width:4px;padding-bottom:6px}
+.fr.slots>span:last-child{padding-top:6px}
+.keypad{display:grid;grid-template-columns:repeat(5,60px);gap:8px}
+.keypad button{font:inherit;font-size:26px;font-weight:800;height:58px;border-radius:12px;border:0;background:#fff;box-shadow:0 1px 0 #c9d6e3, inset 0 0 0 2px #c9d6e3;color:var(--ink)}
+.keypad button:active{background:var(--blueSoft)}
+.keypad .del{background:var(--redSoft);color:var(--red)}
+.strip{width:100%;height:auto;display:block}
+.stripbox{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center}
+.stripbox .lab{font-size:15px;color:var(--muted);text-align:right;min-width:62px}
+.fb{border-radius:14px;padding:12px 14px;margin-top:12px;font-weight:600}
+.fb.good{background:var(--greenSoft);color:#245d20}
+.fb.bad{background:var(--redSoft);color:#8e2a20}
+.fb.info{background:var(--blueSoft);color:var(--blue)}
+.hint{background:#fffaf0;border:2px solid var(--yellowLine);border-radius:14px;padding:10px 14px;margin-top:12px}
+.hint .t{display:flex;gap:10px;margin:6px 0;align-items:center;flex-wrap:wrap}
+.hint .k{background:var(--yellow);color:#6b5200;border-radius:8px;padding:2px 8px;font-weight:800;font-size:15px;white-space:nowrap}
+table.log{width:100%;border-collapse:collapse;font-size:18px}
+table.log th,table.log td{border-bottom:1.5px solid #e1e8f0;padding:6px 8px;text-align:center}
+table.log th{color:var(--muted);font-size:15px;font-weight:700}
+.levels .btn{min-width:120px}
+.score{display:flex;gap:16px;align-items:center;font-weight:700;color:var(--muted);font-size:16px;flex-wrap:wrap}
+.score b{color:var(--ink);font-size:20px}
+.banner{background:linear-gradient(90deg,#fff3b0,#ffe28a);border-radius:14px;padding:12px 16px;font-weight:800;margin-bottom:12px}
+.exitres{text-align:center;padding:24px 12px;border-radius:18px}
+.exitres .n{font-size:64px;font-weight:900;line-height:1}
+.hidden{display:none!important}
+.tf .btn{min-width:150px;font-size:20px}
+.split{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start}
+@media (max-width:860px){.split{grid-template-columns:1fr}.keypad{grid-template-columns:repeat(5,1fr)}}
+.wand{position:relative;--wl:74px;display:grid;gap:8px;margin-bottom:6px}
+.wrow{display:grid;grid-template-columns:var(--wl) 1fr;align-items:center}
+.wlab{font-size:20px;font-weight:700;text-align:center}
+.wlab .fr{font-size:22px}
+.wtrack{display:flex;height:58px;border:3px solid #33465a;border-radius:6px;background:#fff;overflow:hidden;align-items:center}
+.wtrack.drop{border-style:dashed;border-color:#7a4fb5;background:#faf7ff}
+.wtrack.drop.hover{background:#efe6ff;box-shadow:0 0 0 4px rgba(122,79,181,.25)}
+.wp{height:100%;border-right:2px solid #33465a;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#1d2733;flex:0 0 auto;box-sizing:border-box}
+.wp.ok{box-shadow:inset 0 0 0 4px #3f8f3a}
+.wend{position:absolute;top:-6px;bottom:-6px;width:0;border-left:3px dashed #c0392b;pointer-events:none}
+.vorrat{display:flex;flex-wrap:wrap;gap:8px 4px;margin-top:14px;padding:10px;background:#f4f7fb;border-radius:14px}
+.chip{height:54px;min-width:44px;border:2px solid #33465a;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;box-sizing:border-box}
+.ghost{position:fixed;z-index:50;pointer-events:none;opacity:.85;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.pill{display:inline-block;background:var(--blueSoft);color:var(--blue);border-radius:999px;padding:3px 10px;font-weight:700;font-size:15px}
+
+header{flex-direction:column;align-items:stretch;gap:8px;padding:10px 12px}
+header .top{display:flex;align-items:center;gap:10px}
+.leiste{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-left:0;width:100%}
+.leiste button{font:inherit;font-size:14px;font-weight:700;border-radius:10px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#dbe7f3;min-height:46px;padding:4px}
+.leiste button.on{color:#fff;border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
+.leiste button.done{opacity:.75}
+.steps{display:grid;gap:8px;margin:4px 0 6px}
+.steps div{display:flex;gap:10px;align-items:flex-start;font-size:18px}
+.steps b.n{flex:0 0 30px;height:30px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px}
+.fertig{color:#c47d00;font-weight:700;margin-top:10px}
+.ftab{border-collapse:collapse;width:100%;font-size:18px}
+.ftab th,.ftab td{border:2px solid #c9d6e3;padding:8px;text-align:center}
+.ftab th{background:#eef3f8;font-size:15px}
+.toggle{font:inherit;font-weight:800;border:2px dashed #7a4fb5;background:#faf7ff;color:#7a4fb5;border-radius:10px;padding:6px 12px;margin:0 4px;min-height:44px}
+.toggle.good{border-style:solid;border-color:#3f8f3a;background:#e5f4e1;color:#245d20}
+.toggle.bad{border-style:solid;border-color:#c0392b;background:#fbe9e7;color:#8e2a20}
+.regel{font-size:21px;line-height:2.4}
+details.muster{background:#eef6fd;border:2px solid #1f5f99;border-radius:14px;padding:10px 14px}
+details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18px}
+.vorne{text-align:center;padding:30px 10px}
+.vorne .e{font-size:80px}
+.wgroup{box-shadow:inset -3px 0 0 #33465a}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top"><h1>🔍 Brüche erweitern</h1><span class="muted" style="color:#cfe2f5;margin-left:auto;font-size:14px">Mathe 6 · Brüche · Std. 7</span></div>
+  <nav class="leiste" id="leiste"></nav>
+</header>
+<main>
+
+<!-- ===== EINSTIEG ===== -->
+<section id="ein">
+  <div class="card vorne">
+    <div class="e">👀</div>
+    <h2 style="font-size:28px">Schau nach vorne.</h2>
+    <p style="font-size:20px">🎯 Ich kann <b>Brüche erweitern</b> und erklären, warum der Wert gleich bleibt.</p>
+  </div>
+
+</section>
+
+<!-- ===== DU · BRUCHWAND ===== -->
+<section id="wand" class="hidden">
+  <div class="card">
+    <h2 style="color:#7a4fb5">DU · Macht es feiner in der Bruchwand</h2>
+    <div class="steps" id="wSteps"></div>
+    <div class="row" id="wTargets" style="margin:6px 0 12px"></div>
+    <div class="wand" id="wWand">
+      <div class="wrow"><div class="wlab">Ganzes</div><div class="wtrack" id="wGanz"></div></div>
+      <div class="wrow"><div class="wlab" id="wLabT"></div><div class="wtrack" id="wTarget"></div></div>
+      <div class="wrow"><div class="wlab" id="wLabB">?</div><div class="wtrack drop" id="wBuild"></div></div>
+      <div class="wend" id="wEnd"></div>
+    </div>
+    <div id="wFb"></div>
+    <p class="muted" style="margin:10px 0 0">Nur <b>kleinere</b> Streifen: ziehen oder antippen.</p>
+    <div class="vorrat" id="wVorrat"></div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn" id="wUndo">↩ Letzten Streifen weg</button>
+      <button class="btn" id="wClear">🗑 Reihe leeren</button>
+    </div>
+    <div class="fertig">Fertig? → Findet bei 1/2 noch mehr Möglichkeiten.</div>
+  </div>
+  <div class="card">
+    <h2>📒 Eure Entdeckungen</h2>
+    <table class="log"><thead><tr><th>Bruch</th><th>feiner</th><th>Zähler</th><th>Nenner</th></tr></thead><tbody id="wLog"><tr><td colspan="4" class="muted">Noch leer.</td></tr></tbody></table>
+  </div>
+  <div class="card" id="rCard">
+    <h2>✍️ Unsere Regel <span class="muted">(tippe auf die lila Wörter)</span></h2>
+    <div class="regel">Beim Erweitern werden <b>Zähler und Nenner</b> mit der
+      <button class="toggle" data-opts="gleichen|einer anderen" data-ok="gleichen">…</button> Zahl
+      <button class="toggle" data-opts="addiert|malgenommen|geteilt" data-ok="malgenommen">…</button>.<br>
+      Der Wert des Bruches bleibt <button class="toggle" data-opts="gleich|größer|kleiner" data-ok="gleich">…</button>.
+    </div>
+    <button class="btn main" id="rCheck" style="margin-top:8px">✔ Regel prüfen</button>
+    <div id="rFb"></div>
+  </div>
+</section>
+
+<!-- ===== WIR ===== -->
+<section id="wir" class="hidden">
+  <div class="card vorne">
+    <div class="e">👀</div>
+    <h2 style="font-size:28px;color:#3f8f3a">Tablet umdrehen – alle Augen zur Tafel.</h2>
+    <p class="muted">Den Hefteintrag schreibst du zu Hause.</p>
+  </div>
+  <details class="muster"><summary>Später zum Nachschauen: Musterbeispiel</summary><div id="mBox" style="margin-top:10px"></div></details>
+</section>
+
+<!-- ===== ÜBEN ===== -->
+<section id="ueb" class="hidden">
+  <div class="card">
+    <h2 style="color:#c47d00">Üben · Alle: Übungsblatt Erweitern (A → B → C)</h2>
+    <div class="row">
+      <a class="btn main" href="brueche-erweitern-uebungsblatt.pdf" target="_blank" rel="noopener" style="text-decoration:none">📄 Übungsblatt öffnen</a>
+      <span class="muted">Dann oben auf <b>Teilen ⬆️</b> → <b>GoodNotes</b> → als neues Dokument importieren.</span>
+    </div>
+    <div class="fertig">Fertig mit dem Blatt? → Tippe auf „⚡ Für Schnelle“.</div>
+    <button class="btn" id="uToggle" style="margin-top:10px;background:#fff3b0;color:#6b5200;border:2px solid #e8b400">⚡ Für Schnelle</button>
+  </div>
+  <div id="uSchnell" class="hidden">
+  <div class="card"><div class="score">Gelöst <b id="uSolved">0</b> · ohne Tipp <b id="uClean">0</b> · Serie <b id="uStreak">0</b> 🔥</div></div>
+<div id="uBanner" class="banner hidden"></div>
+  <div class="card">
+    <div class="split">
+      <div>
+        <div id="uPrompt" style="font-weight:700;font-size:20px;margin-bottom:10px"></div>
+        <div id="uVisual"></div>
+        <div id="uAnswer" class="row" style="margin-top:12px"></div>
+        <div class="row" style="margin-top:14px">
+          <button class="btn tipp" id="uTipp">💡 Tipp</button>
+          <button class="btn main" id="uCheck">✔ Prüfen</button>
+          <button class="btn ok hidden" id="uNext">Weiter ➜</button>
+        </div>
+        <div id="uFb"></div>
+        <div id="uHint"></div>
+      </div>
+      <div class="keypad" data-pad="ueb"></div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- ===== EXIT ===== -->
+<section id="exit" class="hidden">
+  <div class="card" id="xStart">
+    <h2>🎟️ Exit-Ticket</h2>
+    <p>3 Aufgaben. <b>Allein, ohne Tipps.</b> Jede Aufgabe nur <b>einmal</b>. Am Ende hältst du dein iPad hoch.</p>
+    <button class="btn main" id="xGo">Los geht's ➜</button>
+  </div>
+  <div class="card hidden" id="xTask">
+    <div class="muted" id="xNr"></div>
+    <div class="split">
+      <div>
+        <div id="xPrompt" style="font-weight:700;font-size:20px;margin:6px 0 12px"></div>
+        <div id="xAnswer" class="row"></div>
+        <div class="row" style="margin-top:14px"><button class="btn main" id="xNext">Antwort abgeben ➜</button></div>
+        <div id="xFb"></div>
+      </div>
+      <div class="keypad" data-pad="exit"></div>
+    </div>
+  </div>
+  <div class="card hidden" id="xEnd"></div>
+</section>
+</main>
+
+<script>
+"use strict";
+// ---------- Hilfsfunktionen ----------
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const rnd = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const gcd = (a,b) => b ? gcd(b, a % b) : a;
+const fr = (z,n) => `<span class="fr"><span>${z}</span><span>${n}</span></span>`;
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+
+function stripSVG(n, z, k, opt={}) {
+  // n Teile, z gefärbt, jedes Teil in k Teile (k=1: keine Unterteilung)
+  const W = 600, H = opt.h || 64, pw = W / n;
+  const col = opt.color || "#7fb8e6";
+  let s = `<svg class="strip" viewBox="-2 -2 ${W+4} ${H+4}" preserveAspectRatio="none" style="max-width:${opt.maxw||600}px">`;
+  s += `<rect x="0" y="0" width="${z*pw}" height="${H}" fill="${col}"/>`;
+  if (k > 1) {
+    for (let i = 0; i < n*k; i++) {
+      if (i % k === 0) continue;
+      const x = i * pw / k;
+      s += `<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#33465a" stroke-width="1.6" ${opt.dashed ? 'stroke-dasharray="6 5"' : ''}/>`;
+    }
+  }
+  for (let i = 1; i < n; i++) s += `<line x1="${i*pw}" y1="0" x2="${i*pw}" y2="${H}" stroke="#33465a" stroke-width="3.2"/>`;
+  s += `<rect x="0" y="0" width="${W}" height="${H}" fill="none" stroke="#33465a" stroke-width="3.5"/></svg>`;
+  return s;
+}
+
+function bogenSVG(z1, n1, k, z2, n2, scale=1, op="·") {
+  const W = 190, H = 120, m = H/2, fs = 28;
+  const frac = (x,z,n) => `<text x="${x}" y="${m-8}" font-size="${fs}" text-anchor="middle" font-weight="800" fill="#1d2733">${z}</text>
+    <line x1="${x-18}" y1="${m}" x2="${x+18}" y2="${m}" stroke="#1d2733" stroke-width="3"/>
+    <text x="${x}" y="${m+28}" font-size="${fs}" text-anchor="middle" font-weight="800" fill="#1d2733">${n}</text>`;
+  const c = "#1f5f99";
+  return `<svg width="${W*scale}" height="${H*scale}" viewBox="0 0 ${W} ${H}" style="vertical-align:middle;font-family:inherit">
+    ${frac(30,z1,n1)}<text x="${W/2}" y="${m+9}" font-size="${fs}" text-anchor="middle" fill="#1d2733">=</text>${frac(W-30,z2,n2)}
+    <path d="M 48 ${m-30} Q ${W/2} ${m-66} ${W-48} ${m-30}" fill="none" stroke="${c}" stroke-width="3"/>
+    <path d="M ${W-57} ${m-39} L ${W-47} ${m-30} L ${W-60} ${m-27}" fill="none" stroke="${c}" stroke-width="3"/>
+    <path d="M 48 ${m+30} Q ${W/2} ${m+66} ${W-48} ${m+30}" fill="none" stroke="${c}" stroke-width="3"/>
+    <path d="M ${W-57} ${m+39} L ${W-47} ${m+30} L ${W-60} ${m+27}" fill="none" stroke="${c}" stroke-width="3"/>
+    ${[m-46, m+46].map(y => `<ellipse cx="${W/2}" cy="${y}" rx="24" ry="13" fill="#fff3b0" stroke="#e8b400" stroke-width="2"/>
+      <text x="${W/2}" y="${y+7}" font-size="20" text-anchor="middle" font-weight="800" fill="#6b5200">${op}${k}</text>`).join("")}
+  </svg>`;
+}
+
+
+
+// ---------- Ziffernblock ----------
+const pads = {};
+function makePad(name) {
+  const el = document.querySelector(`[data-pad="${name}"]`);
+  el.innerHTML = ["1","2","3","4","5","6","7","8","9","0"].map(k => `<button data-k="${k}">${k}</button>`).join("") + `<button class="del" data-k="del" style="grid-column:span 5">⌫ löschen</button>`;
+  const pad = { root: null, active: null,
+    bind(root) { this.root = root; const slots = root.querySelectorAll(".slot"); slots.forEach(s => s.onclick = () => this.focus(s)); this.focus(slots[0] || null); },
+    focus(s) { if (!this.root) return; this.root.querySelectorAll(".slot").forEach(x => x.classList.remove("active")); this.active = s; if (s) s.classList.add("active"); },
+    next() { if (!this.root || !this.active) return; const sl = Array.from(this.root.querySelectorAll(".slot")); const i = sl.indexOf(this.active); if (i >= 0 && i < sl.length-1) this.focus(sl[i+1]); },
+    press(k) { const s = this.active; if (!s) return; s.classList.remove("good","bad");
+      if (k === "del") { s.textContent = s.textContent.slice(0,-1); }
+      else if (s.textContent.length < 3) s.textContent += k;
+      if (this.onchange) this.onchange(); }
+  };
+  el.addEventListener("click", e => { const b = e.target.closest("button"); if (b) pad.press(b.dataset.k); });
+  pads[name] = pad; return pad;
+}
+["ueb","exit"].forEach(makePad);
+const val = s => s.textContent === "" ? null : parseInt(s.textContent, 10);
+
+// ---------- Phasen-Leiste (wie in der Präsentation) ----------
+const PH = [
+  { id: "ein", label: "Einstieg", color: "#e08a1e" },
+  { id: "wand", label: "DU · Bruchwand", color: "#7a4fb5" },
+  { id: "wir", label: "WIR · Regel", color: "#3f8f3a" },
+  { id: "ueb", label: "Üben", color: "#c47d00" },
+  { id: "exit", label: "Exit-Ticket", color: "#5d6b7a" },
+];
+let currentTab = "ein";
+function show(id) {
+  if (!PH.some(p => p.id === id)) id = "ein";
+  currentTab = id;
+  PH.forEach(p => $("#" + p.id).classList.toggle("hidden", p.id !== id));
+  const ai = PH.findIndex(p => p.id === id);
+  $("#leiste").innerHTML = PH.map((p, i) => `<button data-go="${p.id}" class="${i === ai ? 'on' : (i < ai ? 'done' : '')}" style="${i === ai ? 'background:' + p.color : ''}">${i < ai ? '✓ ' : ''}${p.label}</button>`).join("");
+  $$("#leiste [data-go]").forEach(b => b.onclick = () => { history.replaceState(null, "", "#" + b.dataset.go); show(b.dataset.go); });
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", () => show(location.hash.slice(1)));
+document.addEventListener("keydown", e => {
+  const p = pads[currentTab]; if (!p) return;
+  if (/^[0-9]$/.test(e.key)) { p.press(e.key); e.preventDefault(); }
+  else if (e.key === "Backspace") { p.press("del"); e.preventDefault(); }
+  else if (e.key === "Tab") { p.next(); e.preventDefault(); }
+});
+function steps(el, items, color) { $(el).innerHTML = items.map((t, i) => `<div><b class="n" style="background:${color}">${i + 1}</b><span>${t}</span></div>`).join(""); }
+
+// ================= DU · BRUCHWAND (gröber) =================
+steps("#wSteps", ["Wählt einen Bruch.", "<b>Vermutet</b> – dann zieht <b>kleinere</b> Streifen darunter.", "Gleich lang? Es landet in der Tabelle."], "#7a4fb5");
+const SORTS = [2,3,4,5,6,8,10,12,16];
+const SCOL = {1:"#d9d9d9",2:"#f4a6a6",3:"#f7c98b",4:"#f3e38a",5:"#bfe3a4",6:"#9fd8d0",8:"#a9c8f0",10:"#c7b6ee",12:"#f1b8dc",16:"#d6c3a5"};
+const TARGETS = [[3,4],[2,3],[1,2]];
+const W = { z: 3, n: 4, sort: null, count: 0, log: [], done: false };
+function piece(k, cls="") { return `<div class="wp ${cls}" style="width:${100/k}%;background:${SCOL[k]}"><span>${k <= 12 ? "1/" + k : ""}</span></div>`; }
+function wRender() {
+  $("#wTargets").innerHTML = TARGETS.map(([z,n]) => `<button class="btn ${W.z===z&&W.n===n?'sel':''}" data-wt="${z}/${n}"><span style="font-size:24px">${fr(z,n)}</span></button>`).join("");
+  $$("#wTargets [data-wt]").forEach(b => b.onclick = () => { const [z,n] = b.dataset.wt.split("/").map(Number); W.z = z; W.n = n; W.sort = null; W.count = 0; W.done = false; $("#wFb").innerHTML = ""; wRender(); });
+  $("#wGanz").innerHTML = `<div class="wp" style="width:100%;background:${SCOL[1]}"><span>1 Ganzes</span></div>`;
+  $("#wTarget").innerHTML = Array.from({length: W.z}, () => piece(W.n)).join("");
+  $("#wLabT").innerHTML = fr(W.z, W.n);
+  $("#wBuild").innerHTML = W.count ? Array.from({length: W.count}, () => piece(W.sort, W.done ? "ok" : "")).join("") : `<span class="muted" style="padding:0 12px">hierher ziehen</span>`;
+  $("#wLabB").innerHTML = W.count ? fr(W.count, W.sort) : "?";
+  $("#wEnd").style.left = `calc(var(--wl) + (100% - var(--wl)) * ${W.z / W.n})`;
+  $("#wVorrat").innerHTML = SORTS.filter(k => k > W.n).map(k => `<div class="chip" data-k="${k}" style="background:${SCOL[k]};width:calc(${100/k}% - 4px)">1/${k}</div>`).join("");
+  $$("#wVorrat .chip").forEach(c => c.addEventListener("pointerdown", dragStart));
+}
+function wMsg(cls, t) { $("#wFb").innerHTML = `<div class="fb ${cls}">${t}</div>`; }
+function addPiece(k) {
+  if (W.sort && W.sort !== k) { wMsg("info", "Nur <b>eine Sorte</b> pro Reihe! Tippe zuerst auf „Reihe leeren“."); return; }
+  if (W.done) { wMsg("info", "Schon gleich lang! Probiert eine <b>andere Sorte</b> oder einen anderen Bruch."); return; }
+  W.sort = k; W.count++; wCheck(); wRender();
+}
+function wCheck() {
+  const k = W.sort, c = W.count, lhs = c * W.n, rhs = W.z * k;
+  if (lhs === rhs) {
+    W.done = true; const t = k / W.n;
+    wMsg("good", `✅ Genau gleich lang! &nbsp;<span style="font-size:26px">${fr(W.z,W.n)} = ${fr(c,k)}</span>`);
+    if (!W.log.some(r => r.z===W.z && r.n===W.n && r.k===k)) { W.log.push({ z: W.z, n: W.n, k, c, t }); wLog(); }
+  } else if (lhs > rhs) {
+    if ((W.z * k) % W.n !== 0) wMsg("bad", `Mit ${fr(1,k)}-Streifen geht ${fr(W.z,W.n)} <b>nicht genau</b>. Leert die Reihe und probiert eine andere Sorte.`);
+    else wMsg("bad", "Zu lang! Nehmt einen Streifen weg.");
+  } else $("#wFb").innerHTML = "";
+}
+function wLog() {
+  $("#wLog").innerHTML = W.log.map(r => `<tr><td>${fr(r.z,r.n)}</td><td>${fr(r.c,r.k)}</td><td>${r.z} ➜ ${r.c} &nbsp;<span class="pill">· ${r.t}</span></td><td>${r.n} ➜ ${r.k} &nbsp;<span class="pill">· ${r.t}</span></td></tr>`).join("");
+}
+let drag = null;
+function dragStart(e) {
+  const c = e.currentTarget; const k = +c.dataset.k; e.preventDefault();
+  const r = c.getBoundingClientRect(); const g = c.cloneNode(true); g.classList.add("ghost");
+  Object.assign(g.style, { width: r.width + "px", height: r.height + "px", left: r.left + "px", top: r.top + "px" }); document.body.appendChild(g);
+  drag = { k, g, x0: e.clientX, y0: e.clientY, dx: e.clientX - r.left, dy: e.clientY - r.top, moved: false };
+  window.addEventListener("pointermove", dragMove); window.addEventListener("pointerup", dragEnd, { once: true }); window.addEventListener("pointercancel", dragEnd, { once: true });
+}
+function overBuild(e) { const t = $("#wBuild").getBoundingClientRect(); return e.clientX >= t.left && e.clientX <= t.right && e.clientY >= t.top - 30 && e.clientY <= t.bottom + 30; }
+function dragMove(e) { if (!drag) return; if (Math.abs(e.clientX - drag.x0) + Math.abs(e.clientY - drag.y0) > 8) drag.moved = true; drag.g.style.left = (e.clientX - drag.dx) + "px"; drag.g.style.top = (e.clientY - drag.dy) + "px"; $("#wBuild").classList.toggle("hover", overBuild(e)); }
+function dragEnd(e) { window.removeEventListener("pointermove", dragMove); if (!drag) return; const over = overBuild(e), k = drag.k, moved = drag.moved; drag.g.remove(); drag = null; $("#wBuild").classList.remove("hover"); if (over || !moved) addPiece(k); }
+$("#wUndo").onclick = () => { if (W.count) { W.count--; W.done = false; if (!W.count) W.sort = null; else wCheck(); wRender(); } };
+$("#wClear").onclick = () => { W.sort = null; W.count = 0; W.done = false; $("#wFb").innerHTML = ""; wRender(); };
+wRender();
+// Regel-Bausteine
+$$("#rCard .toggle").forEach(b => { b.dataset.i = -1; b.onclick = () => { const o = b.dataset.opts.split("|"); b.dataset.i = (+b.dataset.i + 1) % o.length; b.textContent = o[b.dataset.i]; b.classList.remove("good","bad"); }; });
+$("#rCheck").onclick = () => {
+  const ts = $$("#rCard .toggle"); if (ts.some(b => b.textContent === "…")) { $("#rFb").innerHTML = `<div class="fb info">Tippe zuerst auf alle lila Wörter.</div>`; return; }
+  let ok = true; ts.forEach(b => { const g = b.textContent === b.dataset.ok; b.classList.toggle("good", g); b.classList.toggle("bad", !g); if (!g) ok = false; });
+  $("#rFb").innerHTML = ok ? `<div class="fb good">✅ Super – das ist die Regel fürs Erweitern!</div>` : `<div class="fb bad">Schau in eure Tabelle: Wie kommt ihr von 3 zu 6 und von 4 zu 8?</div>`;
+};
+
+// ================= WIR · Musterbeispiel (zum Nachschauen) =================
+$("#mBox").innerHTML = `<div class="row" style="align-items:center;gap:24px"><div style="display:grid;gap:8px;width:260px">${stripSVG(5, 2, 1, {h: 60, maxw: 260})}<span class="muted">jedes Teil in 3 Teile:</span>${stripSVG(5, 2, 3, {h: 60, maxw: 260})}</div>
+  <div>${bogenSVG(2, 5, 3, 6, 15, 0.9)}</div><div style="font-size:19px">Zähler <b>und</b> Nenner mal 3:<br>2 · 3 = 6 &nbsp; 5 · 3 = 15<br>Die <b>3</b> heißt <b>Erweiterungszahl</b>.<br><b style="color:#3f8f3a">Der Wert bleibt gleich.</b></div></div>`;
+
+// ================= ÜBEN =================
+const U = { level: "basis", task: null, tier: 0, solved: 0, clean: 0, streak: 0, levelSolved: {basis:0, stern:0, zwei:0}, done: false };
+const LV = {
+  basis: { nMax: 6,  kMax: 5,  types: ["erw","erw","luecke","bild"] },
+  stern: { nMax: 10, kMax: 9,  types: ["erw","luecke","luecke"] },
+  zwei:  { nMax: 12, kMax: 12, types: ["luecke","zahl","stimmt","stimmt"] }
+};
+function baseFrac(nMax) { let n, z; do { n = rnd(2, nMax); z = rnd(1, n-1); } while (gcd(z,n) !== 1); return [z,n]; }
+function newTask() {
+  const L = LV[U.level]; const type = pick(L.types);
+  let [z, n] = baseFrac(type === "bild" ? 4 : L.nMax);
+  let k = rnd(2, type === "bild" ? 4 : L.kMax);
+  const t = { type, z, n, k };
+  if (type === "luecke") t.miss = Math.random() < 0.5 ? "z" : "n";
+  if (type === "stimmt") {
+    t.correct = Math.random() < 0.45;
+    if (t.correct) { t.c = z*k; t.d = n*k; }
+    else { const v = pick(["add","nenner","zwei"]);
+      if (v === "add") { t.c = z + k; t.d = n + k; t.why = `Hier wurde ${k} <b>addiert</b>. Beim Erweitern wird aber <b>malgenommen</b>.`; }
+      else if (v === "nenner") { t.c = z; t.d = n*k; t.why = `Hier wurde nur der <b>Nenner</b> mal ${k} genommen. Der Zähler muss auch mal ${k}.`; }
+      else { t.c = z*k; t.d = n*(k+1); t.why = `Zähler mal ${k}, aber Nenner mal ${k+1}. Es muss die <b>gleiche</b> Zahl sein.`; } }
+  }
+  U.task = t; U.tier = 0; U.done = false; uRender();
+}
+function slot(key) { return `<span class="slot" data-slot="${key}"></span>`; }
+function uRender() {
+  const t = U.task; const pad = pads.ueb;
+  $("#uFb").innerHTML = ""; $("#uHint").innerHTML = ""; $("#uNext").classList.add("hidden"); $("#uCheck").classList.remove("hidden"); $("#uTipp").classList.remove("hidden");
+  $("#uVisual").innerHTML = ""; $("#uAnswer").classList.remove("tf");
+  const kp = document.querySelector('[data-pad="ueb"]'); kp.classList.remove("hidden");
+  if (t.type === "erw") {
+    $("#uPrompt").innerHTML = `Erweitere ${fr(t.z,t.n)} mit ${t.k}.`;
+    $("#uAnswer").innerHTML = `<span class="big">${fr(t.z,t.n)} =</span> <span class="fr slots big">${'<span>'+slot("a")+'</span><span>'+slot("b")+'</span>'}</span>`;
+    if (U.level === "basis") $("#uVisual").innerHTML = `<div style="max-width:420px">${stripSVG(t.n,t.z,1,{h:46})}</div>`;
+  } else if (t.type === "luecke") {
+    $("#uPrompt").innerHTML = `Finde die fehlende Zahl.`;
+    const top = t.miss === "z" ? slot("a") : t.z*t.k, bot = t.miss === "n" ? slot("a") : t.n*t.k;
+    $("#uAnswer").innerHTML = `<span class="big">${fr(t.z,t.n)} =</span> <span class="fr slots big"><span>${top}</span><span>${bot}</span></span>`;
+  } else if (t.type === "bild") {
+    $("#uPrompt").innerHTML = `Der obere Streifen zeigt ${fr(t.z,t.n)}. Welcher Bruch ist unten gefärbt? Mit welcher Zahl wurde erweitert?`;
+    $("#uVisual").innerHTML = `<div style="max-width:460px;display:grid;gap:8px">${stripSVG(t.n,t.z,1,{h:46,color:"#a9d18e"})}${stripSVG(t.n,t.z,t.k,{h:46,color:"#a9d18e"})}</div>`;
+    $("#uAnswer").innerHTML = `<span class="big">${fr(t.z,t.n)} =</span> <span class="fr slots big"><span>${slot("a")}</span><span>${slot("b")}</span></span> <span style="margin-left:18px">Erweiterungszahl: ${slot("c")}</span>`;
+  } else if (t.type === "zahl") {
+    $("#uPrompt").innerHTML = `Mit welcher Zahl wurde erweitert?`;
+    $("#uAnswer").innerHTML = `<span class="big">${fr(t.z,t.n)} = ${fr(t.z*t.k,t.n*t.k)}</span> <span style="margin-left:18px">Erweiterungszahl: ${slot("a")}</span>`;
+  } else if (t.type === "stimmt") {
+    $("#uPrompt").innerHTML = `Stimmt das? Prüfe, ob richtig erweitert wurde.`;
+    $("#uAnswer").classList.add("tf");
+    $("#uAnswer").innerHTML = `<span class="big" style="margin-right:20px">${fr(t.z,t.n)} = ${fr(t.c,t.d)}</span> <button class="btn" data-tf="1">👍 stimmt</button> <button class="btn" data-tf="0">👎 stimmt nicht</button>`;
+    $$("#uAnswer [data-tf]").forEach(b => b.onclick = () => { $$("#uAnswer [data-tf]").forEach(x => x.classList.toggle("sel", x === b)); U.tf = +b.dataset.tf; });
+    U.tf = null; kp.classList.add("hidden");
+  }
+  pad.bind($("#uAnswer"));
+}
+function solution(t) {
+  if (t.type === "stimmt") return t.correct ? `Es stimmt: Zähler und Nenner wurden beide mal ${t.k} genommen. ${bogenSVG(t.z,t.n,t.k,t.c,t.d,0.6)}` : `Es stimmt nicht. ${t.why}`;
+  return `${bogenSVG(t.z,t.n,t.k,t.z*t.k,t.n*t.k,0.62)} &nbsp; ${t.z} · ${t.k} = ${t.z*t.k} &nbsp;und&nbsp; ${t.n} · ${t.k} = ${t.n*t.k}`;
+}
+function hints(t) {
+  const reihe = (b, max) => { const r = []; for (let i = 1; i*b <= max; i++) r.push(i*b); return r.join(", "); };
+  switch (t.type) {
+    case "erw": return [`Erweitern heißt: Zähler <b>und</b> Nenner mal die <b>gleiche</b> Zahl.`, `Zähler: ${t.z} · ${t.k} = ? &nbsp;&nbsp; Nenner: ${t.n} · ${t.k} = ?`, solution(t)];
+    case "luecke": return t.miss === "z"
+      ? [`Suche zuerst die <b>Erweiterungszahl</b>. Schau beim Nenner: Dort stehen beide Zahlen.`, `${t.n} · ? = ${t.n*t.k} &nbsp; (Reihe: ${reihe(t.n, t.n*t.k)})`, solution(t)]
+      : [`Suche zuerst die <b>Erweiterungszahl</b>. Schau beim Zähler: Dort stehen beide Zahlen.`, `${t.z} · ? = ${t.z*t.k} &nbsp; (Reihe: ${reihe(t.z, t.z*t.k)})`, solution(t)];
+    case "bild": return [`Zähle im <b>unteren</b> Streifen: alle Teile (Nenner) und die gefärbten Teile (Zähler).`, `Wie viele kleine Teile passen in <b>ein</b> großes Teil? Das ist die Erweiterungszahl.`, solution(t)];
+    case "zahl": return [`Mit welcher Zahl wurde der Nenner malgenommen?`, `${t.n} · ? = ${t.n*t.k}`, solution(t)];
+    case "stimmt": return [`Beim Erweitern wird <b>malgenommen</b> – oben und unten mit der <b>gleichen</b> Zahl.`, `Prüfe: ${t.z} · ? = ${t.c} und ${t.n} · ? = ${t.d}. Ist es beide Male die gleiche Zahl?`, solution(t)];
+  }
+}
+function showHint() {
+  const h = hints(U.task); U.tier = Math.min(U.tier + 1, 3);
+  $("#uHint").innerHTML = `<div class="hint">${h.slice(0, U.tier).map((x,i) => `<div class="t"><span class="k">Tipp ${i+1}</span><span>${x}</span></div>`).join("")}</div>`;
+}
+$("#uTipp").onclick = () => { if (!U.done) showHint(); };
+$("#uCheck").onclick = () => {
+  const t = U.task; let ok = false, filled = true;
+  const g = k => { const s = $(`#uAnswer [data-slot="${k}"]`); return s ? val(s) : null; };
+  const mark = (k, good) => { const s = $(`#uAnswer [data-slot="${k}"]`); if (s) { s.classList.toggle("good", good); s.classList.toggle("bad", !good); } };
+  if (t.type === "erw") { const a=g("a"), b=g("b"); filled = a!==null && b!==null; if (filled) { mark("a", a===t.z*t.k); mark("b", b===t.n*t.k); ok = a===t.z*t.k && b===t.n*t.k; } }
+  else if (t.type === "luecke") { const a=g("a"); filled = a!==null; const r = t.miss==="z" ? t.z*t.k : t.n*t.k; if (filled) { ok = a===r; mark("a", ok); } }
+  else if (t.type === "bild") { const a=g("a"), b=g("b"), c=g("c"); filled = a!==null && b!==null && c!==null; if (filled) { mark("a", a===t.z*t.k); mark("b", b===t.n*t.k); mark("c", c===t.k); ok = a===t.z*t.k && b===t.n*t.k && c===t.k; } }
+  else if (t.type === "zahl") { const a=g("a"); filled = a!==null; if (filled) { ok = a===t.k; mark("a", ok); } }
+  else if (t.type === "stimmt") { filled = U.tf !== null && U.tf !== undefined; if (filled) ok = (U.tf === 1) === t.correct; }
+  if (!filled) { $("#uFb").innerHTML = `<div class="fb info">Fülle zuerst alle Kästchen aus.</div>`; return; }
+  if (ok) {
+    U.done = true; U.solved++; U.levelSolved[U.level]++; if (U.tier === 0) { U.clean++; U.streak++; } else U.streak = 0;
+    $("#uFb").innerHTML = `<div class="fb good">✅ ${pick(["Super!","Richtig!","Stark!","Genau so!","Klasse!"])} ${t.type==="stimmt" ? solution(t) : ""}</div>`;
+    $("#uCheck").classList.add("hidden"); $("#uTipp").classList.add("hidden"); $("#uNext").classList.remove("hidden");
+    $("#uSolved").textContent = U.solved; $("#uClean").textContent = U.clean; $("#uStreak").textContent = U.streak;
+    const ls = U.levelSolved[U.level];
+    if (ls === 10 && U.level !== "zwei") { $("#uBanner").textContent = `🏆 10 Aufgaben in ${U.level==="basis"?"Basis":"★"} gelöst! Probier die nächste Stufe.`; $("#uBanner").classList.remove("hidden"); }
+    if (ls === 10 && U.level === "zwei") { $("#uBanner").textContent = `🏆 10 Profi-Aufgaben gelöst! Erfinde jetzt eigene Aufgaben für deinen Partner.`; $("#uBanner").classList.remove("hidden"); }
+  } else {
+    U.streak = 0; $("#uStreak").textContent = 0;
+    if (U.tier < 3) { showHint(); $("#uFb").innerHTML = `<div class="fb bad">Noch nicht richtig. Lies den Tipp und versuche es noch einmal.</div>`; }
+    else { $("#uFb").innerHTML = `<div class="fb bad">Schau dir Tipp 3 genau an und trage die Lösung ein.</div>`; }
+  }
+};
+$("#uNext").onclick = newTask;
+$("#uToggle").onclick = () => { const h = $("#uSchnell").classList.toggle("hidden"); $("#uToggle").textContent = h ? "⚡ Für Schnelle" : "⚡ Für Schnelle ausblenden"; };
+$$("[data-level]").forEach(b => b.onclick = () => { $$("[data-level]").forEach(x => x.classList.toggle("sel", x === b)); U.level = b.dataset.level; $("#uBanner").classList.add("hidden"); newTask(); });
+newTask();
+
+// ================= EXIT-TICKET =================
+const X = { i: 0, res: [], tasks: [
+  { prompt: () => `Erweitere ${fr(3,7)} mit 4.`, html: () => `<span class="big">${fr(3,7)} =</span> <span class="fr slots big"><span>${slot("a")}</span><span>${slot("b")}</span></span>`, check: g => g("a")===12 && g("b")===28, need: ["a","b"] },
+  { prompt: () => `Finde die fehlende Zahl.`, html: () => `<span class="big">${fr(2,3)} =</span> <span class="fr slots big"><span>${slot("a")}</span><span>15</span></span>`, check: g => g("a")===10, need: ["a"] },
+  { prompt: () => `Lisa sagt: „Beim Erweitern wird der Bruch größer.“ Was stimmt?`, tf: true, html: () => `<div style="display:grid;gap:10px;width:100%">
+      <button class="btn" data-tf="1" style="text-align:left">A · Ja, weil die Zahlen größer werden.</button>
+      <button class="btn" data-tf="2" style="text-align:left">B · Ja, weil es mehr Teile sind.</button>
+      <button class="btn" data-tf="0" style="text-align:left">C · Nein. Das Ganze wird nur feiner unterteilt – der Wert bleibt gleich.</button>
+      <button class="btn" data-tf="3" style="text-align:left">D · Nein, der Bruch wird kleiner, weil die Teile kleiner werden.</button></div>`, check: () => X.tf === 0 }
+]};
+$("#xGo").onclick = () => { X.i = 0; X.res = []; $("#xStart").classList.add("hidden"); $("#xEnd").classList.add("hidden"); $("#xTask").classList.remove("hidden"); xRender(); };
+function xRender() {
+  const t = X.tasks[X.i]; $("#xNr").textContent = `Aufgabe ${X.i+1} von 3`;
+  $("#xPrompt").innerHTML = t.prompt(); $("#xAnswer").innerHTML = t.html();
+  const kp = document.querySelector('[data-pad="exit"]'); kp.classList.toggle("hidden", !!t.tf);
+  X.tf = null; $("#xFb").innerHTML = "";
+  if (t.tf) $$("#xAnswer [data-tf]").forEach(b => b.onclick = () => { $$("#xAnswer [data-tf]").forEach(x => x.classList.toggle("sel", x === b)); X.tf = +b.dataset.tf; });
+  pads.exit.bind($("#xAnswer"));
+}
+$("#xNext").onclick = () => {
+  const t = X.tasks[X.i];
+  const g = k => { const s = $(`#xAnswer [data-slot="${k}"]`); return s ? val(s) : null; };
+  if (t.tf ? X.tf === null : t.need.some(k => g(k) === null)) { $("#xFb").innerHTML = `<div class="fb info">Bitte zuerst antworten.</div>`; return; }
+  X.res.push(!!t.check(g)); X.i++;
+  if (X.i < 3) xRender(); else xEnd();
+};
+function xEnd() {
+  $("#xTask").classList.add("hidden");
+  const n = X.res.filter(Boolean).length;
+  const col = n === 3 ? "#e5f4e1" : n === 2 ? "#fff3b0" : "#fbe9e7";
+  const start = n === 3 ? "★" : n === 2 ? "Basis" : "Basis mit Hilfe";
+  const now = new Date(); const zeit = now.toLocaleDateString("de-DE") + ", " + now.toLocaleTimeString("de-DE", {hour:"2-digit", minute:"2-digit"});
+  const emo = n === 3 ? "🟢" : n === 2 ? "🟡" : "🔴";
+  $("#xEnd").innerHTML = `<div class="exitres" style="background:${col};min-height:60vh;display:flex;flex-direction:column;justify-content:center">
+    <div style="font-size:90px;line-height:1">${emo}</div>
+    <div class="n">${n} / 3</div>
+    <div style="font-size:24px;margin:8px 0">${X.res.map((r,i) => `Aufgabe ${i+1}: ${r ? "✅" : "❌"}`).join(" &nbsp; ")}</div>
+    <div style="font-size:22px">Nächste Stunde startest du bei: <b>${start}</b></div>
+    <div class="muted" style="margin-top:10px">Halte dein iPad hoch. · ${zeit}</div></div>`;
+  $("#xEnd").classList.remove("hidden");
+}
+
+show(location.hash.slice(1) || "ein");
+
+</script>
+</body>
+</html>
