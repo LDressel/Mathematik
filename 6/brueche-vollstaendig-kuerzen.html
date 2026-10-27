@@ -89,7 +89,7 @@ table.log th{color:var(--muted);font-size:15px;font-weight:700}
 
 header{flex-direction:column;align-items:stretch;gap:8px;padding:10px 12px}
 header .top{display:flex;align-items:center;gap:10px}
-.leiste{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-left:0;width:100%}
+.leiste{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-left:0;width:100%}
 .leiste button{font:inherit;font-size:14px;font-weight:700;border-radius:10px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#dbe7f3;min-height:46px;padding:4px}
 .leiste button.on{color:#fff;border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
 .leiste button.done{opacity:.75}
@@ -240,6 +240,20 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
   </div>
   <div class="card hidden" id="xEnd"></div>
 </section>
+
+<!-- ===== HAUSAUFGABE ===== -->
+<section id="ha" class="hidden">
+  <div class="card">
+    <h2 style="color:#2f6b1e">🏠 Hausaufgabe: So weit wie möglich kürzen</h2>
+    <p style="font-size:19px;margin:4px 0 8px">Das machst du <b>bis zur nächsten Mathestunde</b>:</p>
+    <ol style="font-size:19px;line-height:1.6;margin:0 0 12px;padding-left:26px"><li><b>Hefteintrag</b> „So weit wie möglich kürzen“ mit den Teilbarkeitsregeln (Seite 1) ins Heft schreiben.</li><li><b>Übung</b> Nr. 1–6 (Seite 2) bearbeiten – immer mit Rechnung.</li><li>Die Buchstaben aus der Lösungsleiste eintragen → <b>Lösungswort</b>.</li><li><b>★ Für Profis</b> (freiwillig): die Zusatzaufgabe unten auf Seite 2.</li></ol>
+    <div class="row">
+      <a class="btn main" href="brueche-vollstaendig-kuerzen-hausaufgabe.pdf" target="_blank" rel="noopener" style="text-decoration:none;background:#2f6b1e">📄 Hausaufgabe öffnen</a>
+      <span class="muted">Dann oben auf <b>Teilen ⬆️</b> → <b>GoodNotes</b> → als neues Dokument importieren.</span>
+    </div>
+    <p class="muted" style="margin-top:14px">Zu Beginn der nächsten Stunde vergleichen wir das Lösungswort. Die Lösung bekommst du dann zum Verbessern.</p>
+  </div>
+</section>
 </main>
 
 <script>
@@ -316,6 +330,7 @@ const PH = [
   { id: "wir", label: "WIR · Regel", color: "#3f8f3a" },
   { id: "ueb", label: "Üben", color: "#c47d00" },
   { id: "exit", label: "Exit-Ticket", color: "#5d6b7a" },
+  { id: "ha", label: "🏠 Hausaufgabe", color: "#2f6b1e" },
 ];
 let currentTab = "ein";
 function show(id) {
