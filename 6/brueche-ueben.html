@@ -103,7 +103,7 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
 .regeln{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
 .regeln div{background:#fff;border:2px solid #c9d6e3;border-radius:12px;padding:8px 10px;font-size:17px}
 .regeln b{color:#1f5f99}
-.blocks{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:4px 0 10px}
+.blocks{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:4px 0 10px}
 .blocks div{border:2px solid #c9d6e3;border-radius:10px;padding:6px 4px;text-align:center;font-size:14px;font-weight:700;color:#5d6b7a;background:#fff}
 .blocks div.on{border-color:#c47d00;background:#fff6e0;color:#6b4a00}
 .blocks div.done{border-color:#3f8f3a;background:#e5f4e1;color:#245d20}
@@ -132,7 +132,7 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
 <section id="k">
   <div class="card" id="kStart">
     <h2 style="color:#e08a1e">🧠 Kopfrechen-Check</h2>
-    <p style="font-size:19px">🎯 Ich kann Brüche sicher erweitern und kürzen – auch so weit wie möglich.</p>
+    <p style="font-size:19px">🎯 Ich kann Brüche sicher erweitern und kürzen.</p>
     <p style="font-size:19px">10 Aufgaben <b>im Kopf</b>. Allein, ohne Tipps. Jede Aufgabe nur <b>einmal</b>.<br>Danach sagt dir die App, mit welcher <b>Stufe</b> du übst.</p>
     <button class="btn main" id="kGo">Los geht's ➜</button>
   </div>
@@ -158,8 +158,7 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
     <h2 style="font-size:28px;color:#3f8f3a">Tablet umdrehen – alle Augen nach vorne.</h2>
     <p class="muted">Den Hefteintrag schreibst du zu Hause.</p>
   </div>
-  <details class="muster"><summary>Später zum Nachschauen: So weit wie möglich kürzen</summary><div id="mBox" style="margin-top:10px"></div></details>
-  <details class="muster"><summary>Später zum Nachschauen: Teilbarkeitsregeln</summary><div class="regeln" id="regeln1"></div></details>
+  <details class="muster"><summary>Später zum Nachschauen: Erweitern und Kürzen</summary><div id="mBox" style="margin-top:10px"></div></details>
 </section>
 
 <!-- ===== ÜBEN ===== -->
@@ -200,7 +199,7 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
       </div>
     </div>
     <div class="card hidden" id="uDone"></div>
-    <details class="muster"><summary>📌 Teilbarkeitsregeln</summary><div class="regeln" id="regeln2"></div></details>
+    <details class="muster"><summary>📌 Erweitern und Kürzen – so geht's</summary><div id="mBox2" style="margin-top:10px"></div></details>
     <p class="muted" style="font-size:14px">Hilfe: erst 💡 Tipp → dann Partner → dann Lehrkraft.</p>
     <details style="margin-top:6px"><summary class="muted" style="font-size:13px">Lehrkraft: Block wählen</summary>
       <div class="wahl" id="uJump"></div></details>
@@ -217,7 +216,7 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
         <ul>
           <li>Steht oben und unten die <b>gleiche Zahl</b>?</li>
           <li>Ist <b>richtig gerechnet</b>?</li>
-          <li>Ist der Bruch <b>so weit wie möglich</b> gekürzt? (Block D)</li>
+          <li>Stimmt die <b>fehlende Zahl</b>? (Block C)</li>
         </ul></li>
       <li>Fehler gefunden? Erklärt ihn: <i>„Das stimmt nicht, weil …“</i></li>
       <li><b>Verbessern mit grünem Stift.</b></li>
@@ -320,7 +319,7 @@ const big = h => `<span class="big">${h}</span>`;
 // ---------- Phasen-Leiste ----------
 const PH = [
   { id: "k", label: "Kopfrechnen", color: "#e08a1e" },
-  { id: "wir", label: "WIR · So weit wie möglich", color: "#3f8f3a" },
+  { id: "wir", label: "WIR · Erinnern", color: "#3f8f3a" },
   { id: "ueb", label: "Üben", color: "#c47d00" },
   { id: "pc", label: "Partner-Check", color: "#7a4fb5" },
   { id: "exit", label: "Exit-Ticket", color: "#5d6b7a" },
@@ -346,16 +345,12 @@ document.addEventListener("keydown", e => {
 });
 $$("[data-go2]").forEach(b => b.onclick = () => go(b.dataset.go2));
 
-// ---------- Teilbarkeitsregeln + Musterbeispiel ----------
-const REGELN = `<div><b>durch 2:</b> Die Zahl ist gerade (endet auf 0, 2, 4, 6, 8). &nbsp;<span class="muted">z. B. 24</span></div>
-  <div><b>durch 5:</b> Die Zahl endet auf 0 oder 5. &nbsp;<span class="muted">z. B. 35</span></div>
-  <div><b>durch 10:</b> Die Zahl endet auf 0. &nbsp;<span class="muted">z. B. 70</span></div>
-  <div><b>durch 3:</b> Die Quersumme ist durch 3 teilbar. &nbsp;<span class="muted">z. B. 27: 2 + 7 = 9</span></div>`;
-$("#regeln1").innerHTML = REGELN; $("#regeln2").innerHTML = REGELN;
-$("#mBox").innerHTML = `<div style="font-size:19px">Kürze ${fr(24,36)} so weit wie möglich:</div>
-  <div class="row" style="gap:6px;margin:6px 0">${bogenSVG(24,36,2,12,18,0.62,":")}<span style="font-size:26px">=</span>${bogenSVG(12,18,2,6,9,0.62,":")}<span style="font-size:26px">=</span>${bogenSVG(6,9,3,2,3,0.62,":")}</div>
-  <div style="font-size:18px">Bei ${fr(2,3)} geht es nicht mehr: 2 und 3 haben keinen gemeinsamen Teiler (außer 1). Der Bruch ist <b>vollständig gekürzt</b>.<br>
-  Schneller: direkt mit 12 kürzen. ${bogenSVG(24,36,12,2,3,0.55,":")}</div>`;
+// ---------- Erinnern: Erweitern und Kürzen ----------
+const MBOX = `<div class="row" style="gap:30px;align-items:center">
+  <div><b style="color:#1f5f99;font-size:19px">Erweitern</b><br>${bogenSVG(2,3,4,8,12,0.7)}<br>Zähler <b>und</b> Nenner mal die gleiche Zahl.</div>
+  <div><b style="color:#1f5f99;font-size:19px">Kürzen</b><br>${bogenSVG(8,12,4,2,3,0.7,":")}<br>Zähler <b>und</b> Nenner durch die gleiche Zahl.</div>
+  <div style="font-size:18px"><b style="color:#3f8f3a">Der Wert bleibt gleich.</b><br>Kürzen ist die Umkehrung vom Erweitern.</div></div>`;
+$("#mBox").innerHTML = MBOX; $("#mBox2").innerHTML = MBOX;
 
 // =================== KOPFRECHEN-CHECK ===================
 const tfBtns = (opts) => `<div style="display:grid;gap:10px;width:100%">${opts.map(([v, t]) => `<button class="btn" data-tf="${v}" style="text-align:left">${t}</button>`).join("")}</div>`;
@@ -367,7 +362,7 @@ const K = { i: 0, res: [], done: false, score: 0, tf: null, tasks: [
   { p: `Kürze ${fr(12,16)} mit 4.`, h: () => big(fr(12,16) + " =") + " " + fs(slot("a"), slot("b")), c: g => g("a")===3 && g("b")===4, need: ["a","b"] },
   { p: `Finde die fehlende Zahl.`, h: () => big(fr(3,5) + " =") + " " + fs(slot("a"), 20), c: g => g("a")===12, need: ["a"] },
   { p: `Finde die fehlende Zahl.`, h: () => big(fr(18,24) + " =") + " " + fs(3, slot("a")), c: g => g("a")===4, need: ["a"] },
-  { p: `Kann man ${fr(15,21)} mit 3 kürzen?`, tf: true, h: () => tfBtns([[1,"Ja"],[0,"Nein"]]), c: () => K.tf === 1 },
+  { p: `Mit welcher Zahl wurde gekürzt?`, h: () => big(fr(12,15) + " = " + fr(4,5)) + ` <span style="margin-left:14px">Kürzungszahl: ${slot("a")}</span>`, c: g => g("a")===3, need: ["a"] },
   { p: `Tim rechnet: ${fr(4,6)} = ${fr(2,4)} &nbsp;(„Ich habe 2 abgezogen.“) Stimmt das?`, tf: true, h: () => tfBtns([[1,"👍 stimmt"],[0,"👎 stimmt nicht"]]), c: () => K.tf === 0 },
   { p: `Stimmt das? ${fr(2,5)} = ${fr(6,15)}`, tf: true, h: () => tfBtns([[1,"👍 stimmt"],[0,"👎 stimmt nicht"]]), c: () => K.tf === 1 },
 ]};
@@ -391,7 +386,7 @@ function kEnd() {
   $("#kTask").classList.add("hidden");
   const n = K.res.filter(Boolean).length; K.score = n; K.done = true;
   const lv = n >= 9 ? 3 : n >= 6 ? 2 : 1; setLevel(lv, true);
-  const teil = !K.res[7] ? `<div class="fb info" style="margin-top:12px">📌 Schau dir beim Üben die <b>Teilbarkeitsregeln</b> an (unten auf der Seite „Üben“).</div>` : "";
+  const teil = "";
   $("#kEnd").innerHTML = `<div class="exitres" style="background:#eef3f8">
     <div style="font-size:24px">${K.res.map((r,i) => `${i+1}: ${r ? "✅" : "❌"}`).join(" &nbsp; ")}</div>
     <div class="n" style="margin:12px 0">${n} von 10</div>
@@ -405,7 +400,7 @@ function kEnd() {
 const ST = { 1: { nMax: 6, ks: [2,3,4,5], max: 30 }, 2: { nMax: 10, ks: [2,3,4,5,6,7,8,9,10], max: 100 }, 3: { nMax: 12, ks: [6,7,8,9,10,11,12,15,25], max: 150 } };
 const BLOCKS = [
   { id: "A", name: "Erweitern" }, { id: "B", name: "Kürzen" }, { id: "C", name: "Fehlende Zahl" },
-  { id: "D", name: "So weit wie möglich kürzen" }, { id: "E", name: "Mischrunde" }];
+  { id: "D", name: "Mischrunde" }];
 const U = { lv: 0, b: 0, last: [], t3: 0, inBlock: 0, solved: 0, task: null, tier: 0, wrong: false, done: false, endless: false };
 function setLevel(lv, fresh) { U.lv = lv; if (fresh) { U.b = 0; U.last = []; U.t3 = 0; U.inBlock = 0; U.endless = false; U.task = null; } }
 function uEnter() {
@@ -504,12 +499,11 @@ function T_weit(lv) { const w = weitZahl(lv); return { type: "weit", ...w, cur: 
 function pickType(lv, b) {
   switch (b) {
     case 0: return lv === 3 ? pick([T_erw, T_erwAuf, T_erwAuf])(lv) : T_erw(lv);
-    case 1: return lv === 1 ? T_kue(1, [2,3,5,4]) : lv === 2 ? pick([() => T_kue(2), () => T_kueFrei(2), () => T_kueFrei(2)])() : T_kueMax(3);
+    case 1: return lv === 1 ? T_kue(1, [2,3,5,4]) : lv === 2 ? pick([() => T_kue(2), () => T_kueFrei(2), () => T_kueFrei(2)])() : pick([() => T_kue(3), () => T_kueFrei(3)])();
     case 2: return lv === 1 ? T_lueckeE(1) : lv === 2 ? pick([T_lueckeE, T_lueckeK])(2) : pick([T_kette, () => T_lueckeK(3), () => T_lueckeE(3)])();
-    case 3: return lv === 3 ? T_kueMax(3, true) : T_weit(lv);
-    case 4: if (lv === 1) return pick([T_erw, () => T_kue(1, [2,3,5])])(1);
+    case 3: if (lv === 1) return pick([T_erw, () => T_kue(1, [2,3,5])])(1);
             if (lv === 2) return pick([T_lueckeE, T_lueckeK, T_erw, T_kueFrei])(2);
-            return pick([T_stimmt, () => T_kueMax(3), T_erwAuf, T_kette, T_stimmt])(3);
+            return pick([T_stimmt, () => T_kueFrei(3), T_erwAuf, T_kette, T_stimmt])(3);
   }
 }
 function heftText(t) {
@@ -518,7 +512,7 @@ function heftText(t) {
   return U.inBlock < 2 && !U.endless ? "✏️ Schreibe die Rechnung <u>mit Bogen</u> ins Heft. Dann tippe das Ergebnis ein." : "✏️ Schreibe kurz ins Heft, z. B. 2/3 = 8/12 (·4). Dann tippe ein.";
 }
 function newTask() {
-  U.task = pickType(U.lv, U.endless ? 4 : U.b); U.tier = 0; U.wrong = false; U.done = false; uRender(); uHead();
+  U.task = pickType(U.lv, U.endless ? 3 : U.b); U.tier = 0; U.wrong = false; U.done = false; uRender(); uHead();
 }
 function uRender() {
   const t = U.task;
@@ -628,7 +622,7 @@ const X = { i: 0, res: [], tf: null, tasks: [
   { p: `Erweitere ${fr(3,4)} mit 5.`, h: () => big(fr(3,4) + " =") + " " + fs(slot("a"), slot("b")), c: g => g("a")===15 && g("b")===20, need: ["a","b"] },
   { p: `Kürze ${fr(15,25)} mit 5.`, h: () => big(fr(15,25) + " =") + " " + fs(slot("a"), slot("b")), c: g => g("a")===3 && g("b")===5, need: ["a","b"] },
   { p: `Finde die fehlende Zahl.`, h: () => big(fr(4,7) + " =") + " " + fs(slot("a"), 28), c: g => g("a")===16, need: ["a"] },
-  { p: `Kürze ${fr(18,24)} so weit wie möglich.`, h: () => big(fr(18,24) + " =") + " " + fs(slot("a"), slot("b")), c: g => g("a")===3 && g("b")===4, need: ["a","b"] },
+  { p: `Finde die fehlende Zahl.`, h: () => big(fr(20,35) + " =") + " " + fs(slot("a"), 7), c: g => g("a")===4, need: ["a"] },
   { p: `Stimmt das? ${fr(10,15)} = ${fr(8,13)}`, tf: true, h: () => tfBtns([[1,"👍 stimmt"],[0,"👎 stimmt nicht"]]), c: () => X.tf === 0 },
 ]};
 $("#xGo").onclick = () => { X.i = 0; X.res = []; $("#xStart").classList.add("hidden"); $("#xEnd").classList.add("hidden"); $("#xTask").classList.remove("hidden"); xRender(); };

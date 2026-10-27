@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>So weit wie möglich kürzen – Mathe 6</title>
+<style>
+:root{
+  --bg:#f4f7fb; --card:#ffffff; --ink:#1d2733; --muted:#5d6b7a; --line:#33465a;
+  --blue:#1f5f99; --blueSoft:#e6eef7; --strip:#7fb8e6; --orange:#f5b971;
+  --green:#3f8f3a; --greenSoft:#e5f4e1; --red:#c0392b; --redSoft:#fbe9e7;
+  --yellow:#fff3b0; --yellowLine:#e8b400; --star:#c47d00;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;touch-action:manipulation}
+body{font-size:19px;line-height:1.35;padding-bottom:30px}
+header{position:sticky;top:0;z-index:5;background:var(--blue);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+header h1{font-size:22px;margin:0;font-weight:800;letter-spacing:-.2px}
+nav{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+nav button{font:inherit;font-size:17px;font-weight:700;border:0;border-radius:12px;padding:10px 16px;background:rgba(255,255,255,.16);color:#fff;min-height:48px}
+nav button.on{background:#fff;color:var(--blue)}
+main{max-width:980px;margin:0 auto;padding:16px}
+.card{background:var(--card);border-radius:18px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card h2{font-size:19px;margin:0 0 10px;color:var(--blue)}
+.row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.muted{color:var(--muted);font-size:16px}
+.btn{font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 18px;min-height:52px;min-width:52px;background:var(--blueSoft);color:var(--blue);cursor:pointer}
+.btn.main{background:var(--blue);color:#fff}
+.btn.ok{background:var(--green);color:#fff}
+.btn.tipp{background:var(--yellow);color:#6b5200;border:2px solid var(--yellowLine)}
+.btn.sel{background:var(--blue);color:#fff}
+.btn:disabled{opacity:.4}
+.stepper{display:inline-flex;align-items:center;gap:8px;background:var(--blueSoft);border-radius:14px;padding:6px}
+.stepper .btn{min-width:48px;min-height:48px;padding:0;font-size:24px;background:#fff}
+.stepper b{min-width:34px;text-align:center;font-size:24px}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px;line-height:1.05;font-weight:700}
+.fr>span:first-child{border-bottom:3px solid currentColor;padding:0 4px 2px}
+.fr>span:last-child{padding:2px 4px 0}
+.big{font-size:30px}
+.slot{display:inline-flex;align-items:center;justify-content:center;min-width:64px;height:52px;border:3px solid #9fb3c8;border-radius:12px;background:#fff;font-size:28px;font-weight:800;color:var(--ink);cursor:pointer;margin:2px 0}
+.slot.active{border-color:var(--blue);box-shadow:0 0 0 4px rgba(31,95,153,.18)}
+.slot.good{border-color:var(--green);background:var(--greenSoft)}
+.slot.bad{border-color:var(--red);background:var(--redSoft)}
+.fr .slot{min-width:70px}
+.fr.slots>span:first-child{border-bottom-width:4px;padding-bottom:6px}
+.fr.slots>span:last-child{padding-top:6px}
+.keypad{display:grid;grid-template-columns:repeat(5,60px);gap:8px}
+.keypad button{font:inherit;font-size:26px;font-weight:800;height:58px;border-radius:12px;border:0;background:#fff;box-shadow:0 1px 0 #c9d6e3, inset 0 0 0 2px #c9d6e3;color:var(--ink)}
+.keypad button:active{background:var(--blueSoft)}
+.keypad .del{background:var(--redSoft);color:var(--red)}
+.strip{width:100%;height:auto;display:block}
+.stripbox{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center}
+.stripbox .lab{font-size:15px;color:var(--muted);text-align:right;min-width:62px}
+.fb{border-radius:14px;padding:12px 14px;margin-top:12px;font-weight:600}
+.fb.good{background:var(--greenSoft);color:#245d20}
+.fb.bad{background:var(--redSoft);color:#8e2a20}
+.fb.info{background:var(--blueSoft);color:var(--blue)}
+.hint{background:#fffaf0;border:2px solid var(--yellowLine);border-radius:14px;padding:10px 14px;margin-top:12px}
+.hint .t{display:flex;gap:10px;margin:6px 0;align-items:center;flex-wrap:wrap}
+.hint .k{background:var(--yellow);color:#6b5200;border-radius:8px;padding:2px 8px;font-weight:800;font-size:15px;white-space:nowrap}
+table.log{width:100%;border-collapse:collapse;font-size:18px}
+table.log th,table.log td{border-bottom:1.5px solid #e1e8f0;padding:6px 8px;text-align:center}
+table.log th{color:var(--muted);font-size:15px;font-weight:700}
+.levels .btn{min-width:120px}
+.score{display:flex;gap:16px;align-items:center;font-weight:700;color:var(--muted);font-size:16px;flex-wrap:wrap}
+.score b{color:var(--ink);font-size:20px}
+.banner{background:linear-gradient(90deg,#fff3b0,#ffe28a);border-radius:14px;padding:12px 16px;font-weight:800;margin-bottom:12px}
+.exitres{text-align:center;padding:24px 12px;border-radius:18px}
+.exitres .n{font-size:64px;font-weight:900;line-height:1}
+.hidden{display:none!important}
+.tf .btn{min-width:150px;font-size:20px}
+.split{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start}
+@media (max-width:860px){.split{grid-template-columns:1fr}.keypad{grid-template-columns:repeat(5,1fr)}}
+.wand{position:relative;--wl:74px;display:grid;gap:8px;margin-bottom:6px}
+.wrow{display:grid;grid-template-columns:var(--wl) 1fr;align-items:center}
+.wlab{font-size:20px;font-weight:700;text-align:center}
+.wlab .fr{font-size:22px}
+.wtrack{display:flex;height:58px;border:3px solid #33465a;border-radius:6px;background:#fff;overflow:hidden;align-items:center}
+.wtrack.drop{border-style:dashed;border-color:#7a4fb5;background:#faf7ff}
+.wtrack.drop.hover{background:#efe6ff;box-shadow:0 0 0 4px rgba(122,79,181,.25)}
+.wp{height:100%;border-right:2px solid #33465a;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#1d2733;flex:0 0 auto;box-sizing:border-box}
+.wp.ok{box-shadow:inset 0 0 0 4px #3f8f3a}
+.wend{position:absolute;top:-6px;bottom:-6px;width:0;border-left:3px dashed #c0392b;pointer-events:none}
+.vorrat{display:flex;flex-wrap:wrap;gap:8px 4px;margin-top:14px;padding:10px;background:#f4f7fb;border-radius:14px}
+.chip{height:54px;min-width:44px;border:2px solid #33465a;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;box-sizing:border-box}
+.ghost{position:fixed;z-index:50;pointer-events:none;opacity:.85;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.pill{display:inline-block;background:var(--blueSoft);color:var(--blue);border-radius:999px;padding:3px 10px;font-weight:700;font-size:15px}
+
+header{flex-direction:column;align-items:stretch;gap:8px;padding:10px 12px}
+header .top{display:flex;align-items:center;gap:10px}
+.leiste{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-left:0;width:100%}
+.leiste button{font:inherit;font-size:14px;font-weight:700;border-radius:10px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#dbe7f3;min-height:46px;padding:4px}
+.leiste button.on{color:#fff;border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
+.leiste button.done{opacity:.75}
+.steps{display:grid;gap:8px;margin:4px 0 6px}
+.steps div{display:flex;gap:10px;align-items:flex-start;font-size:18px}
+.steps b.n{flex:0 0 30px;height:30px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px}
+.fertig{color:#c47d00;font-weight:700;margin-top:10px}
+.ftab{border-collapse:collapse;width:100%;font-size:18px}
+.ftab th,.ftab td{border:2px solid #c9d6e3;padding:8px;text-align:center}
+.ftab th{background:#eef3f8;font-size:15px}
+.toggle{font:inherit;font-size:20px;font-weight:800;border:2px solid #7a4fb5;background:#faf7ff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%237a4fb5' stroke-width='2.5'/%3E%3C/svg%3E") no-repeat right 10px center;color:#7a4fb5;border-radius:10px;padding:6px 32px 6px 12px;margin:0 4px;min-height:46px;-webkit-appearance:none;appearance:none;cursor:pointer}
+.toggle.good{border-style:solid;border-color:#3f8f3a;background:#e5f4e1;color:#245d20}
+.toggle.bad{border-style:solid;border-color:#c0392b;background:#fbe9e7;color:#8e2a20}
+.regel{font-size:21px;line-height:2.6}
+.regel select{line-height:1.2;vertical-align:middle}
+details.muster{background:#eef6fd;border:2px solid #1f5f99;border-radius:14px;padding:10px 14px}
+details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18px}
+.vorne{text-align:center;padding:30px 10px}
+.vorne .e{font-size:80px}
+.wgroup{box-shadow:inset -3px 0 0 #33465a}
+.kette{font-size:20px;margin:6px 0 10px;display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+.kette .op{font-size:14px;color:#1f5f99;font-weight:800;background:#fff3b0;border-radius:8px;padding:1px 6px}
+.regeln{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+.regeln div{background:#fff;border:2px solid #c9d6e3;border-radius:12px;padding:8px 10px;font-size:17px}
+.regeln b{color:#1f5f99}
+.pokal{font-size:18px;margin-left:4px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top"><h1>🏆 So weit wie möglich kürzen</h1><span class="muted" style="color:#cfe2f5;margin-left:auto;font-size:14px">Mathe 6 · Brüche · Std. 10</span></div>
+  <nav class="leiste" id="leiste"></nav>
+</header>
+<main>
+
+<!-- ===== EINSTIEG ===== -->
+<section id="ein">
+  <div class="card vorne">
+    <div class="e">👀</div>
+    <h2 style="font-size:28px">Schau nach vorne.</h2>
+    <p style="font-size:20px">🎯 Ich kann Brüche <b>so weit wie möglich kürzen</b> und weiß, wann ich fertig bin.</p>
+  </div>
+
+</section>
+
+<!-- ===== DU · BRUCHWAND ===== -->
+<section id="wand" class="hidden">
+  <div class="card">
+    <h2 style="color:#7a4fb5">DU · Findet die größten Streifen</h2>
+    <div class="steps" id="wSteps"></div>
+    <div class="row" id="wTargets" style="margin:6px 0 12px"></div>
+    <div class="wand" id="wWand">
+      <div class="wrow"><div class="wlab">Ganzes</div><div class="wtrack" id="wGanz"></div></div>
+      <div class="wrow"><div class="wlab" id="wLabT"></div><div class="wtrack" id="wTarget"></div></div>
+      <div class="wrow"><div class="wlab" id="wLabB">?</div><div class="wtrack drop" id="wBuild"></div></div>
+      <div class="wend" id="wEnd"></div>
+    </div>
+    <div id="wFb"></div>
+    <p class="muted" style="margin:10px 0 0">Nur <b>größere</b> Streifen: ziehen oder antippen.</p>
+    <div class="vorrat" id="wVorrat"></div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn" id="wUndo">↩ Letzten Streifen weg</button>
+      <button class="btn" id="wClear">🗑 Reihe leeren</button>
+    </div>
+    <div class="fertig">Fertig? → Findet bei 12/16 alle Möglichkeiten. Welche ist die gröbste?</div>
+  </div>
+  <div class="card">
+    <h2>📒 Eure Entdeckungen</h2>
+    <table class="log"><thead><tr><th>Bruch</th><th>gröber</th><th>Kürzungszahl</th><th>gröber geht’s nicht?</th></tr></thead><tbody id="wLog"><tr><td colspan="4" class="muted">Noch leer.</td></tr></tbody></table>
+  </div>
+  <div class="card" id="rCard">
+    <h2>✍️ Unsere Regel <span class="muted">(wähle in jedem lila Feld das passende Wort)</span></h2>
+    <div class="regel">Ich kürze so lange, bis Zähler und Nenner
+      <select class="toggle" data-ok="keine gemeinsame Zahl mehr haben"><option value="">wählen …</option><option>gleich groß sind</option><option>keine gemeinsame Zahl mehr haben</option><option>ungerade sind</option></select>, durch die man teilen kann.<br>
+      Dann ist der Bruch <select class="toggle" data-ok="vollständig gekürzt"><option value="">wählen …</option><option>vollständig gekürzt</option><option>kleiner geworden</option><option>falsch</option></select>.
+    </div>
+    <button class="btn main" id="rCheck" style="margin-top:8px">✔ Regel prüfen</button>
+    <div id="rFb"></div>
+  </div>
+</section>
+
+<!-- ===== WIR ===== -->
+<section id="wir" class="hidden">
+  <div class="card vorne">
+    <div class="e">👀</div>
+    <h2 style="font-size:28px;color:#3f8f3a">Tablet umdrehen – alle Augen zur Tafel.</h2>
+    <p class="muted">Den Hefteintrag schreibst du zu Hause.</p>
+  </div>
+  <details class="muster"><summary>Später zum Nachschauen: Musterbeispiel</summary><div id="mBox" style="margin-top:10px"></div></details>
+  <details class="muster" style="margin-top:12px"><summary>Später zum Nachschauen: Teilbarkeitsregeln</summary><div class="regeln" id="regeln1"></div></details>
+</section>
+
+<!-- ===== ÜBEN ===== -->
+<section id="ueb" class="hidden">
+  <div class="card">
+    <h2 style="color:#c47d00">Üben · Alle: Übungsblatt „So weit wie möglich kürzen“ (A → B → C)</h2>
+    <div class="row">
+      <a class="btn main" href="brueche-vollstaendig-kuerzen-uebungsblatt.pdf" target="_blank" rel="noopener" style="text-decoration:none">📄 Übungsblatt öffnen</a>
+      <span class="muted">Dann oben auf <b>Teilen ⬆️</b> → <b>GoodNotes</b> → als neues Dokument importieren.</span>
+    </div>
+    <div class="fertig">Fertig mit dem Blatt? → Tippe auf „⚡ Für Schnelle“.</div>
+    <button class="btn" id="uToggle" style="margin-top:10px;background:#fff3b0;color:#6b5200;border:2px solid #e8b400">⚡ Für Schnelle</button>
+    <details class="muster" style="margin-top:12px"><summary>📌 Teilbarkeitsregeln</summary><div class="regeln" id="regeln2"></div></details>
+  </div>
+  <div id="uSchnell" class="hidden">
+  <div class="card"><div class="score">Gelöst <b id="uSolved">0</b> · ohne Tipp <b id="uClean">0</b> · Serie <b id="uStreak">0</b> 🔥</div></div>
+<div id="uBanner" class="banner hidden"></div>
+  <div class="card">
+    <div class="split">
+      <div>
+        <div id="uPrompt" style="font-weight:700;font-size:20px;margin-bottom:10px"></div>
+        <div id="uVisual"></div>
+        <div id="uKette" class="kette"></div>
+        <div id="uAnswer" class="row" style="margin-top:12px"></div>
+        <div class="row" style="margin-top:14px">
+          <button class="btn tipp" id="uTipp">💡 Tipp</button>
+          <button class="btn main" id="uCheck">✔ Prüfen</button>
+          <button class="btn ok hidden" id="uNext">Weiter ➜</button>
+        </div>
+        <div id="uFb"></div>
+        <div id="uHint"></div>
+      </div>
+      <div class="keypad" data-pad="ueb"></div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- ===== EXIT ===== -->
+<section id="exit" class="hidden">
+  <div class="card" id="xStart">
+    <h2>🎟️ Exit-Ticket</h2>
+    <p>3 Aufgaben. <b>Allein, ohne Tipps.</b> Jede Aufgabe nur <b>einmal</b>. Am Ende siehst du dein Ergebnis.</p>
+    <button class="btn main" id="xGo">Los geht's ➜</button>
+  </div>
+  <div class="card hidden" id="xTask">
+    <div class="muted" id="xNr"></div>
+    <div class="split">
+      <div>
+        <div id="xPrompt" style="font-weight:700;font-size:20px;margin:6px 0 12px"></div>
+        <div id="xAnswer" class="row"></div>
+        <div class="row" style="margin-top:14px"><button class="btn main" id="xNext">Antwort abgeben ➜</button></div>
+        <div id="xFb"></div>
+      </div>
+      <div class="keypad" data-pad="exit"></div>
+    </div>
+  </div>
+  <div class="card hidden" id="xEnd"></div>
+</section>
+</main>
+
+<script>
+"use strict";
+// ---------- Hilfsfunktionen ----------
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const rnd = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const gcd = (a,b) => b ? gcd(b, a % b) : a;
+const fr = (z,n) => `<span class="fr"><span>${z}</span><span>${n}</span></span>`;
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+
+function stripSVG(n, z, k, opt={}) {
+  // n Teile, z gefärbt, jedes Teil in k Teile (k=1: keine Unterteilung)
+  const W = 600, H = opt.h || 64, pw = W / n;
+  const col = opt.color || "#7fb8e6";
+  let s = `<svg class="strip" viewBox="-2 -2 ${W+4} ${H+4}" preserveAspectRatio="none" style="max-width:${opt.maxw||600}px">`;
+  s += `<rect x="0" y="0" width="${z*pw}" height="${H}" fill="${col}"/>`;
+  if (k > 1) {
+    for (let i = 0; i < n*k; i++) {
+      if (i % k === 0) continue;
+      const x = i * pw / k;
+      s += `<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#33465a" stroke-width="1.6" ${opt.dashed ? 'stroke-dasharray="6 5"' : ''}/>`;
+    }
+  }
+  for (let i = 1; i < n; i++) s += `<line x1="${i*pw}" y1="0" x2="${i*pw}" y2="${H}" stroke="#33465a" stroke-width="3.2"/>`;
+  s += `<rect x="0" y="0" width="${W}" height="${H}" fill="none" stroke="#33465a" stroke-width="3.5"/></svg>`;
+  return s;
+}
+
+function bogenSVG(z1, n1, k, z2, n2, scale=1, op="·") {
+  const W = 190, H = 120, m = H/2, fs = 28;
+  const frac = (x,z,n) => `<text x="${x}" y="${m-8}" font-size="${fs}" text-anchor="middle" font-weight="800" fill="#1d2733">${z}</text>
+    <line x1="${x-18}" y1="${m}" x2="${x+18}" y2="${m}" stroke="#1d2733" stroke-width="3"/>
+    <text x="${x}" y="${m+28}" font-size="${fs}" text-anchor="middle" font-weight="800" fill="#1d2733">${n}</text>`;
+  const c = "#1f5f99";
+  return `<svg width="${W*scale}" height="${H*scale}" viewBox="0 0 ${W} ${H}" style="vertical-align:middle;font-family:inherit">
+    ${frac(30,z1,n1)}<text x="${W/2}" y="${m+9}" font-size="${fs}" text-anchor="middle" fill="#1d2733">=</text>${frac(W-30,z2,n2)}
+    <path d="M 48 ${m-30} Q ${W/2} ${m-66} ${W-48} ${m-30}" fill="none" stroke="${c}" stroke-width="3"/>
+    <path d="M ${W-57} ${m-39} L ${W-47} ${m-30} L ${W-60} ${m-27}" fill="none" stroke="${c}" stroke-width="3"/>
+    <path d="M 48 ${m+30} Q ${W/2} ${m+66} ${W-48} ${m+30}" fill="none" stroke="${c}" stroke-width="3"/>
+    <path d="M ${W-57} ${m+39} L ${W-47} ${m+30} L ${W-60} ${m+27}" fill="none" stroke="${c}" stroke-width="3"/>
+    ${[m-46, m+46].map(y => `<ellipse cx="${W/2}" cy="${y}" rx="24" ry="13" fill="#fff3b0" stroke="#e8b400" stroke-width="2"/>
+      <text x="${W/2}" y="${y+7}" font-size="20" text-anchor="middle" font-weight="800" fill="#6b5200">${op}${k}</text>`).join("")}
+  </svg>`;
+}
+
+
+
+// ---------- Ziffernblock ----------
+const pads = {};
+function makePad(name) {
+  const el = document.querySelector(`[data-pad="${name}"]`);
+  el.innerHTML = ["1","2","3","4","5","6","7","8","9","0"].map(k => `<button data-k="${k}">${k}</button>`).join("") + `<button class="del" data-k="del" style="grid-column:span 5">⌫ löschen</button>`;
+  const pad = { root: null, active: null,
+    bind(root) { this.root = root; const slots = root.querySelectorAll(".slot"); slots.forEach(s => s.onclick = () => this.focus(s)); this.focus(slots[0] || null); },
+    focus(s) { if (!this.root) return; this.root.querySelectorAll(".slot").forEach(x => x.classList.remove("active")); this.active = s; if (s) s.classList.add("active"); },
+    next() { if (!this.root || !this.active) return; const sl = Array.from(this.root.querySelectorAll(".slot")); const i = sl.indexOf(this.active); if (i >= 0 && i < sl.length-1) this.focus(sl[i+1]); },
+    press(k) { const s = this.active; if (!s) return; s.classList.remove("good","bad");
+      if (k === "del") { s.textContent = s.textContent.slice(0,-1); }
+      else if (s.textContent.length < 3) s.textContent += k;
+      if (this.onchange) this.onchange(); }
+  };
+  el.addEventListener("click", e => { const b = e.target.closest("button"); if (b) pad.press(b.dataset.k); });
+  pads[name] = pad; return pad;
+}
+["ueb","exit"].forEach(makePad);
+const val = s => s.textContent === "" ? null : parseInt(s.textContent, 10);
+
+// ---------- Phasen-Leiste (wie in der Präsentation) ----------
+const PH = [
+  { id: "ein", label: "Einstieg", color: "#e08a1e" },
+  { id: "wand", label: "DU · Bruchwand", color: "#7a4fb5" },
+  { id: "wir", label: "WIR · Regel", color: "#3f8f3a" },
+  { id: "ueb", label: "Üben", color: "#c47d00" },
+  { id: "exit", label: "Exit-Ticket", color: "#5d6b7a" },
+];
+let currentTab = "ein";
+function show(id) {
+  if (!PH.some(p => p.id === id)) id = "ein";
+  currentTab = id;
+  PH.forEach(p => $("#" + p.id).classList.toggle("hidden", p.id !== id));
+  const ai = PH.findIndex(p => p.id === id);
+  $("#leiste").innerHTML = PH.map((p, i) => `<button data-go="${p.id}" class="${i === ai ? 'on' : (i < ai ? 'done' : '')}" style="${i === ai ? 'background:' + p.color : ''}">${i < ai ? '✓ ' : ''}${p.label}</button>`).join("");
+  $$("#leiste [data-go]").forEach(b => b.onclick = () => { history.replaceState(null, "", "#" + b.dataset.go); show(b.dataset.go); });
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", () => show(location.hash.slice(1)));
+document.addEventListener("keydown", e => {
+  const p = pads[currentTab]; if (!p) return;
+  if (/^[0-9]$/.test(e.key)) { p.press(e.key); e.preventDefault(); }
+  else if (e.key === "Backspace") { p.press("del"); e.preventDefault(); }
+  else if (e.key === "Tab") { p.next(); e.preventDefault(); }
+});
+function steps(el, items, color) { $(el).innerHTML = items.map((t, i) => `<div><b class="n" style="background:${color}">${i + 1}</b><span>${t}</span></div>`).join(""); }
+
+// ================= DU · BRUCHWAND (gröber) =================
+steps("#wSteps", ["Wählt einen Bruch.", "Probiert <b>alle</b> größeren Streifen, die genau passen.", "Findet die <b>größten</b> Streifen, die noch genau passen. 🏆"], "#7a4fb5");
+const SORTS = [2,3,4,5,6,8,10,12,16];
+const SCOL = {1:"#d9d9d9",2:"#f4a6a6",3:"#f7c98b",4:"#f3e38a",5:"#bfe3a4",6:"#9fd8d0",8:"#a9c8f0",10:"#c7b6ee",12:"#f1b8dc",16:"#d6c3a5"};
+const TARGETS = [[12,16],[8,12],[6,12],[10,12]];
+const W = { z: 12, n: 16, sort: null, count: 0, log: [], done: false };
+function piece(k, cls="") { return `<div class="wp ${cls}" style="width:${100/k}%;background:${SCOL[k]}"><span>${k <= 12 ? "1/" + k : ""}</span></div>`; }
+function wRender() {
+  $("#wTargets").innerHTML = TARGETS.map(([z,n]) => `<button class="btn ${W.z===z&&W.n===n?'sel':''}" data-wt="${z}/${n}"><span style="font-size:24px">${fr(z,n)}</span>${W.log.some(r => r.z===z && r.n===n && r.max) ? '<span class="pokal">🏆</span>' : ''}</button>`).join("");
+  $$("#wTargets [data-wt]").forEach(b => b.onclick = () => { const [z,n] = b.dataset.wt.split("/").map(Number); W.z = z; W.n = n; W.sort = null; W.count = 0; W.done = false; $("#wFb").innerHTML = ""; wRender(); });
+  $("#wGanz").innerHTML = `<div class="wp" style="width:100%;background:${SCOL[1]}"><span>1 Ganzes</span></div>`;
+  $("#wTarget").innerHTML = Array.from({length: W.z}, () => piece(W.n)).join("");
+  $("#wLabT").innerHTML = fr(W.z, W.n);
+  $("#wBuild").innerHTML = W.count ? Array.from({length: W.count}, () => piece(W.sort, W.done ? "ok" : "")).join("") : `<span class="muted" style="padding:0 12px">hierher ziehen</span>`;
+  $("#wLabB").innerHTML = W.count ? fr(W.count, W.sort) : "?";
+  $("#wEnd").style.left = `calc(var(--wl) + (100% - var(--wl)) * ${W.z / W.n})`;
+  $("#wVorrat").innerHTML = SORTS.filter(k => k < W.n).map(k => `<div class="chip" data-k="${k}" style="background:${SCOL[k]};width:calc(${100/k}% - 4px)">1/${k}</div>`).join("");
+  $$("#wVorrat .chip").forEach(c => c.addEventListener("pointerdown", dragStart));
+}
+function wMsg(cls, t) { $("#wFb").innerHTML = `<div class="fb ${cls}">${t}</div>`; }
+function addPiece(k) {
+  if (W.sort && W.sort !== k) { wMsg("info", "Nur <b>eine Sorte</b> pro Reihe! Tippe zuerst auf „Reihe leeren“."); return; }
+  if (W.done) { wMsg("info", "Schon gleich lang! Probiert eine <b>andere Sorte</b> oder einen anderen Bruch."); return; }
+  W.sort = k; W.count++; wCheck(); wRender();
+}
+function wCheck() {
+  const k = W.sort, c = W.count, lhs = c * W.n, rhs = W.z * k;
+  if (lhs === rhs) {
+    W.done = true; const t = W.n / k; const max = gcd(c, k) === 1;
+    wMsg("good", `✅ Genau gleich lang! &nbsp;<span style="font-size:26px">${fr(W.z,W.n)} = ${fr(c,k)}</span>` + (max
+      ? `<br>🏆 <b>Gröber geht es nicht!</b> ${c} und ${k} haben keine gemeinsame Zahl mehr. ${fr(c,k)} ist <b>vollständig gekürzt</b>.`
+      : `<br>Geht es noch gröber? Probiert größere Streifen!`));
+    if (!W.log.some(r => r.z===W.z && r.n===W.n && r.k===k)) { W.log.push({ z: W.z, n: W.n, k, c, t, max }); W.log.sort((a, b) => (a.n - b.n) || (a.z - b.z) || (b.k - a.k)); wLog(); }
+  } else if (lhs > rhs) {
+    if ((W.z * k) % W.n !== 0) wMsg("bad", `Mit ${fr(1,k)}-Streifen geht ${fr(W.z,W.n)} <b>nicht genau</b>. Leert die Reihe und probiert eine andere Sorte.`);
+    else wMsg("bad", "Zu lang! Nehmt einen Streifen weg.");
+  } else $("#wFb").innerHTML = "";
+}
+function wLog() {
+  $("#wLog").innerHTML = W.log.map(r => `<tr><td>${fr(r.z,r.n)}</td><td>${fr(r.c,r.k)}</td><td><span class="pill">: ${r.t}</span></td><td>${r.max ? "🏆 ja" : "nein, geht noch"}</td></tr>`).join("");
+}
+let drag = null;
+function dragStart(e) {
+  const c = e.currentTarget; const k = +c.dataset.k; e.preventDefault();
+  const r = c.getBoundingClientRect(); const g = c.cloneNode(true); g.classList.add("ghost");
+  Object.assign(g.style, { width: r.width + "px", height: r.height + "px", left: r.left + "px", top: r.top + "px" }); document.body.appendChild(g);
+  drag = { k, g, x0: e.clientX, y0: e.clientY, dx: e.clientX - r.left, dy: e.clientY - r.top, moved: false };
+  window.addEventListener("pointermove", dragMove); window.addEventListener("pointerup", dragEnd, { once: true }); window.addEventListener("pointercancel", dragEnd, { once: true });
+}
+function overBuild(e) { const t = $("#wBuild").getBoundingClientRect(); return e.clientX >= t.left && e.clientX <= t.right && e.clientY >= t.top - 30 && e.clientY <= t.bottom + 30; }
+function dragMove(e) { if (!drag) return; if (Math.abs(e.clientX - drag.x0) + Math.abs(e.clientY - drag.y0) > 8) drag.moved = true; drag.g.style.left = (e.clientX - drag.dx) + "px"; drag.g.style.top = (e.clientY - drag.dy) + "px"; $("#wBuild").classList.toggle("hover", overBuild(e)); }
+function dragEnd(e) { window.removeEventListener("pointermove", dragMove); if (!drag) return; const over = overBuild(e), k = drag.k, moved = drag.moved; drag.g.remove(); drag = null; $("#wBuild").classList.remove("hover"); if (over || !moved) addPiece(k); }
+$("#wUndo").onclick = () => { if (W.count) { W.count--; W.done = false; if (!W.count) W.sort = null; else wCheck(); wRender(); } };
+$("#wClear").onclick = () => { W.sort = null; W.count = 0; W.done = false; $("#wFb").innerHTML = ""; wRender(); };
+wRender();
+// Regel-Bausteine
+$$("#rCard .toggle").forEach(b => b.onchange = () => { b.classList.remove("good","bad"); $("#rFb").innerHTML = ""; });
+$("#rCheck").onclick = () => {
+  const ts = $$("#rCard .toggle"); if (ts.some(b => b.value === "")) { $("#rFb").innerHTML = `<div class="fb info">Wähle zuerst in jedem lila Feld ein Wort.</div>`; return; }
+  let ok = true; ts.forEach(b => { const g = b.value === b.dataset.ok; b.classList.toggle("good", g); b.classList.toggle("bad", !g); if (!g) ok = false; });
+  $("#rFb").innerHTML = ok ? `<div class="fb good">✅ Super – genau das heißt „so weit wie möglich kürzen“!</div>` : `<div class="fb bad">Schau in eure Tabelle auf die 🏆-Zeilen: Kann man ${fr(3,4)} oder ${fr(2,3)} noch kürzen? Warum nicht?</div>`;
+};
+
+// ================= WIR · Musterbeispiel (zum Nachschauen) =================
+const REGELN = `<div><b>durch 2:</b> Die Zahl ist gerade (endet auf 0, 2, 4, 6, 8). &nbsp;<span class="muted">z. B. 24</span></div>
+  <div><b>durch 5:</b> Die Zahl endet auf 0 oder 5. &nbsp;<span class="muted">z. B. 35</span></div>
+  <div><b>durch 10:</b> Die Zahl endet auf 0. &nbsp;<span class="muted">z. B. 70</span></div>
+  <div><b>durch 3:</b> Die Quersumme ist durch 3 teilbar. &nbsp;<span class="muted">z. B. 27: 2 + 7 = 9</span></div>`;
+$("#regeln1").innerHTML = REGELN; $("#regeln2").innerHTML = REGELN;
+$("#mBox").innerHTML = `<div style="font-size:19px">Kürze ${fr(24,36)} so weit wie möglich:</div>
+  <div class="row" style="gap:6px;margin:6px 0">${bogenSVG(24,36,2,12,18,0.62,":")}<span style="font-size:26px">=</span>${bogenSVG(12,18,2,6,9,0.62,":")}<span style="font-size:26px">=</span>${bogenSVG(6,9,3,2,3,0.62,":")}</div>
+  <div style="font-size:18px">Bei ${fr(2,3)} geht es nicht mehr: 2 und 3 haben keine gemeinsame Zahl (außer 1). Der Bruch ist <b>vollständig gekürzt</b>.<br>
+  Schneller: direkt mit der größten Zahl kürzen. ${bogenSVG(24,36,12,2,3,0.55,":")}</div>`;
+
+// ================= ÜBEN · Für Schnelle: so weit wie möglich, Schritt für Schritt =================
+const slot = key => `<span class="slot" data-slot="${key}"></span>`;
+const fs = (top, bot) => `<span class="fr slots big"><span>${top}</span><span>${bot}</span></span>`;
+const big = h => `<span class="big">${h}</span>`;
+const U = { task: null, tier: 0, wrong: false, done: false, solved: 0, clean: 0, streak: 0, n: 0 };
+function baseFrac(nMax) { let n, z; do { n = rnd(2, nMax); z = rnd(1, n - 1); } while (gcd(z, n) !== 1); return [z, n]; }
+function weitZahl(lv) {
+  const gs = lv === 2 ? [4,6,8,9,10,12,15,18,20] : [12,14,15,16,18,20,21,24,28,30,36];
+  const max = lv === 2 ? 100 : 150; let z, n, g, c = 0;
+  do { [z, n] = baseFrac(9); g = pick(gs); c++; } while (n * g > max && c < 500);
+  return { Z: z * g, N: n * g, z, n, g };
+}
+function smallP(a, b) { for (const p of [2,3,5,7,11,13]) if (a % p === 0 && b % p === 0) return p; return gcd(a, b); }
+function teilTipp(a, b) {
+  const t = [];
+  if (a % 2 === 0 && b % 2 === 0) t.push(`${a} und ${b} sind beide <b>gerade</b> → durch 2`);
+  if (a % 3 === 0 && b % 3 === 0) t.push(`Die Quersummen von ${a} und ${b} sind durch 3 teilbar → durch 3`);
+  if (a % 5 === 0 && b % 5 === 0) t.push(`${a} und ${b} enden auf 0 oder 5 → durch 5`);
+  return t.length ? t.join("<br>") : `Prüfe 2, 3 und 5. Wenn keine Zahl bei beiden passt, ist der Bruch fertig.`;
+}
+function newTask() {
+  U.n++; const ein = U.n % 3 === 0, w = weitZahl(U.solved >= 6 ? 3 : 2);
+  U.task = { ...w, ein, cur: [w.Z, w.N], chain: [], phase: "step" };
+  U.tier = 0; U.wrong = false; U.done = false; uRender();
+}
+function uRender() {
+  const t = U.task, [a, b] = t.cur;
+  $("#uFb").innerHTML = ""; $("#uHint").innerHTML = ""; $("#uNext").classList.add("hidden");
+  $("#uPrompt").innerHTML = t.ein ? `Kürze ${fr(t.Z,t.N)} so weit wie möglich – in <b>einem</b> Schritt.` : `Kürze ${fr(t.Z,t.N)} so weit wie möglich.`;
+  $("#uVisual").innerHTML = `<div class="muted">✏️ ${t.ein ? "Schreibe die Rechnung mit Bogen ins Heft." : "Schreibe die ganze Kette mit Bögen ins Heft."}</div>`;
+  $("#uKette").innerHTML = t.chain.length ? fr(t.Z,t.N) + t.chain.map(s => ` <span class="op">:${s.c}</span> = ${fr(s.a,s.b)}`).join("") : "";
+  const kp = document.querySelector('[data-pad="ueb"]');
+  if (t.phase === "step") {
+    $("#uAnswer").innerHTML = `Kürzungszahl: ${slot("c")} <span style="margin-left:14px">${big(fr(a,b) + " =")}</span> ${fs(slot("a"), slot("b"))}`;
+    kp.classList.remove("hidden"); $("#uCheck").classList.remove("hidden"); $("#uTipp").classList.remove("hidden");
+    pads.ueb.bind($("#uAnswer"));
+  } else {
+    $("#uAnswer").innerHTML = `<div style="width:100%;font-weight:700;font-size:19px;margin-bottom:6px">Kann man ${fr(a,b)} noch weiter kürzen?</div>
+      <button class="btn" id="wMore">✂️ Ja, weiter kürzen</button> <button class="btn" id="wDone">✅ Nein, fertig</button>`;
+    kp.classList.add("hidden"); $("#uCheck").classList.add("hidden"); $("#uTipp").classList.add("hidden");
+    $("#wMore").onclick = () => { if (gcd(a, b) > 1) { t.phase = "step"; uRender(); }
+      else { U.wrong = true; $("#uFb").innerHTML = `<div class="fb bad">Prüfe noch einmal: ${teilTipp(a, b)}<br>${a} und ${b} haben keine gemeinsame Zahl mehr. Tippe auf „Nein, fertig“.</div>`; } };
+    $("#wDone").onclick = () => { if (gcd(a, b) === 1) solved(`Vollständig gekürzt: ${fr(t.Z,t.N)} = ${fr(a,b)}`);
+      else { U.wrong = true; $("#uFb").innerHTML = `<div class="fb bad">Noch nicht fertig! ${teilTipp(a, b)}</div>`; } };
+  }
+}
+function hints() { const t = U.task, [a, b] = t.cur, p = t.ein ? gcd(a, b) : smallP(a, b);
+  if (t.ein) return [`Suche die <b>größte</b> Zahl, durch die ${a} und ${b} beide teilbar sind. Tipp: Kürze erst im Kopf in kleinen Schritten.`,
+    `Gemeinsame Teiler: ${[...Array(b).keys()].map(i => i + 1).filter(d => d > 1 && a % d === 0 && b % d === 0).join(", ")}`, bogenSVG(a,b,p,a/p,b/p,0.6,":")];
+  return [teilTipp(a, b), `Kürze mit ${p}: ${a} : ${p} = ? und ${b} : ${p} = ?`, bogenSVG(a,b,p,a/p,b/p,0.6,":")]; }
+function showHint() { const h = hints(); U.tier = Math.min(U.tier + 1, 3);
+  $("#uHint").innerHTML = `<div class="hint">${h.slice(0, U.tier).map((x,i) => `<div class="t"><span class="k">Tipp ${i+1}</span><span>${x}</span></div>`).join("")}</div>`; }
+$("#uTipp").onclick = () => { if (!U.done) showHint(); };
+$("#uCheck").onclick = () => {
+  const t = U.task; if (U.done || t.phase !== "step") return;
+  const g = k => { const s = $(`#uAnswer [data-slot="${k}"]`); return s ? val(s) : null; };
+  const mark = (k, good) => { const s = $(`#uAnswer [data-slot="${k}"]`); if (s) { s.classList.toggle("good", good); s.classList.toggle("bad", !good); } };
+  if (["c","a","b"].some(k => g(k) === null)) { $("#uFb").innerHTML = `<div class="fb info">Fülle zuerst alle Kästchen aus.</div>`; return; }
+  const [a, b] = t.cur, c = g("c"), okc = t.ein ? c === gcd(a, b) : (c > 1 && a % c === 0 && b % c === 0);
+  const r = { c: okc, a: okc && g("a") === a / c, b: okc && g("b") === b / c };
+  Object.entries(r).forEach(([k, v]) => mark(k, v));
+  if (r.c && r.a && r.b) {
+    t.chain.push({ c, a: a / c, b: b / c }); t.cur = [a / c, b / c];
+    if (t.ein) { solved(`${fr(t.Z,t.N)} = ${fr(a/c,b/c)} mit der größten Zahl ${c}.`); return; }
+    t.phase = "decide"; uRender(); $("#uFb").innerHTML = `<div class="fb good">✅ Richtig gekürzt!</div>`; return; }
+  U.wrong = true;
+  if (!r.c) $("#uFb").innerHTML = `<div class="fb bad">${t.ein && c > 1 && a % c === 0 && b % c === 0 ? `Mit ${c} geht es, aber es gibt eine <b>größere</b> Zahl.` : c <= 1 ? "Die Kürzungszahl muss größer als 1 sein." : `${a} und ${b} sind nicht <b>beide</b> durch ${c} teilbar.`}</div>`;
+  else $("#uFb").innerHTML = `<div class="fb bad">Die Kürzungszahl passt. Rechne noch einmal: ${a} : ${c} und ${b} : ${c}.</div>`;
+  if (U.tier < 3) showHint();
+};
+function solved(extra) {
+  U.done = true; U.solved++; const clean = U.tier === 0 && !U.wrong;
+  if (clean) { U.clean++; U.streak++; } else U.streak = 0;
+  $("#uFb").innerHTML = `<div class="fb good">✅ ${pick(["Super!","Richtig!","Stark!","Genau so!","Klasse!"])} ${extra}</div>`;
+  $("#uKette").innerHTML = fr(U.task.Z,U.task.N) + U.task.chain.map(s => ` <span class="op">:${s.c}</span> = ${fr(s.a,s.b)}`).join("");
+  $("#uAnswer").innerHTML = ""; document.querySelector('[data-pad="ueb"]').classList.add("hidden");
+  $("#uCheck").classList.add("hidden"); $("#uTipp").classList.add("hidden"); $("#uNext").classList.remove("hidden");
+  $("#uSolved").textContent = U.solved; $("#uClean").textContent = U.clean; $("#uStreak").textContent = U.streak;
+  if (U.solved === 6) { $("#uBanner").textContent = "🏆 6 Aufgaben geschafft! Ab jetzt kommen größere Zahlen."; $("#uBanner").classList.remove("hidden"); }
+}
+$("#uNext").onclick = newTask;
+$("#uToggle").onclick = () => { const h = $("#uSchnell").classList.toggle("hidden"); $("#uToggle").textContent = h ? "⚡ Für Schnelle" : "⚡ Für Schnelle ausblenden"; };
+newTask();
+
+// ================= EXIT-TICKET =================
+const X = { i: 0, res: [], tf: null, tasks: [
+  { prompt: () => `Kürze ${fr(18,30)} so weit wie möglich.`, html: () => `<span class="big">${fr(18,30)} =</span> <span class="fr slots big"><span>${slot("a")}</span><span>${slot("b")}</span></span>`, check: g => g("a")===3 && g("b")===5, need: ["a","b"] },
+  { prompt: () => `Durch welche Zahl kannst du ${fr(15,25)} kürzen?`, tf: true, html: () => `<div class="row">
+      <button class="btn" data-tf="2" style="font-size:24px;min-width:80px">2</button>
+      <button class="btn" data-tf="3" style="font-size:24px;min-width:80px">3</button>
+      <button class="btn" data-tf="5" style="font-size:24px;min-width:80px">5</button></div>`, check: () => X.tf === 5 },
+  { prompt: () => `Mia rechnet: ${fr(16,24)} = ${fr(8,12)}. „Fertig, vollständig gekürzt!“ Was stimmt?`, tf: true, html: () => `<div style="display:grid;gap:10px;width:100%">
+      <button class="btn" data-tf="1" style="text-align:left">A · Ja, sie hat richtig gekürzt. Sie ist fertig.</button>
+      <button class="btn" data-tf="0" style="text-align:left">B · Nein. ${fr(8,12)} kann man noch kürzen: ${fr(8,12)} = ${fr(2,3)}.</button>
+      <button class="btn" data-tf="2" style="text-align:left">C · Nein, man darf nur durch 2 kürzen.</button>
+      <button class="btn" data-tf="3" style="text-align:left">D · Nein, ${fr(16,24)} kann man gar nicht kürzen.</button></div>`, check: () => X.tf === 0 }
+]};
+$("#xGo").onclick = () => { X.i = 0; X.res = []; $("#xStart").classList.add("hidden"); $("#xEnd").classList.add("hidden"); $("#xTask").classList.remove("hidden"); xRender(); };
+function xRender() {
+  const t = X.tasks[X.i]; $("#xNr").textContent = `Aufgabe ${X.i+1} von 3`;
+  $("#xPrompt").innerHTML = t.prompt(); $("#xAnswer").innerHTML = t.html(); $("#xFb").innerHTML = "";
+  document.querySelector('[data-pad="exit"]').classList.toggle("hidden", !!t.tf); X.tf = null;
+  if (t.tf) $$("#xAnswer [data-tf]").forEach(b => b.onclick = () => { $$("#xAnswer [data-tf]").forEach(x => x.classList.toggle("sel", x === b)); X.tf = +b.dataset.tf; });
+  pads.exit.bind($("#xAnswer"));
+}
+$("#xNext").onclick = () => {
+  const t = X.tasks[X.i]; const g = k => { const s = $(`#xAnswer [data-slot="${k}"]`); return s ? val(s) : null; };
+  if (t.tf ? X.tf === null : t.need.some(k => g(k) === null)) { $("#xFb").innerHTML = `<div class="fb info">Bitte zuerst antworten.</div>`; return; }
+  X.res.push(!!t.check(g)); X.i++; if (X.i < 3) xRender(); else xEnd();
+};
+function xEnd() {
+  $("#xTask").classList.add("hidden");
+  const n = X.res.filter(Boolean).length;
+  const col = n === 3 ? "#e5f4e1" : n === 2 ? "#fff3b0" : "#fbe9e7", emo = n === 3 ? "🟢" : n === 2 ? "🟡" : "🔴";
+  const start = n === 3 ? "★" : n === 2 ? "Basis" : "Basis mit Hilfe";
+  const now = new Date(); const zeit = now.toLocaleDateString("de-DE") + ", " + now.toLocaleTimeString("de-DE", {hour:"2-digit", minute:"2-digit"});
+  $("#xEnd").innerHTML = `<div class="exitres" style="background:${col};min-height:60vh;display:flex;flex-direction:column;justify-content:center">
+    <div style="font-size:90px;line-height:1">${emo}</div><div class="n">${n} / 3</div>
+    <div style="font-size:24px;margin:8px 0">${X.res.map((r,i) => `Aufgabe ${i+1}: ${r ? "✅" : "❌"}`).join(" &nbsp; ")}</div>
+    <div class="muted" style="margin-top:10px">Lass das Ergebnis offen – deine Lehrkraft schaut kurz vorbei. · ${zeit}</div></div>`;
+  $("#xEnd").classList.remove("hidden");
+}
+
+show(location.hash.slice(1) || "ein");
+
+</script>
+</body>
+</html>
