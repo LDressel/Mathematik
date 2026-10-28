@@ -82,6 +82,7 @@ main{max-width:1000px;margin:0 auto;padding:14px}
 .confetti i{position:absolute;top:-20px;width:14px;height:20px;border-radius:3px;animation:fall 2.4s linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
 .small{font-size:18px;color:var(--muted)}
+.frline .small{font-size:22px;font-weight:700}
 @media (max-width:640px){
   header h1{display:none}.dots{gap:4px}.dots span{width:24px;height:24px;font-size:16px}
   body{font-size:19px}.bubble{font-size:21px}.fr.xl{font-size:48px}.opt{font-size:34px;min-width:90px;min-height:90px}.bruno{width:70px;height:76px}
@@ -126,6 +127,49 @@ const MISSIONS = [
       {t:"make", a:[2,1], b:[4,3], f:2}, {t:"make", a:[3,2], b:[6,4], f:2}, {t:"make", a:[2,1], b:[6,2], f:3},
     ]},
 ];
+const F = (a,b,c="l") => `<span class="fr ${c}"><span>${a}</span><span>${b}</span></span>`;
+function uniq3(r, cands){ const o=[r]; for(const x of cands) if(x>0 && !o.includes(x) && o.length<3) o.push(x); return o; }
+// Mission 5: Erweitern mit Malaufgabe
+const M5 = [[1,2,2],[1,3,2],[2,3,2],[1,2,3],[3,4,2],[2,5,2]].map(([a,b,f])=>({t:"steps",
+  head:`${F(a,b,"xl")} <span class="small">jedes Stück in ${f} Teile</span>`, bars:[[b,a,f]],
+  steps:[{q:`Oben · ${f} und unten · ${f}. Welcher Bruch passt?`, say:`Rechne oben mal ${f} und unten mal ${f}. Welcher Bruch passt?`,
+    opts:[F(a*f,b*f),F(a,b*f),F(a+f,b+f)], right:0, tip:`${a} · ${f} = ${a*f} &nbsp; und &nbsp; ${b} · ${f} = ${b*f}`, tipSay:`${a} mal ${f} ist ${a*f}. ${b} mal ${f} ist ${b*f}.`}],
+  end:`${F(a,b)} = ${F(a*f,b*f)} &nbsp; Gleich viel! 🎉`, endSay:"Super! Der Bruch ist gleich viel."}));
+// Mission 6: Kürzen mit der Malreihe
+const M6 = [[2,4,2],[4,6,2],[6,8,2],[3,9,3],[6,9,3],[10,15,5]].map(([z,n,g])=>{
+  const reihe = x => Array.from({length:x/g},(_,i)=>(i+1)*g).join(", ");
+  return {t:"steps", head:`${F(z,n,"xl")} <span class="small">Malreihe: ${g}er</span>`,
+  steps:[
+    {q:`${z} = ? · ${g}`, say:`${z} ist wie viel mal ${g}?`, opts:uniq3(z/g,[z/g+1,z/g+2,z]), right:0, num:true,
+     tip:`Zähle die ${g}er-Reihe: ${reihe(z)}`, tipSay:`Zähle die ${g}er Reihe bis ${z}.`, reveal:`${z} = <b>${z/g}</b> · ${g}`},
+    {q:`${n} = ? · ${g}`, say:`${n} ist wie viel mal ${g}?`, opts:uniq3(n/g,[n/g+1,n/g-1,n]), right:0, num:true,
+     tip:`Zähle die ${g}er-Reihe: ${reihe(n)}`, tipSay:`Zähle die ${g}er Reihe bis ${n}.`, reveal:`${n} = <b>${n/g}</b> · ${g}`},
+    {q:"Welcher Bruch kommt heraus?", say:"Welcher Bruch kommt heraus?", opts:[F(z/g,n/g),F(z/g,n),F(z,n/g)], right:0,
+     tip:"Oben die erste Zahl, unten die zweite Zahl.", tipSay:"Nimm oben die erste Zahl und unten die zweite Zahl."}],
+  end:`${F(z,n)} = ${F(z/g,n/g)} &nbsp; Gekürzt! 🎉`, endSay:"Super! Du hast gekürzt."};});
+// Mission 7: Wer hat mehr?
+const M7 = [[1,4,3,4,1],[5,6,2,6,1],[2,3,2,3,1],[1,2,3,4,1],[7,10,3,10,0],[4,8,5,8,0]].map(([a,b,c,d,pic])=>{
+  const va=a/b, vb=c/d, r = va<vb?0:va>vb?1:2, sg=["&lt;","&gt;","="][r];
+  return {t:"steps", head:`${F(a,b,"xl")} <span class="slotq" style="font-size:52px">?</span> ${F(c,d,"xl")}`, bars: pic?[[b,a],[d,c]]:null,
+  steps:[{q:"Welches Zeichen passt?", say:"Welches Zeichen passt? Kleiner, größer oder gleich?", opts:["&lt; kleiner","&gt; größer","= gleich"], right:r, word:true,
+    tip: b===d ? "Gleicher Nenner: Mehr bunte Stücke = mehr. Die offene Seite zeigt zum Größeren." : "Schau auf das Bild: Wo hört das Bunte auf?",
+    tipSay: b===d ? "Gleicher Nenner. Mehr bunte Stücke ist mehr." : "Schau auf das Bild. Wo hört das Bunte auf?"}],
+  end:`${F(a,b)} <b style="font-size:44px">${sg}</b> ${F(c,d)} 🎉`, endSay:"Richtig!"};});
+// Mission 8: Geld & Komma
+const M8 = [
+  {head:`${F(1,2,"xl")} <b style="font-size:40px">€</b>`, bars:[[2,1]], q:"Wie viel Cent sind das?", say:"Ein halber Euro. Wie viel Cent sind das?", opts:["50 ct","12 ct","20 ct"], tip:"1 € = 100 ct. Die Hälfte von 100 ist 50.", end:"½ € = 50 ct = 0,50 €"},
+  {head:`${F(1,4,"xl")} <b style="font-size:40px">€</b>`, bars:[[4,1]], q:"Wie viel Cent sind das?", say:"Ein Viertel Euro. Wie viel Cent sind das?", opts:["25 ct","14 ct","40 ct"], tip:"100 ct in 4 gleiche Teile: 25 + 25 + 25 + 25", end:"¼ € = 25 ct = 0,25 €"},
+  {head:`${F(3,4,"xl")} <b style="font-size:40px">€</b>`, bars:[[4,3]], q:"Wie viel Cent sind das?", say:"Drei Viertel Euro. Wie viel Cent sind das?", opts:["75 ct","34 ct","30 ct"], tip:"¼ € = 25 ct. Drei Viertel: 25 + 25 + 25", end:"¾ € = 75 ct = 0,75 €"},
+  {head:F(3,10,"xl"), bars:[[10,3]], q:"Welche Kommazahl passt?", say:"Drei Zehntel. Welche Kommazahl passt?", opts:["0,3","3,10","0,03"], tip:"Zehntel stehen direkt nach dem Komma.", end:"3/10 = 0,3"},
+  {head:F(7,10,"xl"), bars:[[10,7]], q:"Welche Kommazahl passt?", say:"Sieben Zehntel. Welche Kommazahl passt?", opts:["0,7","7,1","0,07"], tip:"Zehntel stehen direkt nach dem Komma.", end:"7/10 = 0,7"},
+  {head:F(25,100,"xl"), bars:null, q:"Welche Kommazahl passt?", say:"25 Hundertstel. Welche Kommazahl passt?", opts:["0,25","25,0","0,025"], tip:"Hundertstel: zwei Stellen nach dem Komma – wie 25 ct = 0,25 €.", end:"25/100 = 0,25"},
+].map(o=>({t:"steps", head:o.head, bars:o.bars, steps:[{q:o.q, say:o.say, opts:o.opts, right:0, word:true, tip:o.tip, tipSay:o.tip.replace(/[½¼¾€·–]/g," ")}], end:o.end+" 🎉", endSay:"Super!"}));
+MISSIONS.push(
+  { id:"maltrick", title:"Mal-Trick", ic:"✖️", sticker:"🔭", sname:"Fernrohr", tasks:M5 },
+  { id:"malreihe", title:"Malreihe", ic:"📏", sticker:"🧬", sname:"DNA", tasks:M6 },
+  { id:"mehr", title:"Wer hat mehr?", ic:"🍫", sticker:"🌡️", sname:"Thermometer", tasks:M7 },
+  { id:"geld", title:"Geld & Komma", ic:"💶", sticker:"🛰️", sname:"Satellit", tasks:M8 },
+);
 const BONUS = { sticker:"🏆", sname:"Bruch-Profi" };
 
 // ============================================================
@@ -264,7 +308,7 @@ function home(){
     ${MISSIONS.map((m,j)=>`<button class="tile" data-m="${j}">
       <div class="ic">${m.ic}</div><b>${j+1}. ${m.title}</b>
       <div class="st">${S.stickers.has(m.id)?m.sticker:"⬜"}</div></button>`).join("")}
-    <button class="tile" id="albumBtn"><div class="ic">📒</div><b>Mein Sticker-Album</b><div class="st">${S.stickers.size + (all?1:0)} / 5</div></button>
+    <button class="tile" id="albumBtn"><div class="ic">📒</div><b>Mein Sticker-Album</b><div class="st">${S.stickers.size + (all?1:0)} / ${MISSIONS.length+1}</div></button>
   </div>`;
   document.getElementById("sayBtn").onclick=()=>say("Hallo! Ich bin Bruno. Komm mit in mein Bruch-Labor! Tippe auf eine Mission.", true);
   app.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>startMission(+b.dataset.m));
@@ -278,7 +322,7 @@ function album(){
       ${MISSIONS.map(m=>`<div class="stk ${S.stickers.has(m.id)?"got":""}">${S.stickers.has(m.id)?m.sticker:"?"}<small>${m.title}</small></div>`).join("")}
       <div class="stk ${all?"got":""}">${all?BONUS.sticker:"?"}<small>${BONUS.sname}</small></div>
     </div>
-    <p class="small center">Den goldenen Pokal gibt es, wenn alle 4 Missionen geschafft sind.</p>
+    <p class="small center">Den goldenen Pokal gibt es, wenn alle Missionen geschafft sind.</p>
     <div class="row"><button class="btn main" id="back">🏠 Zum Start</button></div></div>`;
   document.getElementById("back").onclick=home;
 }
@@ -297,6 +341,7 @@ function startTask(){
   if(t.t==="glue"){ S.p = makeBar(t.n,t.k); S.orig = makeBar(t.n,t.k); S.phase="glue"; S.cnt={}; S.glued=new Set(); }
   if(t.t==="same"){ S.p = makeBar(...t.a); S.q = makeBar(...t.b); S.phase="same"; }
   if(t.t==="make"){ S.p = makeBar(...t.a); S.q = makeBar(...t.b); S.phase="cut"; }
+  if(t.t==="steps"){ S.phase=0; S.revealed=[]; S.ord={}; }
   render(true);
 }
 function next(){
@@ -347,6 +392,10 @@ function instr(){
     if(ph==="cut") return [`Die Stücke sind verschieden groß. ✂️ Schneide oben jedes Stück in ${t.f} Teile.`, `Die Stücke sind verschieden groß. Schneide oben jedes Stück in ${num(t.f)} Teile.`];
     if(ph==="which") return ["Jetzt sind alle Stücke gleich groß. Wo sind mehr bunte Stücke?", "Jetzt sind alle Stücke gleich groß. Zähle die bunten Stücke. Wo sind mehr bunte Stücke? Oben, unten, oder ist es gleich viel?"];
     if(ph==="end") return [S.endTxt, S.endTxt];
+  }
+  if(t.t==="steps"){
+    if(ph==="end") return [t.end, t.endSay];
+    const st=t.steps[ph]; return [st.q, st.say];
   }
   return ["",""];
 }
@@ -405,6 +454,18 @@ function render(speak){
     if(S.phase==="end") body += `<div class="row" style="margin-top:12px"><button class="btn main" id="nextBtn">Weiter ➜</button></div>`;
   }
 
+  if(t.t==="steps"){
+    body = `<div class="frline">${t.head}</div>`;
+    if(t.bars) body += `<div class="bars">${t.bars.map(b=>barSVG(makeBar(b[0],b[1]),{numbers:S.help, guides:b[2]||0})).join("")}</div>`;
+    body += S.revealed.map(r=>`<div class="fb info" style="font-size:30px">${r}</div>`).join("");
+    if(S.phase!=="end"){
+      const st=t.steps[S.phase];
+      if(!S.ord[S.phase]) S.ord[S.phase]=shuffle(st.opts.map((_,j)=>j));
+      body += `<div class="opts">${S.ord[S.phase].map(j=>`<button class="opt ${st.num?"num":""} ${st.word?"word":""}" data-c="${j}">${st.opts[j]}</button>`).join("")}</div>`;
+      if(S.help && st.tip) body += `<div class="fb info">💡 ${st.tip}</div>`;
+      body += `<div class="row" style="margin-top:12px"><button class="btn tipp" id="tipp">💡 Tipp</button></div>`;
+    } else body += `<div class="row" style="margin-top:12px"><button class="btn main" id="nextBtn">Weiter ➜</button></div>`;
+  }
   const fb = S.fb ? `<div class="fb ${S.fb[0]}">${S.fb[1]}</div>` : "";
   S.fb=null;
   app.innerHTML = `<div class="card talk">${brunoSVG(mood)}
@@ -430,7 +491,20 @@ function bad(msg, spoken){
 function wire(){
   const t=S.t;
   const tipp=document.getElementById("tipp");
-  if(tipp) tipp.onclick=()=>{ S.help=true; render(false); say("Ich helfe dir. Zähle mit den Zahlen.", true); };
+  if(tipp) tipp.onclick=()=>{ S.help=true; render(false);
+    if(t.t==="steps" && S.phase!=="end") say(t.steps[S.phase].tipSay || "Schau auf den Tipp.", true);
+    else say("Ich helfe dir. Zähle mit den Zahlen.", true); };
+  if(t.t==="steps" && S.phase!=="end"){
+    const st=t.steps[S.phase];
+    app.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{
+      if(+b.dataset.c===st.right){
+        if(st.reveal) S.revealed.push(st.reveal);
+        S.wrong=0; S.help=false;
+        if(S.phase < t.steps.length-1){ S.phase++; S.mood="happy"; render(true); }
+        else { S.phase="end"; good(); render(true); }
+      } else { b.classList.add("bad"); if(st.tip) S.help=true; setTimeout(()=>bad("Fast! Schau auf den Tipp.", "Fast! "+(st.tipSay||"")),450); }
+    });
+  }
   const nb=document.getElementById("nextBtn");
   if(nb) nb.onclick=next;
 
