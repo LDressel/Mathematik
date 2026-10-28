@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Brunos Bruch-Labor</title>
+<style>
+:root{
+  --bg:#f4f7fb; --card:#ffffff; --ink:#1d2733; --muted:#5d6b7a; --line:#33465a;
+  --blue:#1f5f99; --blueSoft:#e6eef7; --piece:#f7a541; --pieceDark:#c97a10;
+  --teal:#3fb3a3; --tealSoft:#e3f6f2;
+  --green:#3f8f3a; --greenSoft:#e5f4e1; --red:#c0392b; --redSoft:#fbe9e7;
+  --yellow:#fff3b0; --yellowLine:#e8b400;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+body{font-size:22px;line-height:1.3;padding-bottom:30px}
+header{position:sticky;top:0;z-index:5;background:var(--blue);color:#fff;padding:8px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.15);min-height:66px}
+header h1{font-size:22px;margin:0;font-weight:800}
+.hbtn{font:inherit;font-size:26px;border:0;border-radius:14px;background:rgba(255,255,255,.18);color:#fff;min-width:56px;min-height:52px;cursor:pointer}
+.hbtn.off{opacity:.45}
+.dots{display:flex;gap:6px;margin-left:auto;font-size:26px}
+.dots span{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center}
+.dots span.now{outline:3px solid #fff}
+main{max-width:1000px;margin:0 auto;padding:14px}
+.card{background:var(--card);border-radius:22px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.talk{display:flex;gap:12px;align-items:center}
+.bruno{width:96px;height:104px;flex:0 0 auto}
+.bruno.happy{animation:hop .6s ease 2}
+.bruno.think{animation:wig .5s ease 1}
+@keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes wig{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+.bubble{position:relative;flex:1;background:var(--tealSoft);border:3px solid var(--teal);border-radius:20px;padding:14px 16px;font-size:26px;font-weight:700;display:flex;gap:12px;align-items:center}
+.bubble .say{flex:0 0 auto;font-size:30px;border:0;background:#fff;border-radius:50%;width:60px;height:60px;box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:pointer}
+.bubble .txt{flex:1}
+.btn{font:inherit;font-weight:800;border:0;border-radius:18px;padding:12px 22px;min-height:68px;min-width:68px;background:var(--blueSoft);color:var(--blue);cursor:pointer;font-size:26px}
+.btn.main{background:var(--blue);color:#fff}
+.btn.ok{background:var(--green);color:#fff}
+.btn.tipp{background:var(--yellow);color:#6b5200;border:3px solid var(--yellowLine)}
+.btn:active{transform:scale(.97)}
+.row{display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center}
+.bars{display:flex;flex-direction:column;gap:18px;margin:10px 0}
+.bars svg{width:100%;height:auto;display:block;touch-action:manipulation}
+.barlab{font-size:18px;color:var(--muted);font-weight:700;margin-bottom:4px}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.02;font-weight:900;margin:0 6px}
+.fr>span:first-child{border-bottom:5px solid var(--ink);padding:0 8px 3px;color:var(--pieceDark)}
+.fr>span:last-child{padding:3px 8px 0;color:var(--blue)}
+.fr.xl{font-size:64px}
+.fr.l{font-size:44px}
+.slotq{color:#b8c4d0}
+.frline{display:flex;align-items:center;justify-content:center;gap:10px;font-size:52px;font-weight:900;margin:4px 0}
+.legend{display:flex;flex-direction:column;gap:22px;font-size:20px;font-weight:700;color:var(--muted)}
+.targets{display:flex;gap:8px;justify-content:center;margin:4px 0}
+.targets i{width:40px;height:40px;border-radius:10px;border:4px dashed var(--pieceDark);display:block}
+.targets i.full{background:var(--piece);border-style:solid}
+.opts{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.opt{font:inherit;background:#fff;border:4px solid #c9d6e3;border-radius:22px;min-width:120px;min-height:110px;padding:10px 18px;cursor:pointer;font-weight:900;font-size:44px;color:var(--ink)}
+.opt.num{font-size:52px;min-width:110px}
+.opt.bad{border-color:var(--red);background:var(--redSoft);animation:wig .4s}
+.opt.good{border-color:var(--green);background:var(--greenSoft)}
+.opt.word{font-size:28px;min-height:90px}
+.fb{border-radius:18px;padding:14px 18px;margin-top:14px;font-weight:800;font-size:26px;text-align:center}
+.fb.good{background:var(--greenSoft);color:#245d20}
+.fb.bad{background:var(--redSoft);color:#8e2a20}
+.fb.info{background:var(--blueSoft);color:var(--blue)}
+.home-title{font-size:30px;font-weight:900;margin:0 0 4px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.tile{font:inherit;background:#fff;border:0;border-radius:24px;padding:18px 14px;box-shadow:0 2px 6px rgba(0,0,0,.1);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;color:var(--ink)}
+.tile .ic{font-size:56px}
+.tile b{font-size:24px}
+.tile .st{font-size:34px;height:44px}
+.tile svg{width:100%;height:auto}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}
+.stk{border-radius:50%;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:72px;background:#fff;border:6px dashed #c9d6e3}
+.stk.got{border:6px solid var(--yellowLine);background:radial-gradient(circle,#fffbe0,#ffe28a)}
+.stk small{font-size:17px;font-weight:800;color:var(--muted)}
+.big-stk{width:220px;height:220px;margin:10px auto;font-size:120px;animation:pop .8s ease}
+@keyframes pop{0%{transform:scale(.2) rotate(-30deg)}70%{transform:scale(1.15) rotate(8deg)}100%{transform:scale(1)}}
+.center{text-align:center}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}
+.confetti i{position:absolute;top:-20px;width:14px;height:20px;border-radius:3px;animation:fall 2.4s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.small{font-size:18px;color:var(--muted)}
+@media (max-width:640px){
+  header h1{display:none}.dots{gap:4px}.dots span{width:24px;height:24px;font-size:16px}
+  body{font-size:19px}.bubble{font-size:21px}.fr.xl{font-size:48px}.opt{font-size:34px;min-width:90px;min-height:90px}.bruno{width:70px;height:76px}
+}
+</style>
+</head>
+<body>
+<header>
+  <button class="hbtn" id="homeBtn" aria-label="Start">🏠</button>
+  <h1 id="title">Brunos Bruch-Labor</h1>
+  <div class="dots" id="dots"></div>
+  <button class="hbtn" id="voiceBtn" aria-label="Vorlesen an oder aus">🔊</button>
+</header>
+<main id="app"></main>
+<div class="confetti" id="confetti"></div>
+
+<script>
+// ============================================================
+// Daten: 4 Missionen, je 6 Aufgaben (gleiche Aufgabenarten hintereinander)
+// ============================================================
+const MISSIONS = [
+  { id:"malen", title:"Brüche malen", ic:"🖍️", sticker:"🔬", sname:"Mikroskop",
+    tasks:[
+      {t:"paint", n:2, k:1}, {t:"paint", n:4, k:1}, {t:"paint", n:4, k:3},
+      {t:"name", n:3, k:2, opts:[[2,3],[1,3],[3,2]]},
+      {t:"name", n:4, k:1, opts:[[1,4],[3,4],[1,3]]},
+      {t:"name", n:6, k:3, opts:[[3,6],[2,6],[3,5]]},
+    ]},
+  { id:"schneiden", title:"Feiner schneiden", ic:"✂️", sticker:"🧪", sname:"Reagenzglas",
+    tasks:[
+      {t:"cut", n:2, k:1, f:2}, {t:"cut", n:3, k:1, f:2}, {t:"cut", n:2, k:1, f:3},
+      {t:"cut", n:3, k:2, f:2}, {t:"cut", n:4, k:1, f:2}, {t:"cut", n:4, k:3, f:2},
+    ]},
+  { id:"kleben", title:"Zusammenkleben", ic:"🔗", sticker:"🧲", sname:"Magnet",
+    tasks:[
+      {t:"glue", n:4, k:2, g:2}, {t:"glue", n:6, k:2, g:2}, {t:"glue", n:8, k:4, g:2},
+      {t:"glue", n:8, k:6, g:2}, {t:"glue", n:6, k:4, g:2}, {t:"glue", n:6, k:3, g:3},
+    ]},
+  { id:"gleich", title:"Gleich viel?", ic:"⚖️", sticker:"🚀", sname:"Rakete",
+    tasks:[
+      {t:"same", a:[2,1], b:[4,2]}, {t:"same", a:[3,1], b:[2,1]}, {t:"same", a:[4,3], b:[8,6]},
+      {t:"make", a:[2,1], b:[4,3], f:2}, {t:"make", a:[3,2], b:[6,4], f:2}, {t:"make", a:[2,1], b:[6,2], f:3},
+    ]},
+];
+const BONUS = { sticker:"🏆", sname:"Bruch-Profi" };
+
+// ============================================================
+// Sprache
+// ============================================================
+const WORD = ["null","eins","zwei","drei","vier","fünf","sechs","sieben","acht","neun","zehn"];
+const DEN = {2:["Halb","Halbe"],3:["Drittel","Drittel"],4:["Viertel","Viertel"],6:["Sechstel","Sechstel"],8:["Achtel","Achtel"]};
+const frSay = (k,n) => (k===1?"ein":WORD[k]) + " " + DEN[n][k===1?0:1];
+const num = k => k===1 ? "ein" : WORD[k];
+let voiceOn = true, deVoice = null;
+function pickVoice(){ try{ const v = speechSynthesis.getVoices(); deVoice = v.find(x=>/^de/i.test(x.lang)) || null; }catch(e){} }
+try{ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }catch(e){}
+function say(text, force){
+  if(!voiceOn && !force) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "de-DE"; if(deVoice) u.voice = deVoice; u.rate = 0.9;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+// ============================================================
+// Bruno (eigene Figur)
+// ============================================================
+function brunoSVG(mood){
+  const mouth = mood==="happy" ? '<path d="M44 66 Q60 82 76 66" stroke="#1d2733" stroke-width="5" fill="#ff8a7a" stroke-linecap="round"/>'
+    : mood==="think" ? '<path d="M48 72 Q60 66 72 72" stroke="#1d2733" stroke-width="5" fill="none" stroke-linecap="round"/>'
+    : '<path d="M46 68 Q60 77 74 68" stroke="#1d2733" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  const eyes = mood==="happy"
+    ? '<path d="M40 54 Q47 46 54 54" stroke="#1d2733" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M66 54 Q73 46 80 54" stroke="#1d2733" stroke-width="5" fill="none" stroke-linecap="round"/>'
+    : '<circle cx="47" cy="52" r="7" fill="#1d2733"/><circle cx="73" cy="52" r="7" fill="#1d2733"/><circle cx="49" cy="50" r="2.5" fill="#fff"/><circle cx="75" cy="50" r="2.5" fill="#fff"/>';
+  return `<svg class="bruno ${mood||""}" viewBox="0 0 120 130" aria-hidden="true">
+    <line x1="60" y1="8" x2="60" y2="26" stroke="#1d2733" stroke-width="4"/>
+    <circle cx="60" cy="9" r="8" fill="#f7a541" stroke="#1d2733" stroke-width="3"/>
+    <rect x="12" y="44" width="10" height="22" rx="5" fill="#f7a541" stroke="#1d2733" stroke-width="3"/>
+    <rect x="98" y="44" width="10" height="22" rx="5" fill="#f7a541" stroke="#1d2733" stroke-width="3"/>
+    <rect x="20" y="24" width="80" height="68" rx="20" fill="#3fb3a3" stroke="#1d2733" stroke-width="4"/>
+    <rect x="30" y="34" width="60" height="48" rx="14" fill="#eafbf8" stroke="#1d2733" stroke-width="3"/>
+    ${eyes}${mood==="happy"?'<circle cx="38" cy="66" r="5" fill="#ffb3a8"/><circle cx="82" cy="66" r="5" fill="#ffb3a8"/>':""}${mouth}
+    <rect x="38" y="92" width="44" height="30" rx="9" fill="#3fb3a3" stroke="#1d2733" stroke-width="4"/>
+    <rect x="50" y="100" width="20" height="14" rx="3" fill="#f7a541" stroke="#1d2733" stroke-width="2.5"/>
+    <line x1="60" y1="100" x2="60" y2="114" stroke="#1d2733" stroke-width="2.5"/>
+  </svg>`;
+}
+
+// ============================================================
+// Streifen zeichnen
+// ============================================================
+const makeBar = (n,k) => Array.from({length:n},(_,i)=>({w:1/n, c:i<k}));
+const coloredW = p => p.filter(x=>x.c).reduce((s,x)=>s+x.w,0);
+// opts: {id, numbers:true|"colored", tapPieces:true, guides:f, groups:g, markLine:x(0..1)}
+function barSVG(pieces, o={}){
+  const W=1000, H=150, pad=6, iw=W-2*pad;
+  let x=pad, out="";
+  pieces.forEach((p,i)=>{
+    const w=p.w*iw;
+    const clickable = o.tapPieces && !(o.skipDone && p.done);
+    out += `<rect data-i="${i}" x="${x}" y="${pad}" width="${w}" height="${H-2*pad}" fill="${p.c?"#f7a541":"#ffffff"}" stroke="#33465a" stroke-width="5" ${clickable?'style="cursor:pointer"':""}/>`;
+    if(o.guides && !p.done){
+      for(let j=1;j<o.guides;j++){
+        const gx = x + w*j/o.guides;
+        out += `<line x1="${gx}" y1="${pad+10}" x2="${gx}" y2="${H-pad-10}" stroke="#7a8da0" stroke-width="3" stroke-dasharray="10 9" pointer-events="none"/>`;
+      }
+    }
+    if(o.numbers===true || (o.numbers==="colored" && p.c)){
+      out += `<text x="${x+w/2}" y="${H/2+14}" text-anchor="middle" font-size="40" font-weight="900" fill="#1d2733" pointer-events="none">${i+1}</text>`;
+    }
+    x+=w;
+  });
+  if(o.groups){
+    // gestrichelte Rahmen um jede noch nicht verklebte Gruppe
+    const {g:gs, n, glued} = o.groups;
+    const gw = iw*gs/n, nG = n/gs;
+    let gx=pad;
+    for(let g=0; g<nG; g++){
+      if(!glued.has(g)) out += `<rect data-g="${g}" x="${gx+8}" y="${pad+8}" width="${gw-16}" height="${H-2*pad-16}" rx="22" fill="rgba(31,95,153,0.06)" stroke="#1f5f99" stroke-width="5" stroke-dasharray="14 10" style="cursor:pointer"/>`;
+      gx += gw;
+    }
+  }
+  if(o.markLine!=null){
+    const mx = pad + iw*o.markLine;
+    out += `<line x1="${mx}" y1="0" x2="${mx}" y2="${H}" stroke="#c0392b" stroke-width="6" stroke-dasharray="12 8" pointer-events="none"/>`;
+  }
+  return `<svg ${o.id?`id="${o.id}"`:""} viewBox="0 0 ${W} ${H}" role="img">${out}</svg>`;
+}
+// Markierungslinie über beide Streifen (Mission 4)
+function twoBars(a, b, o={}){
+  return `<div class="bars">
+    <div><div class="barlab">${o.la||"oben"}</div>${barSVG(a, Object.assign({id:"barA", markLine:o.line}, o.oa||{}))}</div>
+    <div><div class="barlab">${o.lb||"unten"}</div>${barSVG(b, Object.assign({id:"barB", markLine:o.line}, o.ob||{}))}</div>
+  </div>`;
+}
+const frHTML = (k,n,cls="xl") => `<span class="fr ${cls}"><span>${k}</span><span>${n}</span></span>`;
+
+// ============================================================
+// Zustand
+// ============================================================
+let S = { screen:"home", m:0, i:0, stars:[], stickers:new Set() };
+const app = document.getElementById("app");
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+function numOpts(right, others){
+  const key=S.m+"-"+S.i+S.phase+right; if(S.optCache && S.optCache[0]===key) return S.optCache[1];
+  const o=[right]; for(const x of [...others, right+1, right+2, right-1]) if(x>0 && !o.includes(x) && o.length<3) o.push(x);
+  S.optCache=[key, shuffle(o)]; return S.optCache[1];
+}
+
+function setDots(){
+  const d = document.getElementById("dots");
+  if(S.screen!=="task"){ d.innerHTML=""; return; }
+  d.innerHTML = MISSIONS[S.m].tasks.map((_,j)=>`<span class="${j===S.i?"now":""}">${S.stars[j]?"⭐":""}</span>`).join("");
+}
+function confetti(){
+  const c=document.getElementById("confetti"); c.innerHTML="";
+  const cols=["#f7a541","#3fb3a3","#1f5f99","#e8b400","#ff8a7a","#3f8f3a"];
+  for(let i=0;i<60;i++){
+    const e=document.createElement("i");
+    e.style.left=Math.random()*100+"vw"; e.style.background=cols[i%cols.length];
+    e.style.animationDelay=(Math.random()*0.8)+"s";
+    c.appendChild(e);
+  }
+  setTimeout(()=>c.innerHTML="",3500);
+}
+
+// ============================================================
+// Startseite und Album
+// ============================================================
+function home(){
+  S.screen="home"; setDots();
+  const all = MISSIONS.every(m=>S.stickers.has(m.id));
+  app.innerHTML = `
+  <div class="card talk">${brunoSVG("happy")}
+    <div class="bubble"><button class="say" id="sayBtn">🔊</button><div class="txt">Hallo! Ich bin Bruno. Komm mit in mein Bruch-Labor!</div></div>
+  </div>
+  <div class="tiles">
+    ${MISSIONS.map((m,j)=>`<button class="tile" data-m="${j}">
+      <div class="ic">${m.ic}</div><b>${j+1}. ${m.title}</b>
+      <div class="st">${S.stickers.has(m.id)?m.sticker:"⬜"}</div></button>`).join("")}
+    <button class="tile" id="albumBtn"><div class="ic">📒</div><b>Mein Sticker-Album</b><div class="st">${S.stickers.size + (all?1:0)} / 5</div></button>
+  </div>`;
+  document.getElementById("sayBtn").onclick=()=>say("Hallo! Ich bin Bruno. Komm mit in mein Bruch-Labor! Tippe auf eine Mission.", true);
+  app.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>startMission(+b.dataset.m));
+  document.getElementById("albumBtn").onclick=album;
+}
+function album(){
+  S.screen="album"; setDots();
+  const all = MISSIONS.every(m=>S.stickers.has(m.id));
+  app.innerHTML = `<div class="card"><p class="home-title">📒 Mein Sticker-Album</p>
+    <div class="album">
+      ${MISSIONS.map(m=>`<div class="stk ${S.stickers.has(m.id)?"got":""}">${S.stickers.has(m.id)?m.sticker:"?"}<small>${m.title}</small></div>`).join("")}
+      <div class="stk ${all?"got":""}">${all?BONUS.sticker:"?"}<small>${BONUS.sname}</small></div>
+    </div>
+    <p class="small center">Den goldenen Pokal gibt es, wenn alle 4 Missionen geschafft sind.</p>
+    <div class="row"><button class="btn main" id="back">🏠 Zum Start</button></div></div>`;
+  document.getElementById("back").onclick=home;
+}
+
+// ============================================================
+// Aufgabenablauf
+// ============================================================
+function startMission(m){ S.m=m; S.i=0; S.stars=[]; startTask(); }
+function startTask(){
+  S.screen="task"; S.wrong=0; S.help=false; S.phase=null;
+  const t = MISSIONS[S.m].tasks[S.i];
+  S.t = t;
+  if(t.t==="paint"){ S.p = makeBar(t.n,0); S.phase="paint"; }
+  if(t.t==="name"){ S.p = makeBar(t.n,t.k); S.phase="name"; }
+  if(t.t==="cut"){ S.p = makeBar(t.n,t.k); S.orig = makeBar(t.n,t.k); S.phase="cut"; S.cnt={}; }
+  if(t.t==="glue"){ S.p = makeBar(t.n,t.k); S.orig = makeBar(t.n,t.k); S.phase="glue"; S.cnt={}; S.glued=new Set(); }
+  if(t.t==="same"){ S.p = makeBar(...t.a); S.q = makeBar(...t.b); S.phase="same"; }
+  if(t.t==="make"){ S.p = makeBar(...t.a); S.q = makeBar(...t.b); S.phase="cut"; }
+  render(true);
+}
+function next(){
+  S.stars[S.i]=true;
+  if(S.i < MISSIONS[S.m].tasks.length-1){ S.i++; startTask(); }
+  else missionDone();
+}
+function missionDone(){
+  const m = MISSIONS[S.m];
+  const first = !S.stickers.has(m.id);
+  S.stickers.add(m.id);
+  S.screen="done"; setDots(); confetti();
+  const all = MISSIONS.every(x=>S.stickers.has(x.id));
+  app.innerHTML = `<div class="card center">
+    <div class="talk" style="justify-content:center">${brunoSVG("happy")}</div>
+    <p class="home-title">Mission geschafft! 🎉</p>
+    <div class="stk got big-stk">${m.sticker}</div>
+    <p style="font-size:26px;font-weight:800">${first?"Neuer Sticker: ":"Sticker: "}${m.sname}</p>
+    ${all?`<p style="font-size:26px;font-weight:800">Und du bist jetzt ${BONUS.sticker} Bruch-Profi!</p>`:""}
+    <div class="row"><button class="btn" id="alb">📒 Album</button><button class="btn main" id="hm">🏠 Weiter</button></div></div>`;
+  say("Mission geschafft! Du bekommst einen Sticker: " + m.sname + "." + (all?" Du bist jetzt Bruch-Profi!":""));
+  document.getElementById("alb").onclick=album;
+  document.getElementById("hm").onclick=home;
+}
+
+// Text für die Sprechblase je Phase
+function instr(){
+  const t=S.t, ph=S.phase;
+  if(t.t==="paint") return [`Male ${t.k} ${t.k===1?"Stück":"Stücke"} an.`, `Male ${frSay(t.k,t.n)} an. Tippe auf ${num(t.k)} ${t.k===1?"Stück":"Stücke"}.`];
+  if(t.t==="name") return ["Welcher Bruch passt zum Bild?", "Welcher Bruch passt zum Bild? Zähle die bunten Stücke und alle Stücke."];
+  if(t.t==="cut"){
+    if(ph==="cut") return [`✂️ Schneide jedes Stück in ${t.f} Teile. Tippe auf jedes Stück.`, `Schneide jedes Stück in ${num(t.f)} Teile. Tippe auf jedes Stück.`];
+    if(ph==="n") return ["Zähle: Wie viele Stücke sind es jetzt?", "Zähle alle Stücke. Wie viele Stücke sind es jetzt?"];
+    if(ph==="k") return ["Zähle: Wie viele Stücke sind bunt?", "Zähle nur die bunten Stücke. Wie viele sind bunt?"];
+    if(ph==="end") return ["Die Stücke sind kleiner. Aber es ist gleich viel bunt! 🎉", `Super! ${frSay(t.k,t.n)} ist gleich viel wie ${frSay(t.k*t.f,t.n*t.f)}.`];
+  }
+  if(t.t==="glue"){
+    if(ph==="glue") return [`🔗 Klebe immer ${t.g} Stücke zusammen. Tippe auf jeden Rahmen.`, `Klebe immer ${num(t.g)} Stücke zusammen. Tippe auf jeden blauen Rahmen.`];
+    if(ph==="n") return ["Zähle: Wie viele Stücke sind es jetzt?", "Zähle alle Stücke. Wie viele Stücke sind es jetzt?"];
+    if(ph==="k") return ["Zähle: Wie viele Stücke sind bunt?", "Zähle nur die bunten Stücke. Wie viele sind bunt?"];
+    if(ph==="end") return ["Die Stücke sind größer. Aber es ist gleich viel bunt! 🎉", `Super! ${frSay(t.k,t.n)} ist gleich viel wie ${frSay(t.k/t.g,t.n/t.g)}.`];
+  }
+  if(t.t==="same"){
+    if(ph==="same") return ["Ist oben und unten gleich viel bunt?", "Schau genau. Ist oben und unten gleich viel bunt?"];
+    if(ph==="end") return S.isSame ? ["Ja! Beide sind gleich lang bunt. 🎉","Richtig! Oben und unten ist gleich viel bunt."] : ["Richtig! Das ist nicht gleich viel. 🎉","Richtig! Das ist nicht gleich viel."];
+  }
+  if(t.t==="make"){
+    if(ph==="cut") return [`Die Stücke sind verschieden groß. ✂️ Schneide oben jedes Stück in ${t.f} Teile.`, `Die Stücke sind verschieden groß. Schneide oben jedes Stück in ${num(t.f)} Teile.`];
+    if(ph==="which") return ["Jetzt sind alle Stücke gleich groß. Wo sind mehr bunte Stücke?", "Jetzt sind alle Stücke gleich groß. Zähle die bunten Stücke. Wo sind mehr bunte Stücke? Oben, unten, oder ist es gleich viel?"];
+    if(ph==="end") return [S.endTxt, S.endTxt];
+  }
+  return ["",""];
+}
+
+function render(speak){
+  setDots();
+  const t=S.t, [txt, spk] = instr();
+  const mood = S.mood || "normal"; S.mood=null;
+  let body = "";
+
+  // ---------- Mission 1 ----------
+  if(t.t==="paint"){
+    const got = S.p.filter(x=>x.c).length;
+    body = `<div class="row">${frHTML(t.k,t.n)}<div class="legend"><span>🖍️ ${t.k} anmalen</span><span>🧩 ${t.n} Stücke</span></div></div>
+      <div class="targets">${Array.from({length:t.k},(_,j)=>`<i class="${j<got?"full":""}"></i>`).join("")}</div>
+      <div class="bars">${barSVG(S.p,{id:"barA",tapPieces:true,numbers:S.help?true:false})}</div>
+      <div class="row"><button class="btn tipp" id="tipp">💡 Tipp</button><button class="btn ok" id="check">✔️ Fertig</button></div>`;
+  }
+  if(t.t==="name"){
+    body = `<div class="bars">${barSVG(S.p,{numbers:S.help?true:false})}</div>
+      ${S.help?`<div class="fb info">Oben: die bunten Stücke 🟧 · Unten: alle Stücke 🧩</div>`:""}
+      <div class="opts">${t.opts.map((o,j)=>`<button class="opt" data-o="${j}">${frHTML(o[0],o[1],"l")}</button>`).join("")}</div>
+      <div class="row" style="margin-top:12px"><button class="btn tipp" id="tipp">💡 Tipp</button></div>`;
+  }
+  // ---------- Mission 2 + 3 ----------
+  if(t.t==="cut" || t.t==="glue"){
+    const N = t.t==="cut" ? t.n*t.f : t.n/t.g, K = t.t==="cut" ? t.k*t.f : t.k/t.g;
+    const nTxt = S.cnt.n ? S.cnt.n : `<span class="slotq">?</span>`;
+    const kTxt = S.cnt.k ? S.cnt.k : `<span class="slotq">?</span>`;
+    const showOrig = S.phase!==(t.t==="cut"?"cut":"glue");
+    body = `<div class="frline">${frHTML(t.k,t.n)} <span>=</span> <span class="fr xl"><span>${kTxt}</span><span>${nTxt}</span></span></div>`;
+    if(showOrig) body += `<div class="bars"><div><div class="barlab">vorher</div>${barSVG(S.orig,{markLine:S.phase==="end"?coloredW(S.orig):null})}</div>
+        <div><div class="barlab">jetzt</div>${barSVG(S.p,{id:"barA",numbers:S.help?(S.phase==="k"?"colored":true):false, markLine:S.phase==="end"?coloredW(S.p):null})}</div></div>`;
+    else if(t.t==="cut") body += `<div class="bars">${barSVG(S.p,{id:"barA",tapPieces:true,skipDone:true,guides:t.f})}</div>`;
+    else body += `<div class="bars">${barSVG(S.p,{id:"barA",groups:{g:t.g,n:t.n,glued:S.glued}})}</div>`;
+    if(S.phase==="n") body += `<div class="opts">${numOpts(N,[t.n, N+1]).map(v=>`<button class="opt num" data-v="${v}">${v}</button>`).join("")}</div>`;
+    if(S.phase==="k") body += `<div class="opts">${numOpts(K,[t.k, K+1, N]).map(v=>`<button class="opt num" data-v="${v}">${v}</button>`).join("")}</div>`;
+    if(S.phase==="n"||S.phase==="k") body += `<div class="row" style="margin-top:12px"><button class="btn tipp" id="tipp">💡 Tipp</button></div>`;
+    if(S.phase==="end") body += `<div class="row" style="margin-top:12px"><button class="btn main" id="nextBtn">Weiter ➜</button></div>`;
+  }
+  // ---------- Mission 4 ----------
+  if(t.t==="same"){
+    const line = (S.help || S.phase==="end") ? coloredW(S.p) : null;
+    body = twoBars(S.p, S.q, {line});
+    if(S.help && S.phase!=="end") body += `<div class="fb info">Schau auf die rote Linie: Hört unten das Bunte an der gleichen Stelle auf?</div>`;
+    if(S.phase==="same") body += `<div class="opts"><button class="opt word" data-s="1">✅ gleich viel</button><button class="opt word" data-s="0">❌ nicht gleich viel</button></div>
+      <div class="row" style="margin-top:12px"><button class="btn tipp" id="tipp">💡 Tipp</button></div>`;
+    else body += `<div class="row" style="margin-top:12px"><button class="btn main" id="nextBtn">Weiter ➜</button></div>`;
+  }
+  if(t.t==="make"){
+    if(S.phase==="cut") body = twoBars(S.p, S.q, {oa:{tapPieces:true,skipDone:true,guides:t.f}});
+    else body = twoBars(S.p, S.q, {oa:{numbers:S.help?"colored":false}, ob:{numbers:S.help?"colored":false}});
+    if(S.phase==="which") body += `<div class="opts">
+        <button class="opt word" data-w="oben">⬆️ oben</button><button class="opt word" data-w="unten">⬇️ unten</button><button class="opt word" data-w="gleich">🟰 gleich viel</button></div>
+        <div class="row" style="margin-top:12px"><button class="btn tipp" id="tipp">💡 Tipp</button></div>`;
+    if(S.phase==="end") body += `<div class="row" style="margin-top:12px"><button class="btn main" id="nextBtn">Weiter ➜</button></div>`;
+  }
+
+  const fb = S.fb ? `<div class="fb ${S.fb[0]}">${S.fb[1]}</div>` : "";
+  S.fb=null;
+  app.innerHTML = `<div class="card talk">${brunoSVG(mood)}
+      <div class="bubble"><button class="say" id="sayBtn">🔊</button><div class="txt">${txt}</div></div></div>
+    <div class="card">${body}${fb}</div>`;
+  document.getElementById("sayBtn").onclick=()=>say(spk,true);
+  if(speak) say(spk);
+  wire();
+}
+
+function good(msg){
+  const praise = ["Super!","Klasse!","Richtig!","Toll gemacht!","Spitze!"][Math.floor(Math.random()*5)];
+  S.mood="happy"; S.fb=["good", praise + (msg?" "+msg:"")];
+  return praise;
+}
+function bad(msg, spoken){
+  S.wrong++; S.mood="think";
+  if(S.wrong>=2) S.help=true;
+  S.fb=["bad", msg || "Fast! Schau noch mal genau."];
+  render(false); say(spoken || msg || "Fast! Schau noch mal genau.");
+}
+
+function wire(){
+  const t=S.t;
+  const tipp=document.getElementById("tipp");
+  if(tipp) tipp.onclick=()=>{ S.help=true; render(false); say("Ich helfe dir. Zähle mit den Zahlen.", true); };
+  const nb=document.getElementById("nextBtn");
+  if(nb) nb.onclick=next;
+
+  // Mission 1: anmalen
+  if(t.t==="paint"){
+    document.getElementById("barA").onclick=e=>{
+      const i=e.target.dataset.i; if(i==null) return;
+      S.p[+i].c=!S.p[+i].c; render(false);
+    };
+    document.getElementById("check").onclick=()=>{
+      const got=S.p.filter(x=>x.c).length;
+      if(got===t.k){ const p=good(); render(false); say(p); setTimeout(next,1600); }
+      else if(got<t.k) bad(`Du hast ${got} angemalt. Male ${t.k} an.`, `Du hast ${num(got)} angemalt. Male ${num(t.k)} an.`);
+      else bad(`Du hast ${got} angemalt. Das sind zu viele. Male ${t.k} an.`, `Du hast ${num(got)} angemalt. Das sind zu viele.`);
+    };
+  }
+  if(t.t==="name"){
+    app.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{
+      const o=t.opts[+b.dataset.o];
+      if(o[0]===t.k && o[1]===t.n){ b.classList.add("good"); const p=good(); say(p+" Das ist "+frSay(t.k,t.n)+"."); setTimeout(()=>{render(false); setTimeout(next,1200);},300); }
+      else { b.classList.add("bad"); setTimeout(()=>bad(),450); }
+    });
+  }
+  // Mission 2: schneiden
+  if(t.t==="cut" && S.phase==="cut"){
+    document.getElementById("barA").onclick=e=>{
+      const i=e.target.dataset.i; if(i==null) return;
+      const p=S.p[+i]; if(p.done) return;
+      const parts=Array.from({length:t.f},()=>({w:p.w/t.f,c:p.c,done:true}));
+      S.p.splice(+i,1,...parts);
+      if(S.p.every(x=>x.done)){ S.phase="n"; S.mood="happy"; render(true); }
+      else render(false);
+    };
+  }
+  // Mission 3: kleben
+  if(t.t==="glue" && S.phase==="glue"){
+    document.getElementById("barA").onclick=e=>{
+      const g=e.target.dataset.g; if(g==null) return;
+      // Gruppe g ist im aktuellen Array an Position: Anzahl verklebter Gruppen davor zählt 1, sonst t.g
+      let pos=0; for(let j=0;j<+g;j++) pos += S.glued.has(j)?1:t.g;
+      if(S.glued.has(+g)) return;
+      const grp=S.p.slice(pos,pos+t.g);
+      S.p.splice(pos,t.g,{w:grp.reduce((s,x)=>s+x.w,0),c:grp.every(x=>x.c)});
+      S.glued.add(+g);
+      if(S.glued.size===t.n/t.g){ S.phase="n"; S.mood="happy"; render(true); }
+      else render(false);
+    };
+  }
+  // Mission 2+3: zählen
+  if((t.t==="cut"||t.t==="glue") && (S.phase==="n"||S.phase==="k")){
+    const N = t.t==="cut" ? t.n*t.f : t.n/t.g, K = t.t==="cut" ? t.k*t.f : t.k/t.g;
+    app.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{
+      const v=+b.dataset.v, right = S.phase==="n"?N:K;
+      if(v===right){
+        S.cnt[S.phase]=v; S.wrong=0; S.help=false;
+        if(S.phase==="n"){ S.phase="k"; S.mood="happy"; render(true); }
+        else { S.phase="end"; S.mood="happy"; render(true); }
+      } else { b.classList.add("bad"); setTimeout(()=>bad(S.phase==="n"?"Fast! Zähle alle Stücke noch mal.":"Fast! Zähle nur die bunten Stücke."),450); }
+    });
+  }
+  // Mission 4: gleich viel?
+  if(t.t==="same" && S.phase==="same"){
+    const isSame = Math.abs(coloredW(S.p)-coloredW(S.q))<1e-9;
+    app.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{
+      if((b.dataset.s==="1")===isSame){ S.isSame=isSame; S.phase="end"; good(); render(true); }
+      else { b.classList.add("bad"); setTimeout(()=>bad("Fast! Schau auf die rote Linie.","Fast! Schau auf die rote Linie. Hört das Bunte an der gleichen Stelle auf?"),450); S.help=true; }
+    });
+  }
+  if(t.t==="make" && S.phase==="cut"){
+    document.getElementById("barA").onclick=e=>{
+      const i=e.target.dataset.i; if(i==null) return;
+      const p=S.p[+i]; if(p.done) return;
+      S.p.splice(+i,1,...Array.from({length:t.f},()=>({w:p.w/t.f,c:p.c,done:true})));
+      if(S.p.every(x=>x.done)){ S.phase="which"; S.mood="happy"; render(true); } else render(false);
+    };
+  }
+  if(t.t==="make" && S.phase==="which"){
+    const a=S.p.filter(x=>x.c).length, b2=S.q.filter(x=>x.c).length;
+    const right = a>b2?"oben":a<b2?"unten":"gleich";
+    app.querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>{
+      if(b.dataset.w===right){
+        S.endTxt = right==="gleich" ? `Oben ${a} bunte Stücke, unten ${b2}. Gleich viel! 🎉`
+          : `Oben ${a} bunte Stücke, unten ${b2}. ${right==="oben"?"Oben":"Unten"} ist mehr! 🎉`;
+        S.phase="end"; good(); render(true);
+      } else { b.classList.add("bad"); setTimeout(()=>bad("Fast! Zähle oben und unten die bunten Stücke."),450); }
+    });
+  }
+}
+
+document.getElementById("homeBtn").onclick=home;
+document.getElementById("voiceBtn").onclick=e=>{
+  voiceOn=!voiceOn; e.currentTarget.classList.toggle("off",!voiceOn);
+  try{ if(!voiceOn) speechSynthesis.cancel(); }catch(err){}
+};
+home();
+</script>
+</body>
+</html>
