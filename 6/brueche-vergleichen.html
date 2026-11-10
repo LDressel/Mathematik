@@ -158,7 +158,11 @@ details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18
 <section id="ein" class="hidden">
   <div class="card">
     <p style="font-size:20px;margin-top:0">🎯 Ich kann <b>Brüche vergleichen</b>, indem ich sie <b>gleichnamig</b> mache.</p>
-    <h2 style="color:#e08a1e">🍫 Wer hat mehr Schokolade gegessen?</h2>
+    <h2 style="color:#e08a1e">⚖️ Gleicher Nenner: Welcher Bruch ist größer?</h2>
+    <div class="paar"><div class="lab"><span id="frC"></span></div><div><div id="strC"></div></div><div></div></div>
+    <div class="paar"><div class="lab"><span id="frD"></span></div><div><div id="strD"></div></div><div></div></div>
+    <p class="muted" style="margin:0 0 14px">Schau nach vorne – wir besprechen es gemeinsam.</p>
+    <h2 style="color:#e08a1e">🍫 Und jetzt: Wer hat mehr Schokolade gegessen?</h2>
     <div class="paar"><div class="lab">Tim</div><div><div id="tafA"></div></div><div class="lab"><span id="frA"></span></div></div>
     <div class="paar"><div class="lab">Lena</div><div><div id="tafB"></div></div><div class="lab"><span id="frB"></span></div></div>
     <p style="font-size:19px">Beide Tafeln sind gleich groß. Tim hat <b>3/4</b> gegessen, Lena <b>5/8</b>.<br><b>Vermute:</b> Wer hat mehr gegessen?</p>
@@ -385,7 +389,7 @@ document.addEventListener("keydown", e => {
 });
 
 $("#tafA").innerHTML = stripSVG(4, 3, 1, { h: 60, maxw: 600, color: "#8a5a3c" }); $("#tafB").innerHTML = stripSVG(8, 5, 1, { h: 60, maxw: 600, color: "#8a5a3c" });
-$("#frA").innerHTML = fr(3,4); $("#frB").innerHTML = fr(5,8);
+$("#frA").innerHTML = fr(3,4); $("#frB").innerHTML = fr(5,8); $("#frC").innerHTML = fr(3,8); $("#frD").innerHTML = fr(5,8); $("#strC").innerHTML = stripSVG(8, 3, 1, { h: 44, maxw: 600 }); $("#strD").innerHTML = stripSVG(8, 5, 1, { h: 44, maxw: 600, color: "#f5b971" });
 
 // =================== KOPFRECHEN-CHECK ===================
 const two = (z, n) => () => big(fr(z,n) + " =") + " " + fs(slot("a"), slot("b"));
