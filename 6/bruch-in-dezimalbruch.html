@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Brüche in Dezimalbrüche umwandeln – Mathe 6</title>
+<style>
+
+:root{
+  --bg:#f4f7fb; --card:#ffffff; --ink:#1d2733; --muted:#5d6b7a; --line:#33465a;
+  --blue:#1f5f99; --blueSoft:#e6eef7; --strip:#7fb8e6; --orange:#f5b971;
+  --green:#3f8f3a; --greenSoft:#e5f4e1; --red:#c0392b; --redSoft:#fbe9e7;
+  --yellow:#fff3b0; --yellowLine:#e8b400; --star:#c47d00;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;touch-action:manipulation}
+body{font-size:19px;line-height:1.35;padding-bottom:30px}
+header{position:sticky;top:0;z-index:5;background:var(--blue);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+header h1{font-size:22px;margin:0;font-weight:800;letter-spacing:-.2px}
+nav{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+nav button{font:inherit;font-size:17px;font-weight:700;border:0;border-radius:12px;padding:10px 16px;background:rgba(255,255,255,.16);color:#fff;min-height:48px}
+nav button.on{background:#fff;color:var(--blue)}
+main{max-width:980px;margin:0 auto;padding:16px}
+.card{background:var(--card);border-radius:18px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card h2{font-size:19px;margin:0 0 10px;color:var(--blue)}
+.row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.muted{color:var(--muted);font-size:16px}
+.btn{font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 18px;min-height:52px;min-width:52px;background:var(--blueSoft);color:var(--blue);cursor:pointer}
+.btn.main{background:var(--blue);color:#fff}
+.btn.ok{background:var(--green);color:#fff}
+.btn.tipp{background:var(--yellow);color:#6b5200;border:2px solid var(--yellowLine)}
+.btn.sel{background:var(--blue);color:#fff}
+.btn:disabled{opacity:.4}
+.stepper{display:inline-flex;align-items:center;gap:8px;background:var(--blueSoft);border-radius:14px;padding:6px}
+.stepper .btn{min-width:48px;min-height:48px;padding:0;font-size:24px;background:#fff}
+.stepper b{min-width:34px;text-align:center;font-size:24px}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px;line-height:1.05;font-weight:700}
+.fr>span:first-child{border-bottom:3px solid currentColor;padding:0 4px 2px}
+.fr>span:last-child{padding:2px 4px 0}
+.big{font-size:30px}
+.slot{display:inline-flex;align-items:center;justify-content:center;min-width:64px;height:52px;border:3px solid #9fb3c8;border-radius:12px;background:#fff;font-size:28px;font-weight:800;color:var(--ink);cursor:pointer;margin:2px 0}
+.slot.active{border-color:var(--blue);box-shadow:0 0 0 4px rgba(31,95,153,.18)}
+.slot.good{border-color:var(--green);background:var(--greenSoft)}
+.slot.bad{border-color:var(--red);background:var(--redSoft)}
+.fr .slot{min-width:70px}
+.fr.slots>span:first-child{border-bottom-width:4px;padding-bottom:6px}
+.fr.slots>span:last-child{padding-top:6px}
+.keypad{display:grid;grid-template-columns:repeat(5,60px);gap:8px}
+.keypad button{font:inherit;font-size:26px;font-weight:800;height:58px;border-radius:12px;border:0;background:#fff;box-shadow:0 1px 0 #c9d6e3, inset 0 0 0 2px #c9d6e3;color:var(--ink)}
+.keypad button:active{background:var(--blueSoft)}
+.keypad .del{background:var(--redSoft);color:var(--red)}
+.strip{width:100%;height:auto;display:block}
+.stripbox{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center}
+.stripbox .lab{font-size:15px;color:var(--muted);text-align:right;min-width:62px}
+.fb{border-radius:14px;padding:12px 14px;margin-top:12px;font-weight:600}
+.fb.good{background:var(--greenSoft);color:#245d20}
+.fb.bad{background:var(--redSoft);color:#8e2a20}
+.fb.info{background:var(--blueSoft);color:var(--blue)}
+.hint{background:#fffaf0;border:2px solid var(--yellowLine);border-radius:14px;padding:10px 14px;margin-top:12px}
+.hint .t{display:flex;gap:10px;margin:6px 0;align-items:center;flex-wrap:wrap}
+.hint .k{background:var(--yellow);color:#6b5200;border-radius:8px;padding:2px 8px;font-weight:800;font-size:15px;white-space:nowrap}
+table.log{width:100%;border-collapse:collapse;font-size:18px}
+table.log th,table.log td{border-bottom:1.5px solid #e1e8f0;padding:6px 8px;text-align:center}
+table.log th{color:var(--muted);font-size:15px;font-weight:700}
+.levels .btn{min-width:120px}
+.score{display:flex;gap:16px;align-items:center;font-weight:700;color:var(--muted);font-size:16px;flex-wrap:wrap}
+.score b{color:var(--ink);font-size:20px}
+.banner{background:linear-gradient(90deg,#fff3b0,#ffe28a);border-radius:14px;padding:12px 16px;font-weight:800;margin-bottom:12px}
+.exitres{text-align:center;padding:24px 12px;border-radius:18px}
+.exitres .n{font-size:64px;font-weight:900;line-height:1}
+.hidden{display:none!important}
+.tf .btn{min-width:150px;font-size:20px}
+.split{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start}
+@media (max-width:860px){.split{grid-template-columns:1fr}.keypad{grid-template-columns:repeat(5,1fr)}}
+.wand{position:relative;--wl:74px;display:grid;gap:8px;margin-bottom:6px}
+.wrow{display:grid;grid-template-columns:var(--wl) 1fr;align-items:center}
+.wlab{font-size:20px;font-weight:700;text-align:center}
+.wlab .fr{font-size:22px}
+.wtrack{display:flex;height:58px;border:3px solid #33465a;border-radius:6px;background:#fff;overflow:hidden;align-items:center}
+.wtrack.drop{border-style:dashed;border-color:#7a4fb5;background:#faf7ff}
+.wtrack.drop.hover{background:#efe6ff;box-shadow:0 0 0 4px rgba(122,79,181,.25)}
+.wp{height:100%;border-right:2px solid #33465a;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#1d2733;flex:0 0 auto;box-sizing:border-box}
+.wp.ok{box-shadow:inset 0 0 0 4px #3f8f3a}
+.wend{position:absolute;top:-6px;bottom:-6px;width:0;border-left:3px dashed #c0392b;pointer-events:none}
+.vorrat{display:flex;flex-wrap:wrap;gap:8px 4px;margin-top:14px;padding:10px;background:#f4f7fb;border-radius:14px}
+.chip{height:54px;min-width:44px;border:2px solid #33465a;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;box-sizing:border-box}
+.ghost{position:fixed;z-index:50;pointer-events:none;opacity:.85;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.pill{display:inline-block;background:var(--blueSoft);color:var(--blue);border-radius:999px;padding:3px 10px;font-weight:700;font-size:15px}
+
+header{flex-direction:column;align-items:stretch;gap:8px;padding:10px 12px}
+header .top{display:flex;align-items:center;gap:10px}
+.leiste{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-left:0;width:100%}
+.leiste button{font:inherit;font-size:14px;font-weight:700;border-radius:10px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#dbe7f3;min-height:46px;padding:4px}
+.leiste button.on{color:#fff;border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
+.leiste button.done{opacity:.75}
+.steps{display:grid;gap:8px;margin:4px 0 6px}
+.steps div{display:flex;gap:10px;align-items:flex-start;font-size:18px}
+.steps b.n{flex:0 0 30px;height:30px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px}
+.vorne{text-align:center;padding:30px 10px}
+.vorne .e{font-size:80px}
+details.muster{background:#eef6fd;border:2px solid #1f5f99;border-radius:14px;padding:10px 14px;margin-bottom:12px}
+details.muster summary{font-weight:800;color:#1f5f99;cursor:pointer;font-size:18px}
+.dots{display:flex;gap:6px;align-items:center;font-size:15px;color:#5d6b7a;flex-wrap:wrap}
+.dots i{width:18px;height:18px;border-radius:50%;border:2px solid #c9d6e3;display:inline-block}
+.dots i.c{background:#3f8f3a;border-color:#3f8f3a}
+.dots i.h{background:#f3c56b;border-color:#e0a530}
+.paar{display:grid;grid-template-columns:90px 1fr 120px;gap:10px;align-items:center;margin:8px 0}
+.paar .lab{font-size:26px;text-align:center}
+.paar .neu{font-size:24px;text-align:left;color:#1f5f99;font-weight:800}
+.vorrat{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.vorrat button{font:inherit;font-weight:800;font-size:18px;min-width:64px;min-height:48px;border-radius:12px;border:2px solid #c9d6e3;background:#fff;color:#1d2733}
+.vorrat button.bad{border-color:#c0392b;background:#fbe9e7;color:#8e2a20}
+.vorrat button.good{border-color:#3f8f3a;background:#e5f4e1;color:#245d20}
+.rel{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.rel .btn{font-size:30px;min-width:70px;font-weight:800}
+.regel{font-size:21px;line-height:2.6}
+.regel select{line-height:1.2;vertical-align:middle}
+.toggle{font:inherit;font-size:20px;font-weight:800;border:2px solid #7a4fb5;background:#faf7ff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%237a4fb5' stroke-width='2.5'/%3E%3C/svg%3E") no-repeat right 10px center;color:#7a4fb5;border-radius:10px;padding:6px 32px 6px 12px;margin:0 4px;min-height:46px;-webkit-appearance:none;appearance:none;cursor:pointer}
+.toggle.good{border-color:#3f8f3a;color:#245d20;background-color:#e5f4e1}
+.toggle.bad{border-color:#c0392b;color:#8e2a20;background-color:#fbe9e7}
+.log td,.log th{padding:6px 10px;text-align:center;font-size:18px}
+.fertig{color:#c47d00;font-weight:800;margin-top:10px}
+.reihen{font-size:18px;line-height:1.7}
+.reihen b{color:#1f5f99}
+
+.zfr{display:inline-flex;flex-direction:column;align-items:stretch;text-align:right;vertical-align:middle;margin:0 4px;line-height:1.05;font-weight:700;font-variant-numeric:tabular-nums}
+.zfr>span:first-child{border-bottom:3px solid currentColor;padding:0 4px 2px}
+.zfr>span:last-child{padding:2px 4px 0}
+.fr{font-variant-numeric:tabular-nums}
+.dslot{display:inline-flex;align-items:center;justify-content:flex-end;min-width:130px;height:54px;border:3px solid #9fb3c8;border-radius:12px;background:#fff;font-size:28px;font-weight:800;color:var(--ink);cursor:pointer;padding:0 12px;font-variant-numeric:tabular-nums;vertical-align:middle}
+.dslot.active{border-color:var(--blue);box-shadow:0 0 0 4px rgba(31,95,153,.18)}
+.dslot.good{border-color:var(--green);background:var(--greenSoft)}
+.dslot.bad{border-color:var(--red);background:var(--redSoft)}
+.dslot.sm{min-width:100px;height:48px;font-size:24px}
+.keypad .com{background:var(--yellow);color:#6b5200}
+.sticky{position:sticky;top:150px}
+.utask{display:flex;flex-wrap:nowrap;align-items:center;gap:8px;padding:8px 10px;border-radius:14px;background:#f4f7fb;min-height:84px}
+.utask .eq{font-size:26px}
+.ugrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;margin-top:8px}
+.ghead{display:flex;align-items:center;gap:10px;margin:4px 0 2px}
+.gtag{background:#c47d00;color:#fff;border-radius:10px;padding:2px 10px;font-weight:800}
+.wahl{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.wahl .btn.sel{background:#7a4fb5;color:#fff}
+.vers{font-size:17px;color:var(--muted);margin-top:8px}
+.vers span{display:inline-block;background:#fbe9e7;color:#8e2a20;border-radius:8px;padding:2px 8px;margin:2px 4px 2px 0;font-weight:700}
+.waage{display:inline-flex;flex-direction:column;align-items:center;gap:6px}
+.waage .disp{background:#1d2733;color:#9ff59a;font-family:"Courier New",monospace;font-size:34px;font-weight:800;border-radius:10px;padding:6px 18px;letter-spacing:2px}
+.nm{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:8px;margin-top:8px}
+.nm div{background:#fff3b0;border:2px solid #e8b400;border-radius:12px;padding:8px;text-align:center;font-weight:800;font-size:19px;white-space:nowrap}
+.mbsp{display:flex;gap:26px;flex-wrap:wrap;align-items:center}
+.mbsp .lbl{font-weight:800;color:#3f8f3a;font-size:17px;margin-bottom:4px}
+
+.utask .eq{white-space:nowrap;display:inline-flex;align-items:center}
+@media (max-width:860px){
+  [data-pad="ueb"].keypad{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:20;background:#fff;padding:8px 12px;box-shadow:0 -2px 10px rgba(0,0,0,.15);grid-template-columns:repeat(6,1fr)}
+  #ueb{padding-bottom:200px}
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top"><h1>🔟 Brüche in Dezimalbrüche umwandeln</h1><span class="muted" style="color:#cfe2f5;margin-left:auto;font-size:14px">Mathe 6 · Brüche · Std. 13</span></div>
+  <nav class="leiste" id="leiste"></nav>
+</header>
+<main>
+
+<!-- ===== KOPFRECHNEN ===== -->
+<section id="k">
+  <div class="card" id="kStart">
+    <h2 style="color:#e08a1e">🧠 Kopfrechen-Check: Zehnerbrüche als Dezimalbruch</h2>
+    <p style="font-size:19px">10 Aufgaben <b>im Kopf</b>. Allein, ohne Tipps. Jede Aufgabe nur <b>einmal</b>.<br>Dein Ergebnis siehst nur du.</p>
+    <p class="muted">Denk dran: Die Ziffern, die <b>über den Nullen</b> stehen, kommen <b>hinter das Komma</b>.</p>
+    <button class="btn main" id="kGo">Los geht's ➜</button>
+  </div>
+  <div class="card hidden" id="kTask">
+    <div class="row" style="justify-content:space-between"><span class="muted" id="kNr"></span><span class="dots" id="kDots"></span></div>
+    <div class="split">
+      <div>
+        <div id="kPrompt" style="font-weight:700;font-size:20px;margin:6px 0 12px"></div>
+        <div id="kAnswer" class="row"></div>
+        <div class="row" style="margin-top:14px"><button class="btn main" id="kNext">Antwort abgeben ➜</button></div>
+        <div id="kFb"></div>
+      </div>
+      <div class="keypad" data-pad="k"></div>
+    </div>
+  </div>
+  <div class="card hidden" id="kEnd"></div>
+</section>
+
+<!-- ===== EINSTIEG ===== -->
+<section id="ein" class="hidden">
+  <div class="card">
+    <p style="font-size:20px;margin-top:0">🎯 Ich kann <b>Brüche in Dezimalbrüche umwandeln</b>, indem ich sie <b>erweitere oder kürze</b>.</p>
+    <h2 style="color:#e08a1e">🧁 Im Rezept steht: <span id="eFr"></span> kg Mehl</h2>
+    <div class="row" style="gap:28px">
+      <div class="waage"><div class="disp">?,?? kg</div><span class="muted">Die Küchenwaage zeigt nur Kommazahlen.</span></div>
+      <div style="font-size:20px;max-width:420px">Tim sagt: <b><span id="eFr2"></span> kg = 0,34 kg</b><br><b>Vermute:</b> Stimmt das? 👍 oder 👎</div>
+    </div>
+    <div class="fb info" style="margin-top:16px">Das können wir schon: <span id="eZ"></span> = 0,75.<br>Aber bei <span id="eFr3"></span> steht im Nenner keine 10, 100 oder 1000. Was nun?</div>
+    <p class="muted">Schau nach vorne – wir besprechen es gemeinsam.</p>
+  </div>
+</section>
+
+<!-- ===== DU · ZEHNERBRUCH ===== -->
+<section id="du" class="hidden">
+  <div class="card">
+    <h2 style="color:#7a4fb5">DU · Zehnerbruch-Werkstatt (zu zweit)</h2>
+    <div class="steps" id="dSteps"></div>
+    <div class="row" id="dTargets" style="margin:10px 0"></div>
+  </div>
+  <div class="card" id="dCard">
+    <div class="split">
+      <div>
+        <div class="row" style="gap:18px;align-items:center">
+          <span class="big" id="dStart"></span>
+          <span id="dRes"></span>
+        </div>
+        <div id="dStep1" style="margin-top:12px">
+          <div style="font-weight:700;font-size:19px;margin-bottom:8px">① Erweitern oder kürzen? Wähle und tippe die Zahl ein.</div>
+          <div class="wahl">
+            <button class="btn" data-op="e">· erweitern mit</button>
+            <button class="btn" data-op="k">: kürzen mit</button>
+            <span class="slot" data-slot="f" id="dF"></span>
+            <button class="btn main" id="dTry">Ausprobieren ➜</button>
+          </div>
+          <div class="vers" id="dVers"></div>
+        </div>
+        <div id="dStep2" class="hidden" style="margin-top:12px">
+          <div style="font-weight:700;font-size:19px;margin-bottom:8px">② Jetzt als Dezimalbruch:</div>
+          <div class="row"><span class="big" id="dZ"></span><span class="big">=</span><span class="dslot" data-slot="d" id="dD"></span><button class="btn main" id="dCheck">✔ Prüfen</button></div>
+        </div>
+        <div class="row" style="margin-top:12px"><button class="btn tipp" id="dTipp">💡 Tipp</button><button class="btn ok hidden" id="dNext">Nächster Bruch ➜</button></div>
+        <div id="dFb"></div>
+        <div id="dHint"></div>
+      </div>
+      <div class="keypad sticky" data-pad="du"></div>
+    </div>
+    <div class="fertig">Fertig? → Die lila Brüche mit ★: <span id="dExtra"></span>. Bei einem gibt es zwei Wege!</div>
+  </div>
+  <div class="card">
+    <h2>📒 Unsere Tabelle</h2>
+    <table class="log"><thead><tr><th>Bruch</th><th>erweitert / gekürzt mit</th><th>Zehnerbruch</th><th>Dezimalbruch</th></tr></thead><tbody id="dLog"></tbody></table>
+    <p class="muted" style="margin-bottom:0">🔍 Schaut in die Tabelle: <b>Wann</b> habt ihr erweitert, wann gekürzt? <b>Mit welchen Zahlen</b> habt ihr erweitert?</p>
+  </div>
+  <div class="card" id="rCard">
+    <h2 style="color:#7a4fb5">✍️ Unsere Regel <span class="muted" style="font-size:15px;font-weight:600">(wähle in jedem lila Feld das passende Wort)</span></h2>
+    <div class="regel">Ich mache aus dem Bruch zuerst einen
+      <select class="toggle" data-ok="Zehnerbruch"><option value="">wählen …</option><option>Stammbruch</option><option>Zehnerbruch</option><option>gemischten Bruch</option></select>.
+      Dazu <select class="toggle" data-ok="erweitere"><option value="">wählen …</option><option>addiere</option><option>erweitere</option><option>vertausche</option></select>
+      oder <select class="toggle" data-ok="kürze"><option value="">wählen …</option><option>kürze</option><option>subtrahiere</option><option>teile durch 10</option></select> ich,
+      bis im <select class="toggle" data-ok="Nenner"><option value="">wählen …</option><option>Zähler</option><option>Nenner</option></select> 10, 100 oder 1000 steht.
+      Dann schreibe ich ihn als <select class="toggle" data-ok="Dezimalbruch"><option value="">wählen …</option><option>gemischte Zahl</option><option>Dezimalbruch</option><option>Prozentsatz</option></select>.
+    </div>
+    <button class="btn main" id="rCheck" style="margin-top:10px">✔ Prüfen</button>
+    <div id="rFb"></div>
+  </div>
+</section>
+
+<!-- ===== WIR ===== -->
+<section id="wir" class="hidden">
+  <div class="card vorne">
+    <div class="e">👀</div>
+    <h2 style="font-size:28px;color:#3f8f3a">Tablet umdrehen – alle Augen zur Tafel.</h2>
+    <p class="muted">Wer erklärt es den anderen an der Tafel? Den Hefteintrag schreibst du zu Hause.</p>
+  </div>
+  <details class="muster"><summary>Später zum Nachschauen: Musterbeispiel und Nullmacher</summary><div class="mBox" style="margin-top:10px"></div></details>
+</section>
+
+<!-- ===== ÜBEN ===== -->
+<section id="ueb" class="hidden">
+  <div class="card">
+    <h2 style="color:#c47d00">Üben · Vom Tablet ins Heft (Buch S. 22 Nr. 3 und 4)</h2>
+    <div class="steps" id="uSteps"></div>
+    <details class="muster" style="margin-top:10px"><summary>📌 Musterbeispiel und Nullmacher</summary><div class="mBox" style="margin-top:10px"></div></details>
+    <div class="score">Richtig: <b id="uOk">0</b> von <b id="uAll">10</b></div>
+  </div>
+  <div class="split">
+    <div id="uList"></div>
+    <div class="keypad sticky" data-pad="ueb"></div>
+  </div>
+  <div class="card">
+    <button class="btn" id="uToggle">⚡ Für Schnelle</button>
+    <div id="uSchnell" class="hidden" style="margin-top:10px"></div>
+  </div>
+</section>
+
+<!-- ===== EXIT ===== -->
+<section id="exit" class="hidden">
+  <div class="card" id="xStart">
+    <h2>🎟️ Exit-Ticket</h2>
+    <p>3 Aufgaben. <b>Allein, ohne Tipps.</b> Jede Aufgabe nur <b>einmal</b>. Rechne im Kopf oder im Heft.</p>
+    <button class="btn main" id="xGo">Los geht's ➜</button>
+  </div>
+  <div class="card hidden" id="xTask">
+    <div class="muted" id="xNr"></div>
+    <div class="split">
+      <div>
+        <div id="xPrompt" style="font-weight:700;font-size:20px;margin:6px 0 12px"></div>
+        <div id="xAnswer" class="row"></div>
+        <div class="row" style="margin-top:14px"><button class="btn main" id="xNext">Antwort abgeben ➜</button></div>
+      </div>
+      <div class="keypad" data-pad="exit"></div>
+    </div>
+  </div>
+  <div class="card hidden" id="xEnd"></div>
+</section>
+
+<!-- ===== HAUSAUFGABE ===== -->
+<section id="ha" class="hidden">
+  <div class="card">
+    <h2 style="color:#2f6b1e">🏠 Hausaufgabe: Brüche in Dezimalbrüche umwandeln</h2>
+    <p style="font-size:19px;margin:4px 0 8px">Das machst du <b>bis zur nächsten Mathestunde</b>:</p>
+    <ol style="font-size:19px;line-height:1.6;margin:0 0 12px;padding-left:26px">
+      <li><b>Hefteintrag</b> „Brüche in Dezimalbrüche umwandeln“ (Seite 1) ordentlich ins Heft schreiben.</li>
+      <li><b>Übung</b> Nr. 1–6 (Seite 2) im PDF bearbeiten: erst Zehnerbruch machen (erweitern oder kürzen), dann Dezimalbruch.</li>
+      <li>Dein Ergebnis in der Lösungsleiste suchen und den Buchstaben eintragen → <b>Lösungswort</b>.</li>
+      <li><b>★ Für Profis</b> (freiwillig): Brüche und Dezimalbrüche der Größe nach ordnen.</li>
+    </ol>
+    <div class="row">
+      <a class="btn main" href="bruch-in-dezimalbruch-hausaufgabe.pdf" target="_blank" rel="noopener" style="text-decoration:none;background:#2f6b1e">📄 Hausaufgabe öffnen</a>
+      <span class="muted">Dann oben auf <b>Teilen ⬆️</b> → <b>GoodNotes</b> → als neues Dokument importieren.</span>
+    </div>
+    <p class="muted" style="margin-top:14px">Zu Beginn der nächsten Stunde vergleichen wir das Lösungswort. Die Lösung bekommst du dann zum Verbessern.</p>
+  </div>
+</section>
+</main>
+
+<script>
+"use strict";
+// ---------- Hilfsfunktionen ----------
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const isZ = n => /^10+$/.test(String(n));
+const fr = (z,n) => `<span class="fr"><span>${z}</span><span>${n}</span></span>`;
+const zfr = (z,n) => `<span class="zfr"><span>${z}</span><span>${n}</span></span>`;
+const frX = (z,n) => isZ(n) ? zfr(z,n) : fr(z,n);
+const big = h => `<span class="big">${h}</span>`;
+const slot = key => `<span class="slot" data-slot="${key}"></span>`;
+const dslot = (key, sm) => `<span class="dslot${sm ? ' sm' : ''}" data-slot="${key}"></span>`;
+
+// Dezimalbruch aus Zehnerbruch (z/n mit n = 10, 100, 1000 …)
+function toDec(z, n) {
+  const d = String(n).length - 1;
+  let s = String(z).padStart(d + 1, "0");
+  let ip = s.slice(0, s.length - d), fp = s.slice(s.length - d).replace(/0+$/, "");
+  return fp ? ip + "," + fp : ip;
+}
+// Eingabe normalisieren: 0,750 → 0,75 · 007 → 7
+function norm(t) {
+  if (!t) return null;
+  let s = t;
+  if (s.includes(",")) s = s.replace(/0+$/, "").replace(/,$/, "");
+  s = s.replace(/^0+(?=\d)/, "");
+  return s;
+}
+// Zielnenner und Weg bestimmen
+function weg(z, n) {
+  for (const t of [10, 100, 1000, 10000]) if (t % n === 0 && t >= n) return { op: "e", f: t / n, z2: z * (t / n), n2: t };
+  for (const t of [10, 100, 1000]) if (n % t === 0 && z % (n / t) === 0) return { op: "k", f: n / t, z2: z / (n / t), n2: t };
+  return null;
+}
+const dezWert = (z, n) => { const w = weg(z, n); return toDec(w.z2, w.n2); };
+
+// Rechnung mit Bögen (rechts Zehnerbruch rechtsbündig)
+function bogen(z1, n1, op, k, z2, n2) {
+  const dw = 18, m = 76, fs = 28, c = "#1f5f99";
+  const wL = Math.max(String(z1).length, String(n1).length) * dw + 14;
+  const wR = Math.max(String(z2).length, String(n2).length) * dw + 14;
+  const pad = 10, xL = pad, xR = pad + wL + 56, W = xR + wR + pad, H = 154;
+  const cL = xL + wL / 2, cR = xR + wR / 2, mid = (cL + cR) / 2;
+  const frac = (x, w, z, n, right) => {
+    const tx = right ? x + w - 5 : x + w / 2, an = right ? "end" : "middle";
+    return `<text x="${tx}" y="${m - 8}" font-size="${fs}" text-anchor="${an}" font-weight="800" fill="#1d2733" style="font-variant-numeric:tabular-nums">${z}</text>
+      <line x1="${x}" y1="${m}" x2="${x + w}" y2="${m}" stroke="#1d2733" stroke-width="3"/>
+      <text x="${tx}" y="${m + 28}" font-size="${fs}" text-anchor="${an}" font-weight="800" fill="#1d2733" style="font-variant-numeric:tabular-nums">${n}</text>`;
+  };
+  const lab = (op === "·" ? "·" : ":") + k, rx = 12 + lab.length * 6;
+  const t = m - 40, b = m + 42;
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="vertical-align:middle;font-family:inherit">
+    ${frac(xL, wL, z1, n1, isZ(n1))}<text x="${xL + wL + 28}" y="${m + 9}" font-size="${fs}" text-anchor="middle" fill="#1d2733">=</text>${frac(xR, wR, z2, n2, isZ(n2))}
+    <path d="M ${cL} ${t} Q ${mid} ${t - 44} ${cR} ${t}" fill="none" stroke="${c}" stroke-width="3"/>
+    <path d="M ${cR - 10} ${t - 7} L ${cR} ${t} L ${cR - 12} ${t + 4}" fill="none" stroke="${c}" stroke-width="3"/>
+    <path d="M ${cL} ${b} Q ${mid} ${b + 44} ${cR} ${b}" fill="none" stroke="${c}" stroke-width="3"/>
+    <path d="M ${cR - 10} ${b + 7} L ${cR} ${b} L ${cR - 12} ${b - 4}" fill="none" stroke="${c}" stroke-width="3"/>
+    ${[t - 22, b + 22].map(y => `<ellipse cx="${mid}" cy="${y}" rx="${rx}" ry="13" fill="#fff3b0" stroke="#e8b400" stroke-width="2"/>
+      <text x="${mid}" y="${y + 7}" font-size="19" text-anchor="middle" font-weight="800" fill="#6b5200">${lab}</text>`).join("")}
+  </svg>`;
+}
+
+// ---------- Ziffernblock (mit Komma) ----------
+const pads = {};
+function makePad(name) {
+  const el = document.querySelector(`[data-pad="${name}"]`);
+  el.innerHTML = ["1","2","3","4","5","6","7","8","9","0"].map(k => `<button data-k="${k}">${k}</button>`).join("")
+    + `<button class="com" data-k="," style="grid-column:span 2">,</button><button class="del" data-k="del" style="grid-column:span 3">⌫ löschen</button>`;
+  const pad = { root: null, active: null,
+    bind(root) { this.root = root; const sl = root.querySelectorAll(".slot,.dslot"); sl.forEach(s => s.onclick = () => this.focus(s)); this.focus(sl[0] || null); },
+    focus(s) { if (!this.root) return; this.root.querySelectorAll(".slot,.dslot").forEach(x => x.classList.remove("active")); this.active = s; if (s) s.classList.add("active"); },
+    press(k) { const s = this.active; if (!s || s.dataset.lock) return; s.classList.remove("good","bad");
+      const dec = s.classList.contains("dslot");
+      if (k === "del") s.textContent = s.textContent.slice(0,-1);
+      else if (k === ",") { if (dec && !s.textContent.includes(",")) s.textContent += ","; }
+      else if (s.textContent.length < (dec ? 7 : 4)) s.textContent += k; }
+  };
+  el.addEventListener("click", e => { const b = e.target.closest("button"); if (b) pad.press(b.dataset.k); });
+  pads[name] = pad; return pad;
+}
+["k","du","ueb","exit"].forEach(makePad);
+const txt = s => s ? s.textContent : "";
+function steps(el, items, color) { $(el).innerHTML = items.map((t, i) => `<div><b class="n" style="background:${color}">${i + 1}</b><span>${t}</span></div>`).join(""); }
+const tfBtns = (opts) => `<div style="display:grid;gap:10px;width:100%">${opts.map(([v, t]) => `<button class="btn" data-tf="${v}" style="text-align:left">${t}</button>`).join("")}</div>`;
+function decFb(eing, soll) {
+  if (eing && eing.startsWith(",")) return "Vor dem Komma fehlt die <b>0</b>.";
+  return "Noch nicht. Schau auf den Zehnerbruch: Die Ziffern <b>über den Nullen</b> kommen <b>hinter das Komma</b>.";
+}
+
+// ---------- Phasen-Leiste ----------
+const PH = [
+  { id: "k", label: "Kopfrechnen", color: "#e08a1e" },
+  { id: "ein", label: "Einstieg", color: "#e08a1e" },
+  { id: "du", label: "DU · Zehnerbruch", color: "#7a4fb5" },
+  { id: "wir", label: "WIR · Regel", color: "#3f8f3a" },
+  { id: "ueb", label: "Üben", color: "#c47d00" },
+  { id: "exit", label: "Exit-Ticket", color: "#5d6b7a" },
+  { id: "ha", label: "🏠 Hausaufgabe", color: "#2f6b1e" },
+];
+let currentTab = "k";
+function show(id) {
+  if (!PH.some(p => p.id === id)) id = "k";
+  currentTab = id;
+  PH.forEach(p => $("#" + p.id).classList.toggle("hidden", p.id !== id));
+  const ai = PH.findIndex(p => p.id === id);
+  $("#leiste").innerHTML = PH.map((p, i) => `<button data-go="${p.id}" class="${i === ai ? 'on' : (i < ai ? 'done' : '')}" style="${i === ai ? 'background:' + p.color : ''}">${i < ai ? '✓ ' : ''}${p.label}</button>`).join("");
+  $$("#leiste [data-go]").forEach(b => b.onclick = () => go(b.dataset.go));
+  window.scrollTo(0, 0);
+}
+function go(id) { history.replaceState(null, "", "#" + id); show(id); }
+window.addEventListener("hashchange", () => show(location.hash.slice(1)));
+document.addEventListener("keydown", e => {
+  const p = pads[currentTab]; if (!p) return;
+  if (/^[0-9]$/.test(e.key)) { p.press(e.key); e.preventDefault(); }
+  else if (e.key === "," || e.key === ".") { p.press(","); e.preventDefault(); }
+  else if (e.key === "Backspace") { p.press("del"); e.preventDefault(); }
+});
+
+// ---------- Einstieg / Musterbeispiel ----------
+$("#eFr").innerHTML = fr(3,4); $("#eFr2").innerHTML = fr(3,4); $("#eFr3").innerHTML = fr(3,4); $("#eZ").innerHTML = zfr(75,100);
+const muster = `<div class="mbsp">
+  <div><div class="lbl">Erweitern</div>${bogen(3,4,"·",25,75,100)}<span class="big"> = 0,75</span></div>
+  <div><div class="lbl">Kürzen</div>${bogen(6,30,":",3,2,10)}<span class="big"> = 0,2</span></div></div>
+  <div class="lbl" style="font-weight:800;color:#6b5200;margin-top:10px">Nullmacher: Mit dieser Zahl wird der Nenner zu 10, 100 oder 1000.</div>
+  <div class="nm"><div>2 · 5 = 10</div><div>4 · 25 = 100</div><div>20 · 5 = 100</div><div>50 · 2 = 100</div><div>8 · 125 = 1000</div><div>40 · 25 = 1000</div></div>
+  <div style="margin-top:10px;font-size:20px"><b>Das merke ich mir:</b> ${fr(1,2)} = 0,5 &nbsp; ${fr(1,4)} = 0,25 &nbsp; ${fr(3,4)} = 0,75 &nbsp; ${fr(1,5)} = 0,2 &nbsp; ${fr(1,8)} = 0,125</div>`;
+$$(".mBox").forEach(b => b.innerHTML = muster);
+
+// =================== KOPFRECHEN-CHECK ===================
+const K = { i: 0, res: [], tf: null, tasks: [
+  [7,10],[37,100],[9,100],[125,1000],[45,1000],[7,1000],[13,10],[325,100],[60,100],
+  { tf: true }
+]};
+$("#kGo").onclick = () => { K.i = 0; K.res = []; $("#kStart").classList.add("hidden"); $("#kEnd").classList.add("hidden"); $("#kTask").classList.remove("hidden"); kRender(); };
+function kRender() {
+  const t = K.tasks[K.i]; $("#kNr").textContent = `Aufgabe ${K.i+1} von 10`;
+  $("#kDots").innerHTML = K.tasks.map((_, i) => `<i class="${i < K.res.length ? 'c' : ''}"></i>`).join("");
+  K.tf = null;
+  if (t.tf) {
+    $("#kPrompt").innerHTML = `Stimmt das? ${zfr(3,100)} = 0,3`;
+    $("#kAnswer").innerHTML = tfBtns([[1,"👍 stimmt"],[0,"👎 stimmt nicht"]]);
+    $$("#kAnswer [data-tf]").forEach(b => b.onclick = () => { $$("#kAnswer [data-tf]").forEach(x => x.classList.toggle("sel", x === b)); K.tf = +b.dataset.tf; });
+  } else {
+    $("#kPrompt").innerHTML = "Schreibe als Dezimalbruch.";
+    $("#kAnswer").innerHTML = big(zfr(t[0], t[1]) + " =") + " " + dslot("d");
+  }
+  document.querySelector('[data-pad="k"]').classList.toggle("hidden", !!t.tf);
+  pads.k.bind($("#kAnswer"));
+}
+$("#kNext").onclick = () => {
+  const t = K.tasks[K.i];
+  let ok, eing;
+  if (t.tf) { if (K.tf === null) return; ok = K.tf === 0; eing = K.tf ? "stimmt" : "stimmt nicht"; }
+  else { eing = txt($("#kAnswer .dslot")); if (!eing) return; ok = norm(eing) === toDec(t[0], t[1]); }
+  K.res.push({ ok, eing });
+  K.i++;
+  if (K.i < K.tasks.length) kRender(); else kEnd();
+};
+function kEnd() {
+  $("#kTask").classList.add("hidden");
+  const n = K.res.filter(r => r.ok).length;
+  const rows = K.tasks.map((t, i) => {
+    const r = K.res[i];
+    const a = t.tf ? `${zfr(3,100)} = 0,3?` : zfr(t[0], t[1]);
+    const l = t.tf ? "stimmt nicht (0,03)" : toDec(t[0], t[1]);
+    return `<tr><td>${a}</td><td>${r.eing}</td><td>${r.ok ? "✅" : "❌"}</td><td>${r.ok ? "" : l}</td></tr>`;
+  }).join("");
+  $("#kEnd").innerHTML = `<div class="exitres"><div class="n">${n}/10</div><p style="font-size:20px;font-weight:700">${n >= 9 ? "Stark! Zehnerbrüche sitzen. 💪" : n >= 6 ? "Gut! Schau dir die ❌ noch einmal an." : "Schau dir die ❌ genau an: Über den Nullen → hinter das Komma."}</p></div>
+    <table class="log"><thead><tr><th>Aufgabe</th><th>deine Antwort</th><th></th><th>richtig wäre</th></tr></thead><tbody>${rows}</tbody></table>
+    <p class="muted">Warte leise. Gleich geht es mit dem Einstieg weiter.</p>`;
+  $("#kEnd").classList.remove("hidden");
+}
+
+// =================== DU · ZEHNERBRUCH-WERKSTATT ===================
+steps("#dSteps", [
+  "Wählt einen Bruch. Macht daraus einen <b>Zehnerbruch</b> (Nenner 10, 100 oder 1000).",
+  "<b>Erweitern oder kürzen?</b> Probiert aus – die App zeigt euch, ob es klappt.",
+  "Schreibt den Zehnerbruch als <b>Dezimalbruch</b>. Danach unten die <b>Regel</b> ergänzen."
+], "#7a4fb5");
+const D = { list: [[1,2],[3,4],[2,5],[7,20],[6,30],[27,300]], extra: [[3,8],[12,40]], cur: 0, op: null, vers: [], tip: 0, solved: {}, res: null };
+const allD = () => D.list.concat(D.extra);
+function dTargets() {
+  $("#dTargets").innerHTML = allD().map(([z, n], i) => {
+    const ex = i >= D.list.length, s = D.solved[i];
+    return `<button class="btn ${i === D.cur ? 'sel' : ''}" data-i="${i}" style="${s ? 'background:#e5f4e1;color:#245d20' : (ex && i !== D.cur ? 'background:#efe6ff;color:#7a4fb5' : '')};font-size:22px">${s ? '✓ ' : ''}${ex ? '★ ' : ''}${fr(z, n)}</button>`;
+  }).join("");
+  $$("#dTargets [data-i]").forEach(b => b.onclick = () => dLoad(+b.dataset.i));
+  $("#dExtra").innerHTML = D.extra.map(([z, n]) => fr(z, n)).join(" und ");
+}
+function dLoad(i) {
+  D.cur = i; D.op = null; D.vers = []; D.tip = 0; D.res = null;
+  const [z, n] = allD()[i];
+  $("#dStart").innerHTML = fr(z, n); $("#dStart").classList.remove("hidden"); $("#dRes").innerHTML = "";
+  $$("[data-op]").forEach(b => b.classList.remove("sel"));
+  $("#dF").textContent = ""; $("#dF").classList.remove("good","bad"); $("#dD").textContent = ""; $("#dD").classList.remove("good","bad"); delete $("#dD").dataset.lock;
+  $("#dStep1").classList.remove("hidden"); $("#dStep2").classList.add("hidden");
+  $("#dVers").innerHTML = ""; $("#dFb").innerHTML = ""; $("#dHint").innerHTML = ""; $("#dNext").classList.add("hidden"); $("#dTipp").classList.remove("hidden");
+  dTargets();
+  pads.du.bind($("#dStep1"));
+}
+$$("[data-op]").forEach(b => b.onclick = () => { D.op = b.dataset.op; $$("[data-op]").forEach(x => x.classList.toggle("sel", x === b)); pads.du.focus($("#dF")); });
+$("#dTry").onclick = () => {
+  const [z, n] = allD()[D.cur];
+  const f = parseInt(txt($("#dF")), 10);
+  if (!D.op) { $("#dFb").innerHTML = `<div class="fb info">Wählt zuerst: erweitern oder kürzen?</div>`; return; }
+  if (!f) { $("#dFb").innerHTML = `<div class="fb info">Tippt eine Zahl ein.</div>`; return; }
+  if (f === 1) { $("#dFb").innerHTML = `<div class="fb info">Mit 1 ändert sich nichts. Probiert eine andere Zahl.</div>`; return; }
+  let z2, n2;
+  if (D.op === "e") { z2 = z * f; n2 = n * f; }
+  else {
+    if (z % f || n % f) {
+      D.vers.push(`: ${f} geht nicht`);
+      $("#dVers").innerHTML = "Versuche: " + D.vers.map(v => `<span>${v}</span>`).join("");
+      $("#dFb").innerHTML = `<div class="fb bad">${z} oder ${n} lässt sich nicht ohne Rest durch ${f} teilen.</div>`; return;
+    }
+    z2 = z / f; n2 = n / f;
+  }
+  $("#dRes").innerHTML = bogen(z, n, D.op === "e" ? "·" : ":", f, z2, n2); $("#dStart").classList.add("hidden");
+  if (isZ(n2)) {
+    D.res = [z2, n2];
+    $("#dFb").innerHTML = `<div class="fb good">✅ Zehnerbruch! Im Nenner steht ${n2}.</div>`;
+    $("#dStep1").classList.add("hidden"); $("#dStep2").classList.remove("hidden");
+    $("#dZ").innerHTML = zfr(z2, n2);
+    pads.du.bind($("#dStep2"));
+  } else {
+    D.vers.push(`${D.op === "e" ? "·" : ":"} ${f} → ${z2}/${n2}`);
+    $("#dVers").innerHTML = "Versuche: " + D.vers.map(v => `<span>${v}</span>`).join("");
+    $("#dFb").innerHTML = `<div class="fb bad">Noch kein Zehnerbruch – im Nenner steht ${n2}. Probiert eine andere Zahl${D.vers.length >= 2 ? " – oder die andere Richtung" : ""}.</div>`;
+  }
+};
+$("#dCheck").onclick = () => {
+  if (!D.res) return;
+  const eing = txt($("#dD")); if (!eing) return;
+  const soll = toDec(D.res[0], D.res[1]);
+  if (norm(eing) === soll) {
+    $("#dD").classList.add("good"); $("#dD").dataset.lock = 1;
+    const [z, n] = allD()[D.cur];
+    const f = D.res[1] > n ? `· ${D.res[1] / n} (erweitert)` : `: ${n / D.res[1]} (gekürzt)`;
+    D.solved[D.cur] = true;
+    $("#dLog").insertAdjacentHTML("beforeend", `<tr><td>${fr(z, n)}</td><td>${f}</td><td>${zfr(D.res[0], D.res[1])}</td><td><b>${soll}</b></td></tr>`);
+    const zwei = (z === 12 && n === 40) ? (D.res[1] === 10 ? " Es geht auch mit Erweitern: · 25 → 300/1000 = 0,3." : " Es geht auch mit Kürzen: : 4 → 3/10 = 0,3.") : "";
+    const fertig = D.list.every((_, i) => D.solved[i]);
+    $("#dFb").innerHTML = `<div class="fb good">✅ Richtig: ${fr(z, n)} = ${soll}.${zwei}${fertig ? " <br>Alle 6 geschafft! Jetzt die ★-Brüche oder unten die Regel ergänzen." : ""}</div>`;
+    $("#dHint").innerHTML = ""; $("#dTipp").classList.add("hidden");
+    const nxt = allD().findIndex((_, i) => !D.solved[i]);
+    if (nxt >= 0) $("#dNext").classList.remove("hidden");
+    dTargets();
+  } else {
+    $("#dD").classList.add("bad");
+    $("#dFb").innerHTML = `<div class="fb bad">${decFb(eing, soll)}</div>`;
+  }
+};
+$("#dNext").onclick = () => { const nxt = allD().findIndex((_, i) => !D.solved[i]); if (nxt >= 0) dLoad(nxt); };
+$("#dTipp").onclick = () => {
+  const [z, n] = allD()[D.cur]; const w = weg(z, n);
+  D.tip = Math.min(D.tip + 1, 3);
+  const T = w.op === "e" ? [
+    `Der Nenner ${n} soll 10, 100 oder 1000 werden. Wird er größer oder kleiner?`,
+    `Rechne: ${n} · ? = ${w.n2}`,
+    `${n} · ${w.f} = ${w.n2}. Erweitere mit ${w.f}: Zähler und Nenner mal ${w.f}.`
+  ] : [
+    `${n} · ? ergibt nie genau 10, 100 oder 1000. Kann der Nenner auch <b>kleiner</b> werden?`,
+    `Rechne: ${n} : ? = ${w.n2}`,
+    `${n} : ${w.f} = ${w.n2}. Kürze mit ${w.f}: Zähler und Nenner durch ${w.f}.`
+  ];
+  $("#dHint").innerHTML = `<div class="hint">${T.slice(0, D.tip).map((t, i) => `<div class="t"><span class="k">Tipp ${i + 1}</span><span>${t}</span></div>`).join("")}</div>`;
+};
+$("#rCheck").onclick = () => {
+  let all = true;
+  $$("#rCard .toggle").forEach(s => { const ok = s.value === s.dataset.ok; s.classList.toggle("good", ok); s.classList.toggle("bad", !ok); if (!ok) all = false; });
+  $("#rFb").innerHTML = all ? `<div class="fb good">✅ Richtig! Gleich besprechen wir eure Regel – und die Zahlen, mit denen ihr erweitert habt, bekommen einen Namen.</div>`
+    : `<div class="fb bad">Noch nicht alles richtig. Die roten Felder noch einmal ansehen.</div>`;
+};
+$$("#rCard .toggle").forEach(s => s.onchange = () => s.classList.remove("good","bad"));
+dLoad(0);
+
+// =================== ÜBEN ===================
+steps("#uSteps", [
+  "Rechne jede Aufgabe <b>im Heft</b> – mit Bogen, wie im Musterbeispiel.",
+  "Tippe dein Ergebnis ein und drücke <b>✔</b>. Die App sagt dir sofort, ob es stimmt.",
+  "Arbeite von <b>A</b> nach <b>D</b>. Fragen? Ich komme zu dir."
+], "#c47d00");
+const U = [
+  { g: "A", t: "Nenner wird 10", tip: "Nullmacher: 5 · 2 = 10", a: [[4,5],[2,5]] },
+  { g: "B", t: "Nenner wird 100", tip: "Nullmacher: 4 · 25 = 100 · 20 · 5 = 100 · 25 · 4 = 100", a: [[1,4],[9,20],[12,25]] },
+  { g: "C", t: "Nenner wird 1000", tip: "Nullmacher: 200 · 5 = 1000 · 8 · 125 = 1000", a: [[19,200],[5,8]] },
+  { g: "D", t: "Erst kürzen", tip: "Kürze zuerst: 30 : 3 = 10 · 40 : 4 = 10 · 300 : 3 = 100", a: [[9,30],[28,40],[33,300]] },
+];
+const US = [[3,4],[11,20],[3,8],[9,40],[217,700],[2406,6000]];
+let uOk = 0;
+const uTask = (z, n, key) => `<div class="utask" data-z="${z}" data-n="${n}"><span class="eq">${fr(z, n)} =</span>${dslot(key, true)}<button class="btn main" data-chk style="min-width:52px;padding:0 12px">✔</button></div><div class="ufb muted" style="font-size:15px;min-height:4px"></div>`;
+$("#uList").innerHTML = U.map((G, gi) => `<div class="card"><div class="ghead"><span class="gtag">${G.g}</span><b style="font-size:19px">${G.t}</b><button class="btn tipp" data-tp="${gi}" style="margin-left:auto;min-height:44px;padding:6px 12px">💡 Tipp</button></div>
+  <div class="hint hidden" id="tp${gi}">${G.tip}</div>
+  <div class="ugrid">${G.a.map(([z, n], i) => `<div>${uTask(z, n, G.g + i)}</div>`).join("")}</div></div>`).join("");
+$("#uSchnell").innerHTML = `<b style="font-size:19px">⚡ Weitere Aufgaben aus Nr. 3 und 4</b><div class="ugrid">${US.map(([z, n], i) => `<div>${uTask(z, n, "S" + i)}</div>`).join("")}</div>`;
+$("#uAll").textContent = U.reduce((s, G) => s + G.a.length, 0);
+pads.ueb.bind($("#ueb"));
+$$("#ueb [data-tp]").forEach(b => b.onclick = () => $("#tp" + b.dataset.tp).classList.toggle("hidden"));
+$("#uToggle").onclick = () => { $("#uSchnell").classList.toggle("hidden"); pads.ueb.bind($("#ueb")); };
+$("#ueb").addEventListener("click", e => {
+  const b = e.target.closest("[data-chk]"); if (!b) return;
+  const box = b.closest(".utask"), s = box.querySelector(".dslot"), fb = box.nextElementSibling;
+  const z = +box.dataset.z, n = +box.dataset.n, eing = txt(s);
+  if (!eing || s.dataset.lock) return;
+  const soll = dezWert(z, n);
+  if (norm(eing) === soll) {
+    s.classList.add("good"); s.dataset.lock = 1; b.disabled = true; fb.innerHTML = "✅ richtig";
+    if (!s.dataset.slot.startsWith("S")) { uOk++; $("#uOk").textContent = uOk; }
+  } else {
+    s.classList.add("bad");
+    fb.innerHTML = eing.startsWith(",") ? "❌ Vor dem Komma fehlt die 0." : "❌ Noch nicht. Erst Zehnerbruch machen, dann umwandeln.";
+  }
+});
+
+// =================== EXIT-TICKET ===================
+const X = { i: 0, res: [], tf: null, tasks: [
+  { p: `Schreibe als Dezimalbruch. Rechne im Heft, wenn du willst.`, z: 7, n: 20 },
+  { p: `Schreibe als Dezimalbruch. Rechne im Heft, wenn du willst.`, z: 12, n: 40 },
+  { p: `Tim sagt: ${fr(3,4)} = 0,34. Was stimmt?`, tf: true, opts: [[0,"A · Tim hat recht."],[1,"B · Falsch: 3/4 = 75/100 = 0,75"],[2,"C · Falsch: 3/4 = 0,3"],[3,"D · Falsch: 3/4 = 3,4"]], ok: 1 },
+]};
+$("#xGo").onclick = () => { X.i = 0; X.res = []; $("#xStart").classList.add("hidden"); $("#xEnd").classList.add("hidden"); $("#xTask").classList.remove("hidden"); xRender(); };
+function xRender() {
+  const t = X.tasks[X.i]; $("#xNr").textContent = `Aufgabe ${X.i + 1} von 3`; X.tf = null;
+  $("#xPrompt").innerHTML = t.p;
+  if (t.tf) {
+    $("#xAnswer").innerHTML = tfBtns(t.opts);
+    $$("#xAnswer [data-tf]").forEach(b => b.onclick = () => { $$("#xAnswer [data-tf]").forEach(x => x.classList.toggle("sel", x === b)); X.tf = +b.dataset.tf; });
+  } else $("#xAnswer").innerHTML = big(fr(t.z, t.n) + " =") + " " + dslot("d");
+  document.querySelector('[data-pad="exit"]').classList.toggle("hidden", !!t.tf);
+  pads.exit.bind($("#xAnswer"));
+}
+$("#xNext").onclick = () => {
+  const t = X.tasks[X.i]; let ok, eing;
+  if (t.tf) { if (X.tf === null) return; ok = X.tf === t.ok; eing = "ABCD"[X.tf]; }
+  else { eing = txt($("#xAnswer .dslot")); if (!eing) return; ok = norm(eing) === dezWert(t.z, t.n); }
+  X.res.push({ ok, eing }); X.i++;
+  if (X.i < X.tasks.length) xRender(); else xEnd();
+};
+function xEnd() {
+  $("#xTask").classList.add("hidden");
+  const n = X.res.filter(r => r.ok).length;
+  const L = [`${fr(7,20)} = ${zfr(35,100)} = 0,35`, `${fr(12,40)} = ${zfr(3,10)} = 0,3`, `B: ${fr(3,4)} = ${zfr(75,100)} = 0,75`];
+  $("#xEnd").innerHTML = `<div class="exitres"><div class="n">${n}/3 ${n === 3 ? "😀" : n === 2 ? "🙂" : "🤔"}</div>
+    <p style="font-size:19px;font-weight:700">Lass das Ergebnis offen – ich komme vorbei.</p></div>
+    <table class="log"><tbody>${X.res.map((r, i) => `<tr><td>${i + 1}</td><td>${r.ok ? "✅" : "❌"}</td><td>${L[i]}</td></tr>`).join("")}</tbody></table>
+    <p class="muted">Denk still nach: Wann erweiterst du, wann kürzt du?</p>`;
+  $("#xEnd").classList.remove("hidden");
+}
+
+show(location.hash.slice(1) || "k");
+
+</script>
+</body>
+</html>
